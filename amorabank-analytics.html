@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amorabank — Analitika</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#2c2966', 'ink-2': '#1b1940', 'ink-3': '#14122e',
+        neon: '#00e5d4', lilac: '#7c6ff0', mist: '#f4f5fa', line: '#e6e8f2',
+      },
+      fontFamily: {
+        display: ['Sora', 'sans-serif'], body: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'],
+      },
+    }
+  }
+}
+</script>
+
+<style>
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #cfd3e6; border-radius: 99px; }
+  :focus-visible { outline: 2px solid #00e5d4; outline-offset: 2px; border-radius: 6px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  .bar { transition: height .6s cubic-bezier(.22,1,.36,1); }
+</style>
+</head>
+
+<body class="bg-mist font-body text-ink-2 antialiased">
+
+<div class="flex min-h-screen">
+
+  <!-- ════════════ SOL PANEL ════════════ -->
+  <aside class="hidden lg:flex w-64 shrink-0 flex-col bg-ink-2 text-white/70 px-5 py-6">
+    <div class="flex items-center gap-2.5 px-2 mb-9">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+        <i data-lucide="gem" style="width:18px;height:18px" class="text-ink-2"></i>
+      </div>
+      <span class="font-display font-700 text-lg text-white tracking-tight">Amorabank</span>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Panel
+      </a>
+      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> Köçürmələr
+      </a>
+      <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> Kartlar
+      </a>
+      <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> Ödənişlər
+      </a>
+      <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> Yığım
+      </a>
+      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> Analitika
+      </a>
+      <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> Kreditlər
+      </a>
+    </nav>
+
+    <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <i data-lucide="log-out" style="width:18px;height:18px"></i> Çıxış
+    </button>
+  </aside>
+
+
+  <main class="flex-1 min-w-0 pb-24 lg:pb-0">
+
+    <!-- ════════════ HEADER ════════════ -->
+    <header class="sticky top-0 z-20 bg-mist/80 backdrop-blur-lg border-b border-line">
+      <div class="flex items-center gap-3 px-5 lg:px-8 h-16">
+        <div class="lg:hidden flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
+            <i data-lucide="gem" style="width:15px;height:15px" class="text-ink-2"></i>
+          </div>
+          <span class="font-display font-700 text-ink">Amorabank</span>
+        </div>
+
+        <div class="hidden lg:block">
+          <h1 class="font-display font-600 text-ink text-lg leading-tight">Analitika</h1>
+          <p class="text-xs text-ink/50">Pulun hara gedir — bir baxışda</p>
+        </div>
+
+        <div class="flex-1"></div>
+
+        <a href="amorabank-dashboard.html" class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
+          <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+          <span class="hidden sm:inline">Panel</span>
+        </a>
+
+        <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
+          <div id="avatar" class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm">—</div>
+          <div class="hidden xl:block leading-tight">
+            <p class="text-sm font-500 text-ink-2" id="userFullName">…</p>
+            <p class="text-[11px] text-ink/45" id="userEmail">…</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+
+    <div class="px-5 lg:px-8 py-6 space-y-6">
+
+      <p id="pageMsg" class="hidden text-sm px-4 py-3 rounded-xl"></p>
+
+      <!-- ════════════ STAT KARTLARI ════════════ -->
+      <div class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl border border-line p-5">
+          <div class="w-9 h-9 rounded-xl bg-ink/6 grid place-items-center mb-3">
+            <i data-lucide="wallet" style="width:17px;height:17px" class="text-ink"></i>
+          </div>
+          <p class="text-[11px] text-ink/50 uppercase tracking-wide">Ümumi balans</p>
+          <p id="statBalance" class="font-mono font-700 text-ink text-xl mt-1">— ₼</p>
+          <p id="statAccounts" class="text-[11px] text-ink/40 mt-1">— hesab</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-line p-5">
+          <div class="w-9 h-9 rounded-xl bg-neon/12 grid place-items-center mb-3">
+            <i data-lucide="trending-up" style="width:17px;height:17px" class="text-teal-700"></i>
+          </div>
+          <p class="text-[11px] text-ink/50 uppercase tracking-wide">Ümumi gəlir</p>
+          <p id="statIncome" class="font-mono font-700 text-teal-700 text-xl mt-1">— ₼</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-line p-5">
+          <div class="w-9 h-9 rounded-xl bg-red-50 grid place-items-center mb-3">
+            <i data-lucide="trending-down" style="width:17px;height:17px" class="text-red-500"></i>
+          </div>
+          <p class="text-[11px] text-ink/50 uppercase tracking-wide">Ümumi xərc</p>
+          <p id="statExpense" class="font-mono font-700 text-red-500 text-xl mt-1">— ₼</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-ink to-ink-3 rounded-2xl p-5 text-white">
+          <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center mb-3">
+            <i data-lucide="activity" style="width:17px;height:17px" class="text-neon"></i>
+          </div>
+          <p class="text-[11px] text-white/55 uppercase tracking-wide">Net axın</p>
+          <p id="statNet" class="font-mono font-700 text-xl mt-1">— ₼</p>
+          <p id="statTxCount" class="text-[11px] text-white/45 mt-1">— əməliyyat</p>
+        </div>
+      </div>
+
+
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6">
+
+        <!-- ════════════ AYLIQ TREND (bar chart) ════════════ -->
+        <section class="bg-white rounded-2xl border border-line p-5 sm:p-6">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="font-display font-600 text-ink">Aylıq gəlir və xərc</h2>
+              <p class="text-xs text-ink/45">Son aylar</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-neon"></span> Gəlir</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-lilac"></span> Xərc</span>
+            </div>
+          </div>
+          <div id="barChart" class="h-56 flex items-end justify-between gap-2">
+            <div class="w-full text-center text-ink/30 text-sm self-center">Yüklənir…</div>
+          </div>
+        </section>
+
+
+        <!-- ════════════ KATEQORIYA XERCLERI (ring) ════════════ -->
+        <section class="bg-white rounded-2xl border border-line p-5 sm:p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-display font-600 text-ink">Kateqoriya üzrə</h2>
+            <select id="monthSelect" class="h-8 px-2 rounded-lg border border-line bg-mist text-xs text-ink-2 focus:border-neon outline-none"></select>
+          </div>
+
+          <div class="relative w-40 h-40 mx-auto">
+            <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#eef0f7" stroke-width="14"/>
+              <g id="ringSegments"></g>
+            </svg>
+            <div class="absolute inset-0 grid place-items-center text-center">
+              <div>
+                <p class="text-[11px] text-ink/45">Cəmi</p>
+                <p class="font-mono font-700 text-ink text-lg" id="ringTotal">— ₼</p>
+              </div>
+            </div>
+          </div>
+
+          <ul id="categoryLegend" class="mt-5 space-y-2.5"></ul>
+        </section>
+      </div>
+
+
+      <!-- ════════════ NOV UZRE BOLGU ════════════ -->
+      <section class="bg-white rounded-2xl border border-line p-5 sm:p-6">
+        <h2 class="font-display font-600 text-ink mb-5">Əməliyyat növləri</h2>
+        <div id="typeBreakdown" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="col-span-full text-center text-ink/30 text-sm py-6">Yüklənir…</div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+
+<!-- ════════════ MOBIL NAV ════════════ -->
+<nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
+  <div class="flex justify-around">
+    <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span class="text-[10px]">Panel</span>
+    </a>
+    <a href="amorabank-payments.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+      <i data-lucide="receipt" style="width:20px;height:20px"></i><span class="text-[10px]">Ödə</span>
+    </a>
+    <a href="amorabank-analytics.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
+      <i data-lucide="pie-chart" style="width:20px;height:20px"></i><span class="text-[10px] font-500">Analitika</span>
+    </a>
+    <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+      <i data-lucide="credit-card" style="width:20px;height:20px"></i><span class="text-[10px]">Kartlar</span>
+    </a>
+  </div>
+</nav>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   1. KONFIQURASIYA
+   ══════════════════════════════════════════════════════════════ */
+const API_BASE = "http://localhost:5150";
+const getToken = () => localStorage.getItem("token");
+if (!getToken()) window.location.href = "amorabank-auth.html";
+
+async function api(path, options = {}) {
+  const res = await fetch(API_BASE + path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": "az",
+      ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
+      ...(options.headers || {}),
+    },
+  });
+  if (res.status === 401) {
+    localStorage.removeItem("token"); localStorage.removeItem("refreshToken");
+    window.location.href = "amorabank-auth.html";
+    throw new Error("Sessiya bitib.");
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || data.message || "Xəta baş verdi.");
+  return data;
+}
+
+const AZN = (n) => Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const MONTHS_AZ = ["Yan","Fev","Mar","Apr","May","İyn","İyl","Avq","Sen","Okt","Noy","Dek"];
+
+
+/* ══════════════════════════════════════════════════════════════
+   2. DASHBOARD (stat kartlari + aylik trend + nov)
+   ══════════════════════════════════════════════════════════════ */
+async function loadProfile() {
+  try {
+    const me = await api("/api/Auth/me");
+    const name = me.fullName || me.email || "İstifadəçi";
+    document.getElementById("userFullName").textContent = name;
+    document.getElementById("userEmail").textContent = me.email ?? "";
+    document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
+  } catch (e) { console.error("Profil:", e.message); }
+}
+
+async function loadDashboard() {
+  let d;
+  try { d = await api("/api/Analytics/dashboard"); }
+  catch (e) { showMsg("Analitika yüklənmədi: " + e.message, false); return; }
+
+  document.getElementById("statBalance").textContent = AZN(d.totalBalance) + " ₼";
+  document.getElementById("statAccounts").textContent = (d.accountCount ?? 0) + " hesab";
+  document.getElementById("statIncome").textContent = AZN(d.totalIncome) + " ₼";
+  document.getElementById("statExpense").textContent = AZN(d.totalExpense) + " ₼";
+  const net = Number(d.netFlow ?? 0);
+  const netEl = document.getElementById("statNet");
+  netEl.textContent = (net >= 0 ? "+" : "") + AZN(net) + " ₼";
+  document.getElementById("statTxCount").textContent = (d.transactionCount ?? 0) + " əməliyyat";
+
+  renderBarChart(d.monthlyBreakdown || []);
+  renderTypeBreakdown(d.byType || []);
+}
+
+function renderBarChart(months) {
+  const box = document.getElementById("barChart");
+  if (!months.length) {
+    box.innerHTML = `<div class="w-full text-center text-ink/30 text-sm self-center">Məlumat yoxdur</div>`;
+    return;
+  }
+  // max deyer (gelir ve xerc arasinda en boyuk)
+  const max = Math.max(...months.flatMap(m => [Number(m.income || 0), Number(m.expense || 0)]), 1);
+
+  box.innerHTML = months.map(m => {
+    const inc = Number(m.income || 0), exp = Number(m.expense || 0);
+    const incH = Math.round((inc / max) * 100);
+    const expH = Math.round((exp / max) * 100);
+    const label = m.label || `${MONTHS_AZ[(m.month || 1) - 1]}`;
+    return `
+    <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group relative">
+      <div class="absolute -top-1 opacity-0 group-hover:opacity-100 transition bg-ink-2 text-white text-[10px] rounded-lg px-2 py-1 whitespace-nowrap z-10 pointer-events-none">
+        Gəlir ${AZN(inc)} • Xərc ${AZN(exp)}
+      </div>
+      <div class="w-full flex items-end justify-center gap-1 h-full">
+        <div class="bar w-1/2 max-w-[18px] rounded-t bg-neon" style="height:${incH}%"></div>
+        <div class="bar w-1/2 max-w-[18px] rounded-t bg-lilac" style="height:${expH}%"></div>
+      </div>
+      <span class="text-[10px] text-ink/45">${MONTHS_AZ[(m.month || 1) - 1] || label}</span>
+    </div>`;
+  }).join("");
+}
+
+function renderTypeBreakdown(types) {
+  const box = document.getElementById("typeBreakdown");
+  if (!types.length) {
+    box.innerHTML = `<div class="col-span-full text-center text-ink/30 text-sm py-6">Məlumat yoxdur</div>`;
+    return;
+  }
+  const TYPE_META = {
+    Deposit:  { az: "Balans artımı", icon: "arrow-down-left", cls: "bg-neon/12 text-teal-700" },
+    Withdraw: { az: "Çıxarış",       icon: "arrow-up-right",  cls: "bg-red-50 text-red-500" },
+    Transfer: { az: "Köçürmə",       icon: "arrow-left-right",cls: "bg-lilac/12 text-lilac" },
+  };
+  box.innerHTML = types.map(t => {
+    const m = TYPE_META[t.type] || { az: t.type, icon: "circle", cls: "bg-ink/6 text-ink/60" };
+    return `
+    <div class="rounded-xl border border-line p-4">
+      <div class="flex items-center gap-2.5 mb-3">
+        <div class="w-9 h-9 rounded-lg ${m.cls} grid place-items-center">
+          <i data-lucide="${m.icon}" style="width:17px;height:17px"></i>
+        </div>
+        <span class="text-sm font-500 text-ink-2">${m.az}</span>
+      </div>
+      <p class="font-mono font-700 text-ink text-xl">${AZN(t.total)} ₼</p>
+      <p class="text-[11px] text-ink/45 mt-0.5">${t.count} əməliyyat</p>
+    </div>`;
+  }).join("");
+  lucide.createIcons();
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   3. KATEQORIYA XERCLERI (ring) — ay secici ile
+   ══════════════════════════════════════════════════════════════ */
+function buildMonthOptions() {
+  const sel = document.getElementById("monthSelect");
+  const now = new Date();
+  let html = "";
+  for (let i = 0; i < 6; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const y = d.getFullYear(), mo = d.getMonth() + 1;
+    const label = `${MONTHS_AZ[d.getMonth()]} ${y}`;
+    html += `<option value="${y}-${mo}"${i === 0 ? " selected" : ""}>${label}</option>`;
+  }
+  sel.innerHTML = html;
+  sel.onchange = () => {
+    const [y, mo] = sel.value.split("-").map(Number);
+    loadSpending(y, mo);
+  };
+}
+
+async function loadSpending(year, month) {
+  let data;
+  try {
+    const q = year && month ? `?year=${year}&month=${month}` : "";
+    data = await api("/api/Analytics/spending" + q);
+  } catch (e) {
+    document.getElementById("categoryLegend").innerHTML = `<li class="text-sm text-red-500 text-center py-2">${e.message}</li>`;
+    return;
+  }
+  renderRing(data);
+}
+
+function renderRing(data) {
+  const colors = ["#2c2966", "#00e5d4", "#7c6ff0", "#c8cbe0", "#f0a868", "#8fd4c8"];
+  const R = 52, C = 2 * Math.PI * R;
+  let offset = 0;
+
+  document.getElementById("ringTotal").textContent = AZN(data.totalSpent) + " ₼";
+  const cats = data.categories || [];
+
+  if (!cats.length) {
+    document.getElementById("ringSegments").innerHTML = "";
+    document.getElementById("categoryLegend").innerHTML = `<li class="text-sm text-ink/35 text-center py-2">Bu ay xərc yoxdur</li>`;
+    return;
+  }
+
+  document.getElementById("ringSegments").innerHTML = cats.map((c, i) => {
+    const len = (Number(c.percentage) / 100) * C;
+    const seg = `<circle cx="60" cy="60" r="${R}" fill="none"
+      stroke="${colors[i % colors.length]}" stroke-width="14" stroke-linecap="round"
+      stroke-dasharray="${Math.max(0, len - 3)} ${C - len + 3}" stroke-dashoffset="${-offset}"/>`;
+    offset += len;
+    return seg;
+  }).join("");
+
+  document.getElementById("categoryLegend").innerHTML = cats.map((c, i) => `
+    <li class="flex items-center gap-2.5">
+      <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${colors[i % colors.length]}"></span>
+      <span class="text-xs text-ink-2 flex-1 truncate">${c.category}</span>
+      <span class="text-[11px] text-ink/40">${Math.round(c.percentage)}%</span>
+      <span class="font-mono text-xs text-ink/60">${AZN(c.amount)} ₼</span>
+    </li>
+  `).join("");
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   4. UI
+   ══════════════════════════════════════════════════════════════ */
+function showMsg(text, ok) {
+  const el = document.getElementById("pageMsg");
+  el.textContent = text;
+  el.className = "text-sm px-4 py-3 rounded-xl " + (ok ? "bg-neon/10 text-teal-800" : "bg-red-50 text-red-700");
+  el.classList.remove("hidden");
+  if (ok) setTimeout(() => el.classList.add("hidden"), 5000);
+}
+
+document.getElementById("logoutBtn").onclick = async () => {
+  try { await api("/api/Auth/logout", { method: "POST" }); } catch (e) {}
+  localStorage.removeItem("token"); localStorage.removeItem("refreshToken");
+  window.location.href = "amorabank-auth.html";
+};
+
+
+/* ══════════════════════════════════════════════════════════════
+   5. ILKIN YUKLENME
+   ══════════════════════════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", async () => {
+  lucide.createIcons();
+  buildMonthOptions();
+  await loadProfile();
+  await loadDashboard();
+  // cari ay uzre kateqoriya
+  const now = new Date();
+  await loadSpending(now.getFullYear(), now.getMonth() + 1);
+});
+</script>
+</body>
+</html>

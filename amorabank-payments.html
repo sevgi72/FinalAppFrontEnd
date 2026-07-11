@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amorabank — Ödənişlər</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#2c2966', 'ink-2': '#1b1940', 'ink-3': '#14122e',
+        neon: '#00e5d4', lilac: '#7c6ff0', mist: '#f4f5fa', line: '#e6e8f2',
+      },
+      fontFamily: {
+        display: ['Sora', 'sans-serif'], body: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'],
+      },
+    }
+  }
+}
+</script>
+
+<style>
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #cfd3e6; border-radius: 99px; }
+  :focus-visible { outline: 2px solid #00e5d4; outline-offset: 2px; border-radius: 6px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fade .3s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+
+<body class="bg-mist font-body text-ink-2 antialiased">
+
+<div class="flex min-h-screen">
+
+  <!-- ════════════ SOL PANEL ════════════ -->
+  <aside class="hidden lg:flex w-64 shrink-0 flex-col bg-ink-2 text-white/70 px-5 py-6">
+    <div class="flex items-center gap-2.5 px-2 mb-9">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+        <i data-lucide="gem" style="width:18px;height:18px" class="text-ink-2"></i>
+      </div>
+      <span class="font-display font-700 text-lg text-white tracking-tight">Amorabank</span>
+    </div>
+
+    <nav class="flex-1 space-y-1">
+      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Panel
+      </a>
+      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> Köçürmələr
+      </a>
+      <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> Kartlar
+      </a>
+      <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> Ödənişlər
+      </a>
+      <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> Yığım
+      </a>
+      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> Analitika
+      </a>
+      <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> Kreditlər
+      </a>
+    </nav>
+
+    <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <i data-lucide="log-out" style="width:18px;height:18px"></i> Çıxış
+    </button>
+  </aside>
+
+
+  <main class="flex-1 min-w-0 pb-24 lg:pb-0">
+
+    <!-- ════════════ HEADER ════════════ -->
+    <header class="sticky top-0 z-20 bg-mist/80 backdrop-blur-lg border-b border-line">
+      <div class="flex items-center gap-3 px-5 lg:px-8 h-16">
+        <div class="lg:hidden flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
+            <i data-lucide="gem" style="width:15px;height:15px" class="text-ink-2"></i>
+          </div>
+          <span class="font-display font-700 text-ink">Amorabank</span>
+        </div>
+
+        <div class="hidden lg:block">
+          <h1 class="font-display font-600 text-ink text-lg leading-tight">Ödənişlər</h1>
+          <p class="text-xs text-ink/50">Kommunal xidmətləri ödə</p>
+        </div>
+
+        <div class="flex-1"></div>
+
+        <a href="amorabank-dashboard.html" class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
+          <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+          <span class="hidden sm:inline">Panel</span>
+        </a>
+
+        <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
+          <div id="avatar" class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm">—</div>
+          <div class="hidden xl:block leading-tight">
+            <p class="text-sm font-500 text-ink-2" id="userFullName">…</p>
+            <p class="text-[11px] text-ink/45" id="userEmail">…</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+
+    <div class="px-5 lg:px-8 py-6 grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-6">
+
+      <!-- ════════════ SOL: TABLAR ════════════ -->
+      <div class="space-y-6 min-w-0">
+
+        <div class="bg-white rounded-2xl border border-line p-1.5 flex gap-1">
+          <button data-tab="pay" class="tab-btn flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-500 transition">
+            <i data-lucide="zap" style="width:16px;height:16px"></i> Ödəniş
+          </button>
+          <button data-tab="templates" class="tab-btn flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-500 transition">
+            <i data-lucide="bookmark" style="width:16px;height:16px"></i> Şablonlar
+          </button>
+          <button data-tab="scheduled" class="tab-btn flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-500 transition">
+            <i data-lucide="calendar-clock" style="width:16px;height:16px"></i> Avtomatik
+          </button>
+        </div>
+
+        <p id="formMsg" class="hidden text-sm px-4 py-3 rounded-xl"></p>
+
+        <!-- ─── TAB 1: ODENIS ─── -->
+        <section class="tab-panel active" data-panel="pay">
+          <div class="bg-white rounded-2xl border border-line p-5 sm:p-6">
+            <div class="flex items-center gap-2 mb-5">
+              <div class="w-9 h-9 rounded-xl bg-neon/12 grid place-items-center">
+                <i data-lucide="zap" style="width:17px;height:17px" class="text-teal-700"></i>
+              </div>
+              <div>
+                <h2 class="font-display font-600 text-ink">Kommunal ödəniş</h2>
+                <p class="text-xs text-ink/45">Provayder seç, borcu yoxla, ödə</p>
+              </div>
+            </div>
+
+            <!-- Kateqoriya secimi -->
+            <div class="mb-4">
+              <label class="block text-xs font-500 text-ink/60 mb-2">Kateqoriya</label>
+              <div id="categoryChips" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <form id="payForm" class="space-y-4">
+              <div>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5">Provayder</label>
+                <select id="payProvider" class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5">Abunəçi kodu</label>
+                <div class="flex gap-2">
+                  <input id="paySubscriber" type="text" placeholder="Məs: 1234567890"
+                         class="flex-1 h-12 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
+                  <button type="button" id="debtBtn" class="h-12 px-4 rounded-xl border border-line text-sm font-500 text-ink/70 hover:border-neon hover:text-teal-700 transition whitespace-nowrap">
+                    Borcu yoxla
+                  </button>
+                </div>
+                <p id="debtResult" class="hidden mt-2 text-sm px-3 py-2 rounded-lg bg-mist"></p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5">Hesabdan</label>
+                <select id="payAccount" class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5">Məbləğ (₼)</label>
+                <input id="payAmount" type="number" step="0.01" min="0.01" placeholder="0.00"
+                       class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-lg font-mono font-600 text-ink focus:border-neon focus:bg-white outline-none transition">
+              </div>
+
+              <div class="flex gap-2">
+                <button type="submit" class="flex-1 h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
+                  <i data-lucide="check" style="width:16px;height:16px"></i> Ödə
+                </button>
+                <button type="button" id="saveTemplateBtn" title="Şablon kimi saxla" class="h-12 px-4 rounded-xl border border-line text-ink/60 hover:border-neon hover:text-teal-700 transition">
+                  <i data-lucide="bookmark-plus" style="width:18px;height:18px"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- ─── TAB 2: SABLONLAR ─── -->
+        <section class="tab-panel" data-panel="templates">
+          <div class="bg-white rounded-2xl border border-line p-5 sm:p-6">
+            <div class="flex items-center gap-2 mb-5">
+              <div class="w-9 h-9 rounded-xl bg-lilac/12 grid place-items-center">
+                <i data-lucide="bookmark" style="width:17px;height:17px" class="text-lilac"></i>
+              </div>
+              <div>
+                <h2 class="font-display font-600 text-ink">Ödəniş şablonları</h2>
+                <p class="text-xs text-ink/45">Tez-tez ödədiklərini bir kliklə ödə</p>
+              </div>
+            </div>
+            <div id="templatesList" class="space-y-2.5">
+              <p class="text-sm text-ink/35 text-center py-6">Yüklənir…</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── TAB 3: AVTOMATIK ─── -->
+        <section class="tab-panel" data-panel="scheduled">
+          <div class="bg-white rounded-2xl border border-line p-5 sm:p-6 mb-5">
+            <div class="flex items-center gap-2 mb-5">
+              <div class="w-9 h-9 rounded-xl bg-ink/8 grid place-items-center">
+                <i data-lucide="calendar-clock" style="width:17px;height:17px" class="text-ink"></i>
+              </div>
+              <div>
+                <h2 class="font-display font-600 text-ink">Avtomatik ödəniş qur</h2>
+                <p class="text-xs text-ink/45">Hər ay seçilmiş gündə avtomatik ödənilsin</p>
+              </div>
+            </div>
+
+            <form id="scheduleForm" class="space-y-4">
+              <div>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5">Provayder</label>
+                <select id="schProvider" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Abunəçi kodu</label>
+                  <input id="schSubscriber" type="text" placeholder="1234567890" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
+                </div>
+                <div>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Ayın günü (1–28)</label>
+                  <input id="schDay" type="number" min="1" max="28" placeholder="15" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Hesabdan</label>
+                  <select id="schAccount" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
+                </div>
+                <div>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Məbləğ (₼)</label>
+                  <input id="schAmount" type="number" step="0.01" min="0.01" placeholder="0.00" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
+                </div>
+              </div>
+              <button type="submit" class="w-full h-11 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] transition flex items-center justify-center gap-2">
+                <i data-lucide="plus" style="width:16px;height:16px"></i> Avtomatik ödəniş qur
+              </button>
+            </form>
+          </div>
+
+          <div id="scheduledList" class="space-y-2.5">
+            <p class="text-sm text-ink/35 text-center py-6">Yüklənir…</p>
+          </div>
+        </section>
+
+      </div>
+
+
+      <!-- ════════════ SAG: TARIXCE ════════════ -->
+      <div class="space-y-6">
+        <section class="bg-white rounded-2xl border border-line overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-line">
+            <h2 class="font-display font-600 text-ink">Ödəniş tarixçəsi</h2>
+            <i data-lucide="history" style="width:16px;height:16px" class="text-ink/30"></i>
+          </div>
+          <ul id="historyList" class="divide-y divide-line max-h-[560px] overflow-y-auto">
+            <li class="px-5 py-8 text-center text-sm text-ink/35">Yüklənir…</li>
+          </ul>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+
+<!-- ════════════ MOBIL NAV ════════════ -->
+<nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
+  <div class="flex justify-around">
+    <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span class="text-[10px]">Panel</span>
+    </a>
+    <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+      <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i><span class="text-[10px]">Köçür</span>
+    </a>
+    <a href="amorabank-payments.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
+      <i data-lucide="receipt" style="width:20px;height:20px"></i><span class="text-[10px] font-500">Ödə</span>
+    </a>
+    <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+      <i data-lucide="credit-card" style="width:20px;height:20px"></i><span class="text-[10px]">Kartlar</span>
+    </a>
+  </div>
+</nav>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   1. KONFIQURASIYA
+   ══════════════════════════════════════════════════════════════ */
+const API_BASE = "http://localhost:5150";
+const getToken = () => localStorage.getItem("token");
+if (!getToken()) window.location.href = "amorabank-auth.html";
+
+async function api(path, options = {}) {
+  const res = await fetch(API_BASE + path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": "az",
+      ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
+      ...(options.headers || {}),
+    },
+  });
+  if (res.status === 401) {
+    localStorage.removeItem("token"); localStorage.removeItem("refreshToken");
+    window.location.href = "amorabank-auth.html";
+    throw new Error("Sessiya bitib.");
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || data.message || "Xəta baş verdi.");
+  return data;
+}
+
+const AZN = (n) => Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const formatDate = (iso) => iso ? new Date(iso).toLocaleDateString("az-AZ", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : '—';
+
+
+/* ══════════════════════════════════════════════════════════════
+   2. VEZIYYET + KATEQORIYA IKONLARI
+   ══════════════════════════════════════════════════════════════ */
+let accounts = [];
+let providers = [];
+let activeCategory = "all";
+
+// UtilityCategory adlari -> az + ikon
+const CATEGORY_META = {
+  Electricity: { az: "Elektrik", icon: "zap" },
+  Gas:         { az: "Qaz",      icon: "flame" },
+  Water:       { az: "Su",       icon: "droplet" },
+  Internet:    { az: "İnternet", icon: "wifi" },
+  Phone:       { az: "Telefon",  icon: "phone" },
+  TV:          { az: "TV",       icon: "tv" },
+};
+function catMeta(cat) { return CATEGORY_META[cat] || { az: cat || "Digər", icon: "receipt" }; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   3. YUKLEME
+   ══════════════════════════════════════════════════════════════ */
+async function loadProfile() {
+  try {
+    const me = await api("/api/Auth/me");
+    const name = me.fullName || me.email || "İstifadəçi";
+    document.getElementById("userFullName").textContent = name;
+    document.getElementById("userEmail").textContent = me.email ?? "";
+    document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
+  } catch (e) { console.error("Profil:", e.message); }
+}
+
+async function loadAccounts() {
+  try { accounts = await api("/api/Account/my"); }
+  catch (e) { console.error("Hesablar:", e.message); accounts = []; }
+
+  const opts = accounts.length
+    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? 'Əmanət' : 'Cari'} • ${AZN(a.balance)} ₼</option>`).join("")
+    : `<option value="">Hesab yoxdur</option>`;
+  ["payAccount", "schAccount"].forEach(id => { document.getElementById(id).innerHTML = opts; });
+}
+
+async function loadProviders() {
+  try { providers = await api("/api/Utility/providers"); }
+  catch (e) { console.error("Provayderlər:", e.message); providers = []; }
+  renderCategoryChips();
+  fillProviderSelects();
+}
+
+function renderCategoryChips() {
+  const cats = [...new Set(providers.map(p => p.category))];
+  const chips = document.getElementById("categoryChips");
+  const all = `<button type="button" data-cat="all" class="cat-chip px-3 h-9 rounded-lg border text-xs font-500 transition flex items-center gap-1.5">Hamısı</button>`;
+  chips.innerHTML = all + cats.map(c => {
+    const m = catMeta(c);
+    return `<button type="button" data-cat="${c}" class="cat-chip px-3 h-9 rounded-lg border text-xs font-500 transition flex items-center gap-1.5">
+      <i data-lucide="${m.icon}" style="width:14px;height:14px"></i> ${m.az}
+    </button>`;
+  }).join("");
+  chips.querySelectorAll(".cat-chip").forEach(b => b.onclick = () => setCategory(b.dataset.cat));
+  setCategory("all");
+  lucide.createIcons();
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  document.querySelectorAll(".cat-chip").forEach(b => {
+    const on = b.dataset.cat === cat;
+    b.className = "cat-chip px-3 h-9 rounded-lg border text-xs font-500 transition flex items-center gap-1.5 " +
+      (on ? "border-ink bg-ink text-white" : "border-line text-ink/60 hover:border-ink/30");
+  });
+  fillProviderSelects();
+}
+
+function fillProviderSelects() {
+  const filtered = activeCategory === "all" ? providers : providers.filter(p => p.category === activeCategory);
+  const opts = filtered.length
+    ? filtered.map(p => `<option value="${p.id}">${p.name}</option>`).join("")
+    : `<option value="">Provayder yoxdur</option>`;
+  document.getElementById("payProvider").innerHTML = opts;
+  // scheduled tab-i her provayderi gostersin (kateqoriyadan asili olmasin)
+  document.getElementById("schProvider").innerHTML = providers.length
+    ? providers.map(p => `<option value="${p.id}">${p.name} (${catMeta(p.category).az})</option>`).join("")
+    : `<option value="">Provayder yoxdur</option>`;
+}
+
+async function loadHistory() {
+  const list = document.getElementById("historyList");
+  list.innerHTML = `<li class="px-5 py-8 text-center text-sm text-ink/35">Yüklənir…</li>`;
+  let items;
+  try {
+    const res = await api("/api/Utility/my?Page=1&PageSize=20");
+    items = res.items ?? (Array.isArray(res) ? res : []);
+  } catch (e) {
+    list.innerHTML = `<li class="px-5 py-8 text-center text-sm text-red-500">${e.message}</li>`;
+    return;
+  }
+  if (!items.length) {
+    list.innerHTML = `<li class="px-5 py-10 text-center"><p class="text-sm text-ink/40">Hələ ödəniş yoxdur.</p></li>`;
+    return;
+  }
+  list.innerHTML = items.map(p => {
+    const m = catMeta(p.category);
+    const ok = p.status === "Completed" || p.status === "Success";
+    return `
+    <li class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-mist/60 transition">
+      <div class="w-10 h-10 rounded-xl grid place-items-center shrink-0 bg-ink/6 text-ink/60">
+        <i data-lucide="${m.icon}" style="width:17px;height:17px"></i>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p class="text-sm font-500 text-ink-2 truncate">${p.providerName || m.az}</p>
+        <p class="text-[11px] text-ink/45 mt-0.5">${p.subscriberCode || ""} • ${formatDate(p.createdAt)}</p>
+      </div>
+      <div class="text-right shrink-0">
+        <p class="font-mono font-600 text-sm text-ink-2">−${AZN(p.amount)} ₼</p>
+        <button onclick="downloadReceipt('${p.id}')" class="text-[11px] text-neon hover:underline">PDF qəbz</button>
+      </div>
+    </li>`;
+  }).join("");
+  lucide.createIcons();
+}
+
+async function loadTemplates() {
+  const box = document.getElementById("templatesList");
+  let items;
+  try { items = await api("/api/PaymentTemplate/my"); }
+  catch (e) { box.innerHTML = `<p class="text-sm text-red-500 text-center py-6">${e.message}</p>`; return; }
+  items = Array.isArray(items) ? items : (items.items ?? []);
+  if (!items.length) {
+    box.innerHTML = `<p class="text-sm text-ink/35 text-center py-6">Hələ şablon yoxdur. Ödəniş edərkən <i data-lucide="bookmark-plus" style="width:13px;height:13px;display:inline"></i> ilə saxlaya bilərsiniz.</p>`;
+    lucide.createIcons();
+    return;
+  }
+  box.innerHTML = items.map(t => {
+    const m = catMeta(t.category);
+    return `
+    <div class="flex items-center gap-3 p-3 rounded-xl border border-line hover:border-ink/20 transition">
+      <div class="w-9 h-9 rounded-lg bg-mist grid place-items-center shrink-0">
+        <i data-lucide="${m.icon}" style="width:16px;height:16px" class="text-ink/60"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-500 text-ink-2 truncate">${t.name}</p>
+        <p class="text-[11px] text-ink/45">${t.providerName} • ${t.subscriberCode}</p>
+      </div>
+      <button onclick="useTemplate('${t.providerId}','${t.subscriberCode}')" class="h-8 px-3 rounded-lg bg-ink text-white text-xs font-500 hover:bg-ink-2 transition">Ödə</button>
+      <button onclick="deleteTemplate('${t.id}')" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-red-50 text-ink/40 hover:text-red-500 transition">
+        <i data-lucide="trash-2" style="width:15px;height:15px"></i>
+      </button>
+    </div>`;
+  }).join("");
+  lucide.createIcons();
+}
+
+async function loadScheduled() {
+  const box = document.getElementById("scheduledList");
+  let items;
+  try { items = await api("/api/ScheduledPayment/my"); }
+  catch (e) { box.innerHTML = `<p class="text-sm text-red-500 text-center py-6">${e.message}</p>`; return; }
+  items = Array.isArray(items) ? items : (items.items ?? []);
+  if (!items.length) {
+    box.innerHTML = `<p class="text-sm text-ink/35 text-center py-6">Avtomatik ödəniş qurulmayıb.</p>`;
+    return;
+  }
+  box.innerHTML = items.map(s => `
+    <div class="flex items-center gap-3 p-3.5 rounded-xl border border-line bg-white">
+      <div class="w-9 h-9 rounded-lg ${s.isActive ? "bg-neon/12 text-teal-700" : "bg-ink/6 text-ink/40"} grid place-items-center shrink-0">
+        <i data-lucide="calendar-clock" style="width:16px;height:16px"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-500 text-ink-2 truncate">${s.providerName}</p>
+        <p class="text-[11px] text-ink/45">${s.subscriberCode} • hər ayın ${s.dayOfMonth}-i • ${AZN(s.amount)} ₼</p>
+      </div>
+      <button onclick="toggleScheduled('${s.id}', ${!s.isActive})" title="${s.isActive ? 'Dayandır' : 'Aktivləşdir'}"
+              class="w-9 h-9 grid place-items-center rounded-lg border border-line hover:border-ink/20 transition ${s.isActive ? "text-teal-700" : "text-ink/40"}">
+        <i data-lucide="${s.isActive ? "pause" : "play"}" style="width:15px;height:15px"></i>
+      </button>
+      <button onclick="deleteScheduled('${s.id}')" class="w-9 h-9 grid place-items-center rounded-lg hover:bg-red-50 text-ink/40 hover:text-red-500 transition">
+        <i data-lucide="trash-2" style="width:15px;height:15px"></i>
+      </button>
+    </div>`).join("");
+  lucide.createIcons();
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   4. EMELLER
+   ══════════════════════════════════════════════════════════════ */
+
+// borc yoxla
+document.getElementById("debtBtn").addEventListener("click", async () => {
+  const providerId = document.getElementById("payProvider").value;
+  const subscriberCode = document.getElementById("paySubscriber").value.trim();
+  const res = document.getElementById("debtResult");
+  if (!providerId || !subscriberCode) return showMsg("Provayder və abunəçi kodunu daxil edin.", false);
+
+  res.textContent = "Yoxlanılır…";
+  res.classList.remove("hidden");
+  try {
+    const d = await api("/api/Utility/debt", { method: "POST", body: JSON.stringify({ providerId, subscriberCode }) });
+    res.className = "mt-2 text-sm px-3 py-2 rounded-lg bg-neon/10 text-teal-800";
+    res.textContent = `Borc: ${AZN(d.debtAmount)} ₼`;
+    // borcu avtomatik mebleg xanasina yaz
+    if (d.debtAmount > 0) document.getElementById("payAmount").value = d.debtAmount;
+  } catch (e) {
+    res.className = "mt-2 text-sm px-3 py-2 rounded-lg bg-red-50 text-red-700";
+    res.textContent = e.message;
+  }
+});
+
+// ode
+document.getElementById("payForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = {
+    providerId: document.getElementById("payProvider").value,
+    subscriberCode: document.getElementById("paySubscriber").value.trim(),
+    accountId: document.getElementById("payAccount").value,
+    amount: parseFloat(document.getElementById("payAmount").value),
+  };
+  if (!body.providerId || !body.subscriberCode || !body.accountId || !body.amount || body.amount <= 0)
+    return showMsg("Bütün xanaları düzgün doldurun.", false);
+
+  const btn = e.target.querySelector("button[type=submit]");
+  btn.disabled = true;
+  try {
+    await api("/api/Utility/pay", { method: "POST", body: JSON.stringify(body) });
+    showMsg(`${AZN(body.amount)} ₼ ödənildi.`, true);
+    document.getElementById("payForm").reset();
+    document.getElementById("debtResult").classList.add("hidden");
+    await loadAccounts();
+    await loadHistory();
+  } catch (err) {
+    showMsg(err.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// sablon kimi saxla
+document.getElementById("saveTemplateBtn").addEventListener("click", async () => {
+  const providerId = document.getElementById("payProvider").value;
+  const subscriberCode = document.getElementById("paySubscriber").value.trim();
+  if (!providerId || !subscriberCode) return showMsg("Şablon üçün provayder və abunəçi kodu lazımdır.", false);
+
+  const name = prompt("Şablon adı (məs: Ev elektrik):");
+  if (!name) return;
+  try {
+    await api("/api/PaymentTemplate", { method: "POST", body: JSON.stringify({ name: name.trim(), providerId, subscriberCode }) });
+    showMsg("Şablon saxlanıldı.", true);
+    await loadTemplates();
+  } catch (e) { showMsg(e.message, false); }
+});
+
+// sablonu istifade et (odenis tab-ina kopyala)
+function useTemplate(providerId, subscriberCode) {
+  setTab("pay");
+  document.getElementById("payProvider").value = providerId;
+  document.getElementById("paySubscriber").value = subscriberCode;
+  document.getElementById("debtBtn").click();  // borcu avtomatik yoxla
+}
+
+async function deleteTemplate(id) {
+  try { await api(`/api/PaymentTemplate/${id}`, { method: "DELETE" }); await loadTemplates(); }
+  catch (e) { showMsg(e.message, false); }
+}
+
+// planlanmis odenis yarat
+document.getElementById("scheduleForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = {
+    accountId: document.getElementById("schAccount").value,
+    providerId: document.getElementById("schProvider").value,
+    subscriberCode: document.getElementById("schSubscriber").value.trim(),
+    amount: parseFloat(document.getElementById("schAmount").value),
+    dayOfMonth: parseInt(document.getElementById("schDay").value),
+  };
+  if (!body.accountId || !body.providerId || !body.subscriberCode || !body.amount || !body.dayOfMonth)
+    return showMsg("Bütün xanaları doldurun.", false);
+  if (body.dayOfMonth < 1 || body.dayOfMonth > 28)
+    return showMsg("Ayın günü 1–28 arası olmalıdır.", false);
+
+  const btn = e.target.querySelector("button[type=submit]");
+  btn.disabled = true;
+  try {
+    await api("/api/ScheduledPayment", { method: "POST", body: JSON.stringify(body) });
+    showMsg("Avtomatik ödəniş quruldu.", true);
+    document.getElementById("scheduleForm").reset();
+    await loadScheduled();
+  } catch (err) { showMsg(err.message, false); }
+  finally { btn.disabled = false; }
+});
+
+async function toggleScheduled(id, isActive) {
+  try { await api(`/api/ScheduledPayment/${id}/toggle?isActive=${isActive}`, { method: "POST" }); await loadScheduled(); }
+  catch (e) { showMsg(e.message, false); }
+}
+async function deleteScheduled(id) {
+  try { await api(`/api/ScheduledPayment/${id}`, { method: "DELETE" }); await loadScheduled(); }
+  catch (e) { showMsg(e.message, false); }
+}
+
+// PDF qebz
+async function downloadReceipt(id) {
+  try {
+    const res = await fetch(`${API_BASE}/api/Utility/${id}/receipt/pdf`, { headers: { "Authorization": "Bearer " + getToken() } });
+    if (!res.ok) throw new Error("PDF alına bilmədi.");
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `odenis-${id}.pdf`; a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) { showMsg(e.message, false); }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   5. UI
+   ══════════════════════════════════════════════════════════════ */
+function showMsg(text, ok) {
+  const el = document.getElementById("formMsg");
+  el.textContent = text;
+  el.className = "text-sm px-4 py-3 rounded-xl " + (ok ? "bg-neon/10 text-teal-800" : "bg-red-50 text-red-700");
+  el.classList.remove("hidden");
+  el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  if (ok) setTimeout(() => el.classList.add("hidden"), 6000);
+}
+
+const tabBtns = document.querySelectorAll(".tab-btn");
+function setTab(name) {
+  tabBtns.forEach(b => {
+    const on = b.dataset.tab === name;
+    b.className = "tab-btn flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-500 transition " +
+      (on ? "bg-ink text-white" : "text-ink/50 hover:bg-mist");
+  });
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.dataset.panel === name));
+  if (name === "templates") loadTemplates();
+  if (name === "scheduled") loadScheduled();
+  lucide.createIcons();
+}
+tabBtns.forEach(b => b.onclick = () => setTab(b.dataset.tab));
+
+// document.querySelectorAll(".nav-soon").forEach(item => {
+//   item.onclick = (e) => { e.preventDefault(); showMsg("Bu bölmə hazırlanır. Tezliklə əlçatan olacaq.", false); };
+// });
+
+document.getElementById("logoutBtn").onclick = async () => {
+  try { await api("/api/Auth/logout", { method: "POST" }); } catch (e) {}
+  localStorage.removeItem("token"); localStorage.removeItem("refreshToken");
+  window.location.href = "amorabank-auth.html";
+};
+
+
+/* ══════════════════════════════════════════════════════════════
+   6. ILKIN YUKLENME
+   ══════════════════════════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", async () => {
+  lucide.createIcons();
+  setTab("pay");
+  await loadProfile();
+  await loadAccounts();
+  await loadProviders();
+  await loadHistory();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amorabank — Giriş</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Aurora - brend panelinin canli isigi */
+        @keyframes aurora {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(20%, -15%) scale(1.2);
+            }
+
+            66% {
+                transform: translate(-15%, 12%) scale(0.9);
+            }
+        }
+
+        .aurora-blob {
+            animation: aurora 16s ease-in-out infinite;
+        }
+
+        /* Gorunusler arasi yumsaq kecid */
+        .view {
+            display: none;
+            animation: slideIn .35s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* OTP xanalari - reqem yazilanda neon kenar */
+        .otp-box {
+            transition: border-color .15s, background .15s;
+        }
+
+        .otp-box:not(:placeholder-shown) {
+            border-color: #00e5d4;
+            background: #00e5d40d;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cfd3e6;
+            border-radius: 99px;
+        }
+
+        :focus-visible {
+            outline: 2px solid #00e5d4;
+            outline-offset: 2px;
+            border-radius: 6px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .aurora-blob {
+                animation: none
+            }
+
+            * {
+                transition: none !important
+            }
+
+            .view {
+                animation: none
+            }
+        }
+    </style>
+    <script>
+        // ====== TAILWIND TOKENLERI (dashboard ile eyni sistem) ======
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#2c2966', 'ink-2': '#1b1940', 'ink-3': '#14122e',
+                        neon: '#00e5d4', lilac: '#7c6ff0',
+                        mist: '#f4f5fa', line: '#e6e8f2',
+                    },
+                    fontFamily: {
+                        display: ['Sora', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="font-body text-ink-2 antialiased">
+
+    <div class="min-h-screen flex">
+
+        <div class="hidden lg:flex w-[46%] relative overflow-hidden bg-gradient-to-br from-ink via-ink-2 to-ink-3">
+
+            <div class="aurora-blob absolute -top-24 -left-20 w-[420px] h-[420px] rounded-full blur-3xl opacity-35"
+                style="background: radial-gradient(circle, #00e5d4 0%, transparent 65%)"></div>
+            <div class="aurora-blob absolute bottom-0 right-0 w-[380px] h-[380px] rounded-full blur-3xl opacity-30"
+                style="background: radial-gradient(circle, #7c6ff0 0%, transparent 65%); animation-delay:-8s"></div>
+
+            <div class="relative flex flex-col justify-between p-12 w-full text-white">
+
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+                        <i data-lucide="gem" style="width:19px;height:19px" class="text-ink-2"></i>
+                    </div>
+                    <span class="font-display font-700 text-xl tracking-tight">Amorabank</span>
+                </div>
+
+                <div class="max-w-md">
+                    <h1 class="font-display font-700 text-4xl leading-[1.15] tracking-tight">
+                        Pulunuz<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon to-lilac">öz
+                            ritmində</span><br>
+                        işləsin.
+                    </h1>
+                    <p class="mt-5 text-white/55 leading-relaxed">
+                        Qəpiklərinizi yığın, xərcinizi görün, kartsız pul göndərin — hamısı bir yerdə.
+                    </p>
+
+                    <div class="mt-9 space-y-3.5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white/8 grid place-items-center shrink-0">
+                                <i data-lucide="shield-check" style="width:16px;height:16px" class="text-neon"></i>
+                            </div>
+                            <p class="text-sm text-white/70">İki mərhələli qorunma</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white/8 grid place-items-center shrink-0">
+                                <i data-lucide="coins" style="width:16px;height:16px" class="text-neon"></i>
+                            </div>
+                            <p class="text-sm text-white/70">Round-up yığım — hər alışda</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white/8 grid place-items-center shrink-0">
+                                <i data-lucide="zap" style="width:16px;height:16px" class="text-neon"></i>
+                            </div>
+                            <p class="text-sm text-white/70">Kod ilə köçürmə, saniyələr içində</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-xs text-white/30">© 2026 Amorabank</p>
+            </div>
+        </div>
+
+
+        <div class="flex-1 bg-mist flex items-center justify-center p-5 sm:p-8">
+            <div class="w-full max-w-[420px]">
+
+                <div class="lg:hidden flex items-center justify-center gap-2.5 mb-8">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+                        <i data-lucide="gem" style="width:17px;height:17px" class="text-ink-2"></i>
+                    </div>
+                    <span class="font-display font-700 text-lg text-ink">Amorabank</span>
+                </div>
+
+                <div class="bg-white rounded-3xl border border-line p-7 sm:p-8 shadow-sm">
+
+                    <p id="alertBox" class="hidden mb-5 text-sm px-3.5 py-2.5 rounded-xl leading-snug"></p>
+
+
+                    <section class="view active" data-view="login">
+                        <h2 class="font-display font-600 text-2xl text-ink">Yenidən xoş gördük</h2>
+                        <p class="text-sm text-ink/50 mt-1.5 mb-7">Hesabınıza daxil olun.</p>
+
+                        <form id="loginForm" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Email</label>
+                                <div class="relative">
+                                    <i data-lucide="mail" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="email" type="email" required autocomplete="email"
+                                        placeholder="ad@nümunə.az"
+                                        class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-1.5">
+                                    <label class="text-xs font-500 text-ink/60">Parol</label>
+                                    <button type="button" data-goto="forgot"
+                                        class="text-xs font-500 text-neon hover:underline">
+                                        Parolu unutdum
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <i data-lucide="lock" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="password" type="password" required autocomplete="current-password"
+                                        placeholder="••••••••"
+                                        class="w-full h-12 pl-10 pr-11 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                    <button type="button" data-toggle-pass
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-ink/35 hover:text-ink/60 transition">
+                                        <i data-lucide="eye" style="width:17px;height:17px"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                class="btn-primary w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+                                Daxil ol
+                            </button>
+                        </form>
+
+                        <div class="flex items-center gap-3 my-6">
+                            <div class="flex-1 h-px bg-line"></div>
+                            <span class="text-[11px] text-ink/35">və ya</span>
+                            <div class="flex-1 h-px bg-line"></div>
+                        </div>
+
+                        <button id="googleBtn"
+                            class="w-full h-12 rounded-xl border border-line bg-white text-sm font-500 text-ink-2 hover:border-ink/20 hover:bg-mist active:scale-[.99] transition flex items-center justify-center gap-2.5">
+                            <svg width="17" height="17" viewBox="0 0 24 24">
+                                <path fill="#4285F4"
+                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
+                                <path fill="#34A853"
+                                    d="M12 23c2.97 0 5.46-.98 7.28-2.65l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
+                                <path fill="#FBBC05"
+                                    d="M5.84 14.09a6.6 6.6 0 0 1 0-4.18V7.07H2.18a11 11 0 0 0 0 9.86l3.66-2.84z" />
+                                <path fill="#EA4335"
+                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                            </svg>
+                            Google ilə davam et
+                        </button>
+
+                        <p class="text-center text-sm text-ink/50 mt-7">
+                            Hesabınız yoxdur?
+                            <button data-goto="register"
+                                class="font-600 text-ink hover:text-neon transition">Qeydiyyatdan keçin</button>
+                        </p>
+                    </section>
+
+
+                    <section class="view" data-view="register">
+                        <h2 class="font-display font-600 text-2xl text-ink">Hesab açın</h2>
+                        <p class="text-sm text-ink/50 mt-1.5 mb-7">Bir neçə addım — və hazırsınız.</p>
+
+                        <form id="registerForm" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Ad, soyad</label>
+                                <div class="relative">
+                                    <i data-lucide="user" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="fullName" type="text" required minlength="3"
+                                        placeholder="Sevgi Fərəcli"
+                                        class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Email</label>
+                                <div class="relative">
+                                    <i data-lucide="mail" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="email" type="email" required placeholder="ad@nümunə.az"
+                                        class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Parol</label>
+                                <div class="relative">
+                                    <i data-lucide="lock" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="password" id="regPassword" type="password" required minlength="6"
+                                        placeholder="••••••••"
+                                        class="w-full h-12 pl-10 pr-11 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                    <button type="button" data-toggle-pass
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-ink/35 hover:text-ink/60 transition">
+                                        <i data-lucide="eye" style="width:17px;height:17px"></i>
+                                    </button>
+                                </div>
+
+                                <div class="flex gap-1.5 mt-2.5" id="strengthBars">
+                                    <span class="h-1 flex-1 rounded-full bg-line transition-colors"></span>
+                                    <span class="h-1 flex-1 rounded-full bg-line transition-colors"></span>
+                                    <span class="h-1 flex-1 rounded-full bg-line transition-colors"></span>
+                                    <span class="h-1 flex-1 rounded-full bg-line transition-colors"></span>
+                                </div>
+                                <p id="strengthText" class="text-[11px] text-ink/40 mt-1.5">
+                                    Ən azı 6 simvol, bir böyük hərf və bir rəqəm.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Parolu təsdiqləyin</label>
+                                <div class="relative">
+                                    <i data-lucide="lock-keyhole" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="confirmPassword" type="password" required placeholder="••••••••"
+                                        class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                class="btn-primary w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+                                Hesab aç
+                            </button>
+                        </form>
+
+                        <p class="text-center text-sm text-ink/50 mt-7">
+                            Artıq hesabınız var?
+                            <button data-goto="login" class="font-600 text-ink hover:text-neon transition">Daxil
+                                olun</button>
+                        </p>
+                    </section>
+
+
+                    <section class="view" data-view="confirm">
+                        <button data-goto="register"
+                            class="flex items-center gap-1.5 text-xs text-ink/45 hover:text-ink mb-5 transition">
+                            <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Geri
+                        </button>
+
+                        <div class="w-12 h-12 rounded-2xl bg-neon/12 grid place-items-center mb-5">
+                            <i data-lucide="mail-check" style="width:22px;height:22px" class="text-teal-700"></i>
+                        </div>
+
+                        <h2 class="font-display font-600 text-2xl text-ink">Emailinizi təsdiqləyin</h2>
+                        <p class="text-sm text-ink/50 mt-1.5 mb-7">
+                            6 rəqəmli kodu <span class="font-500 text-ink-2" data-email-slot>—</span> ünvanına
+                            göndərdik.
+                        </p>
+
+                        <form id="confirmForm">
+                            <div class="flex gap-2 justify-between" data-otp-group></div>
+                            <button type="submit"
+                                class="btn-primary w-full h-12 mt-6 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+                                Təsdiqlə
+                            </button>
+                        </form>
+
+                        <p class="text-center text-sm text-ink/50 mt-6">
+                            Kod gəlmədi?
+                            <button data-resend="confirm" class="font-600 text-neon hover:underline">Yenidən
+                                göndər</button>
+                        </p>
+                    </section>
+
+
+                    <section class="view" data-view="otp">
+                        <button data-goto="login"
+                            class="flex items-center gap-1.5 text-xs text-ink/45 hover:text-ink mb-5 transition">
+                            <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Geri
+                        </button>
+
+                        <div class="w-12 h-12 rounded-2xl bg-lilac/12 grid place-items-center mb-5">
+                            <i data-lucide="shield-check" style="width:22px;height:22px" class="text-lilac"></i>
+                        </div>
+
+                        <h2 class="font-display font-600 text-2xl text-ink">Təhlükəsizlik kodu</h2>
+                        <p class="text-sm text-ink/50 mt-1.5 mb-7">
+                            Giriş kodunu <span class="font-500 text-ink-2" data-email-slot>—</span> ünvanına göndərdik.
+                        </p>
+
+                        <form id="otpForm">
+                            <div class="flex gap-2 justify-between" data-otp-group></div>
+                            <button type="submit"
+                                class="btn-primary w-full h-12 mt-6 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+                                Təsdiqlə va daxil ol
+                            </button>
+                        </form>
+
+                        <p class="text-center text-sm text-ink/50 mt-6">
+                            Kod gəlmədi?
+                            <button data-resend="otp" class="font-600 text-neon hover:underline">Yenidən göndər</button>
+                        </p>
+                    </section>
+
+
+                    <section class="view" data-view="forgot">
+                        <button data-goto="login"
+                            class="flex items-center gap-1.5 text-xs text-ink/45 hover:text-ink mb-5 transition">
+                            <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Girişə qayıt
+                        </button>
+
+                        <div class="w-12 h-12 rounded-2xl bg-ink/6 grid place-items-center mb-5">
+                            <i data-lucide="key-round" style="width:22px;height:22px" class="text-ink"></i>
+                        </div>
+
+                        <h2 class="font-display font-600 text-2xl text-ink">Parolu sıfırlayın</h2>
+                        <p class="text-sm text-ink/50 mt-1.5 mb-7">Email ünvanınızı yazın — sıfırlama kodu göndərəcəyik.
+                        </p>
+
+                        <form id="forgotForm" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Email</label>
+                                <div class="relative">
+                                    <i data-lucide="mail" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="email" type="email" required placeholder="ad@nümunə.az"
+                                        class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                </div>
+                            </div>
+                            <button type="submit"
+                                class="btn-primary w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+                                Kod göndər
+                            </button>
+                        </form>
+                    </section>
+
+
+                    <section class="view" data-view="reset">
+                        <button data-goto="forgot"
+                            class="flex items-center gap-1.5 text-xs text-ink/45 hover:text-ink mb-5 transition">
+                            <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Geri
+                        </button>
+
+                        <h2 class="font-display font-600 text-2xl text-ink">Yeni parol</h2>
+                        <p class="text-sm text-ink/50 mt-1.5 mb-7">
+                            <span class="font-500 text-ink-2" data-email-slot>—</span> ünvanına gələn kodu və yeni
+                            parolu yazın.
+                        </p>
+
+                        <form id="resetForm" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Sıfırlama kodu</label>
+                                <input name="code" type="text" required maxlength="6" placeholder="000000"
+                                    class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono tracking-[0.4em] focus:border-neon focus:bg-white outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Yeni parol</label>
+                                <div class="relative">
+                                    <i data-lucide="lock" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="newPassword" type="password" required minlength="6"
+                                        placeholder="••••••••"
+                                        class="w-full h-12 pl-10 pr-11 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                    <button type="button" data-toggle-pass
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-ink/35 hover:text-ink/60 transition">
+                                        <i data-lucide="eye" style="width:17px;height:17px"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-500 text-ink/60 mb-1.5">Yeni parolu təsdiqləyin</label>
+                                <div class="relative">
+                                    <i data-lucide="lock-keyhole" style="width:16px;height:16px"
+                                        class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                                    <input name="confirmNewPassword" type="password" required placeholder="••••••••"
+                                        class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                                </div>
+                            </div>
+                            <button type="submit"
+                                class="btn-primary w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+                                Parolu yenilə
+                            </button>
+                        </form>
+                    </section>
+
+                </div>
+
+                <div class="flex justify-center gap-1 mt-6">
+                    <button data-lang="az"
+                        class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
+                    <button data-lang="en"
+                        class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
+                    <button data-lang="ru"
+                        class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        /* ══════════════════════════════════════════════════════════════
+           1. KONFIQURASIYA & REDIRECT METODU
+           ══════════════════════════════════════════════════════════════ */
+
+        const API_BASE = "http://localhost:5150";
+        let LANG = "az";                       // Accept-Language header-i
+        const getToken = () => localStorage.getItem("token");
+
+        // Giriş səhifəsi açılarkən token yoxlanışı: Artıq sessiyası olanı birbaşa evinə göndər
+        if (getToken()) {
+            let userRole = "Customer";
+            try {
+                const payload = JSON.parse(atob(getToken().split(".")[1]));
+                userRole = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || "Customer";
+            } catch (e) { }
+
+            if (userRole === "Admin" || userRole === "SuperAdmin") {
+                window.location.href = "amorabank-admin.html";
+            } else {
+                window.location.href = "amorabank-dashboard.html";
+            }
+        }
+
+        // Google Client ID — Google Cloud Console-dan
+        const GOOGLE_CLIENT_ID = "1029980468304-vrgdslu331r097hi9h807osut454fo8m.apps.googleusercontent.com";
+
+        // Cari email (addimlar arasi dasinir)
+        let pendingEmail = "";
+
+
+        /* ══════════════════════════════════════════════════════════════
+           2. API KOMEKCISI
+           ══════════════════════════════════════════════════════════════ */
+
+        async function api(path, body) {
+            const res = await fetch(API_BASE + path, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Accept-Language": LANG },
+                body: JSON.stringify(body),
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                if (data.errors) {
+                    const first = Object.values(data.errors)[0];
+                    throw new Error(Array.isArray(first) ? first[0] : String(first));
+                }
+                if (res.status === 429) throw new Error("Çox sayda cəhd. Bir dəqiqə gözləyin.");
+                throw new Error(data.error || data.message || "Xəta baş verdi.");
+            }
+            return data;
+        }
+
+
+        /* ══════════════════════════════════════════════════════════════
+           3. GORUNUS IDARESI
+           ══════════════════════════════════════════════════════════════ */
+
+        function showView(name) {
+            document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.dataset.view === name));
+            hideAlert();
+
+            document.querySelectorAll("[data-email-slot]").forEach(el => el.textContent = pendingEmail || "—");
+
+            const active = document.querySelector(`.view[data-view="${name}"]`);
+            const boxes = active?.querySelectorAll(".otp-box");
+            if (boxes?.length) {
+                boxes.forEach(b => b.value = "");
+                setTimeout(() => boxes[0].focus(), 60);
+            }
+        }
+
+        function showAlert(text, ok = false) {
+            const box = document.getElementById("alertBox");
+            box.textContent = text;
+            box.className = "mb-5 text-sm px-3.5 py-2.5 rounded-xl leading-snug " +
+                (ok ? "bg-neon/10 text-teal-800" : "bg-red-50 text-red-700");
+            box.classList.remove("hidden");
+        }
+        const hideAlert = () => document.getElementById("alertBox").classList.add("hidden");
+
+        function setLoading(form, loading, text) {
+            const btn = form.querySelector(".btn-primary");
+            if (!btn) return;
+            btn.disabled = loading;
+            btn.dataset.label ??= btn.textContent.trim();
+            btn.textContent = loading ? "Gözləyin…" : (text || btn.dataset.label);
+        }
+
+
+        /* ══════════════════════════════════════════════════════════════
+           4. OTP XANALARI (6 reqem, tam dinamik axın)
+           ══════════════════════════════════════════════════════════════ */
+
+        document.querySelectorAll("[data-otp-group]").forEach(group => {
+            group.innerHTML = Array.from({ length: 6 }, () => `
+                <input type="text" inputmode="numeric" maxlength="1" placeholder=" "
+                       class="otp-box w-full h-14 rounded-xl border border-line bg-mist text-center
+                              font-mono font-700 text-lg text-ink outline-none focus:border-neon transition-all">
+            `).join("");
+        });
+
+        document.querySelectorAll("[data-otp-group]").forEach(group => {
+            const boxes = [...group.querySelectorAll(".otp-box")];
+
+            boxes.forEach((box, i) => {
+                box.oninput = () => {
+                    box.value = box.value.replace(/\D/g, "");
+                    if (box.value && i < 5) boxes[i + 1].focus();
+                };
+                box.onkeydown = (e) => {
+                    if (e.key === "Backspace" && !box.value && i > 0) boxes[i - 1].focus();
+                };
+                box.onpaste = (e) => {
+                    e.preventDefault();
+                    const digits = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 6);
+                    digits.split("").forEach((d, k) => boxes[k] && (boxes[k].value = d));
+                    const nextFocus = digits.length < 6 ? digits.length : 5;
+                    if (boxes[nextFocus]) boxes[nextFocus].focus();
+                };
+            });
+        });
+
+
+        /* ══════════════════════════════════════════════════════════════
+           5. INTEQRASIYA: REAl LOGIN SUCCESS AXINI (Addım 3)
+           ══════════════════════════════════════════════════════════════ */
+
+        function onLoginSuccess(data) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("refreshToken", data.refreshToken);
+
+            // token-den rolu oxu - admin/superadmin ise back-office-e at
+            let role = "Customer";
+            try {
+                const payload = JSON.parse(atob(data.token.split(".")[1]));
+                role = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || "Customer";
+            } catch (e) { }
+
+            const target = (role === "Admin" || role === "SuperAdmin")
+                ? "amorabank-admin.html"
+                : "amorabank-dashboard.html";
+
+            showAlert(`Xoş gəldiniz, ${data.fullName || ""}. Yönləndirilirsiniz…`, true);
+            setTimeout(() => { window.location.href = target; }, 900);
+        }
+
+        // Lucide ikonlarını ayağa qaldır
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+        // Sadə view keçid düymələri üçün (data-goto bağlayıcısı)
+        document.addEventListener("click", (e) => {
+            const target = e.target.closest("[data-goto]");
+            if (target) {
+                e.preventDefault();
+                showView(target.dataset.goto);
+            }
+        });
+        /* ══════════════════════════════════════════════════════════════
+           6. FORMA HANDLERLERI
+           ══════════════════════════════════════════════════════════════ */
+
+        // --- LOGIN ---
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const email = fd.get("email").trim();
+            const password = fd.get("password");
+
+            setLoading(e.target, true);
+            try {
+                const data = await api("/api/Auth/login", { email, password });
+
+                // 2FA aciqdirsa - OTP ekranina kec
+                if (data.requiresTwoFactor) {
+                    pendingEmail = email;
+                    showView("otp");
+                    showAlert("Giriş kodu emailinizə göndərildi.", true);
+                    return;
+                }
+                onLoginSuccess(data);
+            } catch (err) {
+                // email tesdiqlenmeyibse - tesdiq ekranina at
+                if (/təsdiq|confirm/i.test(err.message)) {
+                    pendingEmail = email;
+                    showView("confirm");
+                    showAlert(err.message);
+                } else {
+                    showAlert(err.message);
+                }
+            } finally {
+                setLoading(e.target, false);
+            }
+        });
+
+        // --- REGISTER ---
+        document.getElementById("registerForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const password = fd.get("password");
+
+            if (password !== fd.get("confirmPassword")) {
+                return showAlert("Parollar uyğun gəlmir.");
+            }
+
+            setLoading(e.target, true);
+            try {
+                await api("/api/Auth/register", {
+                    fullName: fd.get("fullName").trim(),
+                    email: fd.get("email").trim(),
+                    password: password,
+                });
+                pendingEmail = fd.get("email").trim();
+                showView("confirm");
+                showAlert("Təsdiq kodu emailinizə göndərildi.", true);
+            } catch (err) {
+                showAlert(err.message);
+            } finally {
+                setLoading(e.target, false);
+            }
+        });
+
+        // OTP xanalarindan 6 reqemli kodu yigir
+        const readOtp = (form) =>
+            [...form.querySelectorAll(".otp-box")].map(b => b.value).join("");
+
+        // --- EMAIL TESDIQI ---
+        document.getElementById("confirmForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const code = readOtp(e.target);
+            if (code.length !== 6) return showAlert("6 rəqəmli kodu tam yazın.");
+
+            setLoading(e.target, true);
+            try {
+                await api("/api/Auth/confirm-email", { email: pendingEmail, code });
+                showView("login");
+                showAlert("Email təsdiqləndi. İndi daxil ola bilərsiniz.", true);
+            } catch (err) {
+                showAlert(err.message);
+            } finally {
+                setLoading(e.target, false);
+            }
+        });
+
+        // --- 2FA OTP ---
+        document.getElementById("otpForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const code = readOtp(e.target);
+            if (code.length !== 6) return showAlert("6 rəqəmli kodu tam yazın.");
+
+            setLoading(e.target, true);
+            try {
+                const data = await api("/api/Auth/verify-otp", { email: pendingEmail, code });
+                onLoginSuccess(data);
+            } catch (err) {
+                showAlert(err.message);
+                setLoading(e.target, false);
+            }
+        });
+
+        // --- PAROLU UNUTDUM ---
+        document.getElementById("forgotForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = new FormData(e.target).get("email").trim();
+
+            setLoading(e.target, true);
+            try {
+                await api("/api/Auth/forgot-password", { email });
+                pendingEmail = email;
+                showView("reset");
+                showAlert("Sıfırlama kodu göndərildi.", true);
+            } catch (err) {
+                showAlert(err.message);
+            } finally {
+                setLoading(e.target, false);
+            }
+        });
+
+        // --- PAROLU SIFIRLA ---
+        document.getElementById("resetForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const newPassword = fd.get("newPassword");
+
+            if (newPassword !== fd.get("confirmNewPassword")) {
+                return showAlert("Parollar uyğun gəlmir.");
+            }
+
+            setLoading(e.target, true);
+            try {
+                await api("/api/Auth/reset-password", {
+                    email: pendingEmail,
+                    code: fd.get("code").trim(),
+                    newPassword: newPassword,
+                });
+                showView("login");
+                showAlert("Parol yeniləndi. Daxil olun.", true);
+            } catch (err) {
+                showAlert(err.message);
+            } finally {
+                setLoading(e.target, false);
+            }
+        });
+
+
+        /* ══════════════════════════════════════════════════════════════
+           7. KOMEKCI UI DAVRANISLARI
+           ══════════════════════════════════════════════════════════════ */
+
+        // Parolu goster / gizlet
+        document.querySelectorAll("[data-toggle-pass]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const input = btn.parentElement.querySelector("input");
+                const hidden = input.type === "password";
+                input.type = hidden ? "text" : "password";
+                btn.innerHTML = `<i data-lucide="${hidden ? "eye-off" : "eye"}" style="width:17px;height:17px"></i>`;
+                if (window.lucide) lucide.createIcons();
+            });
+        });
+
+        // Parol gucu olcen (4 zolaq)
+        const regPassword = document.getElementById("regPassword");
+        if (regPassword) {
+            const bars = [...document.querySelectorAll("#strengthBars span")];
+            const label = document.getElementById("strengthText");
+            const colors = ["bg-red-400", "bg-orange-400", "bg-yellow-400", "bg-emerald-500"];
+            const words = ["Çox zəif", "Zəif", "Yaxşı", "Güclü"];
+
+            regPassword.addEventListener("input", () => {
+                const v = regPassword.value;
+                let score = 0;
+                if (v.length >= 6) score++;
+                if (/[A-Z]/.test(v)) score++;
+                if (/\d/.test(v)) score++;
+                if (/[^A-Za-z0-9]/.test(v) || v.length >= 10) score++;
+
+                bars.forEach((b, i) => {
+                    b.className = "h-1 flex-1 rounded-full transition-colors " +
+                        (i < score ? colors[score - 1] : "bg-line");
+                });
+                label.textContent = v ? words[Math.max(score - 1, 0)] :
+                    "Ən azı 6 simvol, bir böyük hərf və bir rəqəm.";
+            });
+        }
+
+        // Kodu yeniden gonder (60 saniye gozleme)
+        document.querySelectorAll("[data-resend]").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                if (btn.disabled) return;
+                if (!pendingEmail) return showAlert("Əvvəlcə email daxil edin.");
+
+                btn.disabled = true;
+                const original = btn.textContent;
+                let left = 60;
+                const tick = setInterval(() => {
+                    btn.textContent = `${left--} san.`;
+                    if (left < 0) {
+                        clearInterval(tick);
+                        btn.textContent = original;
+                        btn.disabled = false;
+                    }
+                }, 1000);
+
+                try {
+                    await api("/api/Auth/resend-code", { email: pendingEmail });
+                    showAlert("Kod yenidən göndərildi.", true);
+                } catch (err) {
+                    showAlert(err.message);
+                }
+            });
+        });
+
+        // Dil secimi (Accept-Language header-i deyisir)
+        const langButtons = document.querySelectorAll("[data-lang]");
+        function setLang(code) {
+            LANG = code;
+            langButtons.forEach(b => {
+                const on = b.dataset.lang === code;
+                b.className = "lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition " +
+                    (on ? "bg-ink text-white" : "text-ink/40 hover:text-ink");
+            });
+        }
+        langButtons.forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+        setLang("az");
+
+        // Google girisi (Client ID lazimdir)
+        // Google girisi (real GIS axini)
+        let googleReady = false;
+
+        function initGoogle() {
+            if (GOOGLE_CLIENT_ID.startsWith("SIZIN_")) return;
+            if (!window.google?.accounts?.id) { setTimeout(initGoogle, 300); return; }
+
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: async (resp) => {
+                    // resp.credential = Google-un verdiyi ID token
+                    setLoading(document.getElementById("loginForm"), true, "Google ilə...");
+                    try {
+                        const data = await api("/api/Auth/google-login", { idToken: resp.credential });
+                        onLoginSuccess(data);
+                    } catch (err) {
+                        showAlert(err.message);
+                        setLoading(document.getElementById("loginForm"), false);
+                    }
+                },
+            });
+            googleReady = true;
+        }
+        initGoogle();
+
+        document.getElementById("googleBtn").addEventListener("click", () => {
+            if (GOOGLE_CLIENT_ID.startsWith("SIZIN_")) {
+                return showAlert("Google Client ID hələ təyin edilməyib.");
+            }
+            if (!googleReady) return showAlert("Google hazırlanır, bir az gözləyin.");
+            google.accounts.id.prompt();  // Google giriş pəncərəsini açır
+        });
+    </script>
+
+</body>
+
+</html>

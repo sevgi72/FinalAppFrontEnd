@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amorabank — Panel</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <script>
+    // ====== TAILWIND KONFIQURASIYASI (reng ve srift tokenleri) ======
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#2c2966',   // esas reng - guven, prestij
+            'ink-2': '#1b1940',   // daha tund ton (sidebar, kart fonu)
+            'ink-3': '#14122e',   // en tund (gradient ucun)
+            neon: '#00e5d4',   // neon cyan - vurgu, aktiv element
+            lilac: '#7c6ff0',   // koməkci bənövsəyi
+            mist: '#f4f5fa',   // acıq boz fon
+            line: '#e6e8f2',   // serhed rengi
+          },
+          fontFamily: {
+            display: ['Sora', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Aurora effekti - balans kartinin imza elementi */
+    @keyframes aurora {
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+
+      33% {
+        transform: translate(18%, -12%) scale(1.15);
+      }
+
+      66% {
+        transform: translate(-14%, 10%) scale(0.95);
+      }
+    }
+
+    .aurora-blob {
+      animation: aurora 14s ease-in-out infinite;
+    }
+
+    /* Kart yigini - arxadaki kartlar kicildilir */
+    .card-stack>.stack-item {
+      transition: transform .45s cubic-bezier(.22, 1, .36, 1), opacity .45s;
+    }
+
+    /* Scrollbar - zerif */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cfd3e6;
+      border-radius: 99px;
+    }
+
+    /* Klaviatura fokusu gorunsun (elcatanliq) */
+    :focus-visible {
+      outline: 2px solid #00e5d4;
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    /* Hereket azaltma teleb olunubsa animasiyani sondur */
+    @media (prefers-reduced-motion: reduce) {
+      .aurora-blob {
+        animation: none;
+      }
+
+      * {
+        transition: none !important;
+      }
+    }
+
+    /* Gizli balans rejimi (privacy) */
+    .blurred {
+      filter: blur(8px);
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body class="bg-mist font-body text-ink-2 antialiased">
+
+  <div class="flex min-h-screen">
+
+    <aside class="hidden lg:flex w-64 shrink-0 flex-col bg-ink-2 text-white/70 px-5 py-6">
+
+      <div class="flex items-center gap-2.5 px-2 mb-9">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+          <i data-lucide="gem" class="w-4.5 h-4.5 text-ink-2" style="width:18px;height:18px"></i>
+        </div>
+        <span class="font-display font-700 text-lg text-white tracking-tight">Amorabank</span>
+      </div>
+
+      <nav class="flex-1 space-y-1">
+      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Panel
+      </a>
+      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> Köçürmələr
+      </a>
+      <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> Kartlar
+      </a>
+      <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> Ödənişlər
+      </a>
+      <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> Yığım
+      </a>
+      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> Analitika
+      </a>
+      <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> Kreditlər
+      </a>
+    </nav>
+
+      <div class="mt-6 p-4 rounded-2xl bg-gradient-to-br from-ink to-ink-3 border border-white/5">
+        <i data-lucide="headset" class="text-neon mb-2" style="width:20px;height:20px"></i>
+        <p class="text-white text-sm font-500">Kömək lazımdır?</p>
+        <p class="text-white/50 text-xs mt-0.5 leading-relaxed">Dəstək 24/7 xəttdədir.</p>
+        <button id="supportChatBtn" class="mt-3 w-full py-2 rounded-lg bg-neon text-ink-2 text-xs font-600 hover:brightness-110 transition">
+          Söhbətə başla
+        </button>
+      </div>
+
+      <button id="logoutBtn"
+        class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="log-out" style="width:18px;height:18px"></i> Çıxış
+      </button>
+    </aside>
+
+
+    <main class="flex-1 min-w-0 pb-24 lg:pb-0">
+
+      <header class="sticky top-0 z-20 bg-mist/80 backdrop-blur-lg border-b border-line">
+        <div class="flex items-center gap-3 px-5 lg:px-8 h-16">
+
+          <div class="lg:hidden flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
+              <i data-lucide="gem" style="width:15px;height:15px" class="text-ink-2"></i>
+            </div>
+            <span class="font-display font-700 text-ink">Amorabank</span>
+          </div>
+
+          <div class="hidden lg:block">
+            <h1 class="font-display font-600 text-ink text-lg leading-tight">
+              Salam, <span id="userFirstName">…</span>
+            </h1>
+            <p class="text-xs text-ink/50" id="todayLabel">—</p>
+          </div>
+
+          <div class="flex-1"></div>
+
+          <button id="privacyBtn" title="Balansı gizlə"
+            class="w-9 h-9 grid place-items-center rounded-xl bg-white border border-line hover:border-ink/20 transition">
+            <i data-lucide="eye" style="width:17px;height:17px" class="text-ink/60"></i>
+          </button>
+
+          <div class="relative">
+            <button id="notifBtn"
+              class="relative w-9 h-9 grid place-items-center rounded-xl bg-white border border-line hover:border-ink/20 transition">
+              <i data-lucide="bell" style="width:17px;height:17px" class="text-ink/60"></i>
+              <span id="notifBadge"
+                class="hidden absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-neon text-ink-2 text-[10px] font-700 grid place-items-center">0</span>
+            </button>
+
+            <!-- Bildiris dropdown -->
+            <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 max-w-[90vw] bg-white rounded-2xl border border-line shadow-xl shadow-ink/10 z-50 overflow-hidden">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-line">
+                <h3 class="font-display font-600 text-ink text-sm">Bildirişlər</h3>
+                <button id="markAllReadBtn" class="text-[11px] font-500 text-neon hover:underline">Hamısını oxu</button>
+              </div>
+              <ul id="notifList" class="max-h-80 overflow-y-auto divide-y divide-line">
+                <li class="px-4 py-6 text-center text-sm text-ink/35">Yüklənir…</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
+            <div id="avatar" class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm">—
+            </div>
+            <div class="hidden xl:block leading-tight">
+              <p class="text-sm font-500 text-ink-2" id="userFullName">…</p>
+              <p class="text-[11px] text-ink/45" id="userEmail">…</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+
+      <div class="px-5 lg:px-8 py-6 grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6">
+
+        <div class="space-y-6 min-w-0">
+
+          <section>
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="font-display font-600 text-ink">Hesablarım</h2>
+              <div class="flex items-center gap-1.5">
+                <button id="prevCard"
+                  class="w-8 h-8 grid place-items-center rounded-lg bg-white border border-line hover:border-ink/20 transition disabled:opacity-40">
+                  <i data-lucide="chevron-left" style="width:16px;height:16px" class="text-ink/60"></i>
+                </button>
+                <button id="nextCard"
+                  class="w-8 h-8 grid place-items-center rounded-lg bg-white border border-line hover:border-ink/20 transition disabled:opacity-40">
+                  <i data-lucide="chevron-right" style="width:16px;height:16px" class="text-ink/60"></i>
+                </button>
+              </div>
+            </div>
+
+            <div id="cardStack" class="card-stack relative h-[210px] sm:h-[220px]">
+              <div class="absolute inset-0 grid place-items-center text-ink/30 text-sm">Hesablar yüklənir…</div>
+            </div>
+
+            <div id="cardDots" class="flex justify-center gap-1.5 mt-3"></div>
+          </section>
+
+
+          <section class="bg-white rounded-2xl border border-line p-5">
+            <div class="flex items-center gap-2 mb-4">
+              <i data-lucide="send" style="width:17px;height:17px" class="text-neon"></i>
+              <h2 class="font-display font-600 text-ink">Sürətli köçürmə</h2>
+            </div>
+
+            <div class="flex gap-3 mb-5 overflow-x-auto pb-1">
+              <button class="shrink-0 flex flex-col items-center gap-1.5 w-16 group">
+                <div
+                  class="w-12 h-12 rounded-full border-2 border-dashed border-line group-hover:border-neon grid place-items-center transition">
+                  <i data-lucide="plus" style="width:18px;height:18px"
+                    class="text-ink/40 group-hover:text-neon transition"></i>
+                </div>
+                <span class="text-[11px] text-ink/50">Yeni</span>
+              </button>
+              <button class="shrink-0 flex flex-col items-center gap-1.5 w-16" data-quick-name="Könül İ.">
+                <div class="w-12 h-12 rounded-full bg-lilac/15 text-lilac grid place-items-center font-600 text-sm">Kİ
+                </div>
+                <span class="text-[11px] text-ink/60 truncate w-full text-center">Könül</span>
+              </button>
+              <button class="shrink-0 flex flex-col items-center gap-1.5 w-16" data-quick-name="Leyla M.">
+                <div class="w-12 h-12 rounded-full bg-neon/15 text-teal-700 grid place-items-center font-600 text-sm">LM
+                </div>
+                <span class="text-[11px] text-ink/60 truncate w-full text-center">Leyla</span>
+              </button>
+              <button class="shrink-0 flex flex-col items-center gap-1.5 w-16" data-quick-name="Aysel R.">
+                <div class="w-12 h-12 rounded-full bg-ink/10 text-ink grid place-items-center font-600 text-sm">AR</div>
+                <span class="text-[11px] text-ink/60 truncate w-full text-center">Aysel</span>
+              </button>
+            </div>
+
+            <form id="transferForm" class="grid sm:grid-cols-[1fr_1fr_auto] gap-3">
+              <div>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5">Hesabdan</label>
+                <select id="fromAccount"
+                  class="w-full h-11 px-3 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon outline-none transition">
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5">Alan hesab nömrəsi</label>
+                <input id="toAccountNumber" type="text" placeholder="AZ00 0000 0000 0000"
+                  class="w-full h-11 px-3 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon outline-none transition">
+              </div>
+
+              <div>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5">Məbləğ</label>
+                <div class="flex gap-2">
+                  <input id="transferAmount" type="number" step="0.01" min="0.01" placeholder="0.00"
+                    class="w-full sm:w-28 h-11 px-3 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon outline-none transition">
+                  <button type="submit" id="transferBtn"
+                    class="h-11 px-5 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.98] transition whitespace-nowrap">
+                    Göndər
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <p id="transferMsg" class="hidden mt-3 text-sm px-3 py-2 rounded-lg"></p>
+          </section>
+
+
+          <section class="bg-white rounded-2xl border border-line overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-line">
+              <h2 class="font-display font-600 text-ink">Son əməliyyatlar</h2>
+              <button id="toggleTxBtn" class="text-xs font-500 text-neon hover:underline">Hamısına bax</button>
+            </div>
+
+            <ul id="txList" class="divide-y divide-line">
+              <li class="px-5 py-8 text-center text-sm text-ink/35">Əməliyyatlar yüklənir…</li>
+            </ul>
+          </section>
+        </div>
+
+
+        <div class="space-y-6">
+
+          <section class="bg-white rounded-2xl border border-line p-5">
+            <h2 class="font-display font-600 text-ink mb-1">Bu ayın xərcləri</h2>
+            <p class="text-xs text-ink/45 mb-4" id="spendMonthLabel">—</p>
+
+            <div class="relative w-40 h-40 mx-auto">
+              <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="#eef0f7" stroke-width="14" />
+                <g id="ringSegments"></g>
+              </svg>
+              <div class="absolute inset-0 grid place-items-center text-center">
+                <div>
+                  <p class="text-[11px] text-ink/45">Cəmi</p>
+                  <p class="font-mono font-700 text-ink text-lg" id="spendTotal">—</p>
+                </div>
+              </div>
+            </div>
+
+            <ul id="spendLegend" class="mt-5 space-y-2.5"></ul>
+          </section>
+
+
+          <section class="grid grid-cols-2 gap-3">
+            <div class="bg-gradient-to-br from-ink to-ink-3 rounded-2xl p-4 text-white">
+              <i data-lucide="badge-percent" style="width:18px;height:18px" class="text-neon mb-3"></i>
+              <p class="text-[11px] text-white/55">Keşbek balansı</p>
+              <p class="font-mono font-700 text-xl mt-0.5 balance-value" id="cashbackBalance">—</p>
+              <button id="cashbackTransferBtn" class="mt-3 text-[11px] font-600 text-neon hover:underline">Hesaba köçür →</button>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-line p-4">
+              <i data-lucide="coins" style="width:18px;height:18px" class="text-lilac mb-3"></i>
+              <p class="text-[11px] text-ink/50">Round-up yığım</p>
+              <p class="font-mono font-700 text-xl mt-0.5 text-ink balance-value" id="roundupTotal">—</p>
+              <p class="mt-3 text-[11px] text-ink/40">bu ay yığılıb</p>
+            </div>
+          </section>
+
+
+          <section class="bg-white rounded-2xl border border-line p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-display font-600 text-ink">Yığım məqsədim</h2>
+              <i data-lucide="target" style="width:16px;height:16px" class="text-ink/30"></i>
+            </div>
+            <div id="goalBox">
+              <p class="text-sm text-ink/35 text-center py-4">Məqsəd yüklənir…</p>
+            </div>
+          </section>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ════════════ CHAT PANELI ════════════ -->
+<div id="chatPanel" class="hidden fixed bottom-5 right-5 z-50 w-[360px] max-w-[calc(100vw-2.5rem)] bg-white rounded-2xl border border-line shadow-2xl shadow-ink/20 flex flex-col" style="height:480px">
+  <!-- basliq -->
+  <div class="flex items-center gap-3 px-4 py-3 border-b border-line bg-gradient-to-br from-ink to-ink-2 rounded-t-2xl">
+    <div class="w-9 h-9 rounded-full bg-neon/20 grid place-items-center">
+      <i data-lucide="headset" style="width:18px;height:18px" class="text-neon"></i>
+    </div>
+    <div class="flex-1">
+      <p class="text-white text-sm font-600">Amorabank Dəstək</p>
+      <p id="chatStatus" class="text-white/50 text-[11px]">Qoşulur…</p>
+    </div>
+    <button id="chatClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-white/10 transition">
+      <i data-lucide="x" style="width:18px;height:18px" class="text-white/70"></i>
+    </button>
+  </div>
+
+  <!-- mesajlar -->
+  <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-mist">
+    <div class="text-center text-ink/35 text-sm py-8">Yüklənir…</div>
+  </div>
+
+  <!-- input -->
+  <form id="chatForm" class="flex items-center gap-2 px-3 py-3 border-t border-line">
+    <input id="chatInput" type="text" placeholder="Mesaj yaz…" autocomplete="off"
+           class="flex-1 h-11 px-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+    <button type="submit" id="chatSend" class="w-11 h-11 rounded-xl bg-ink text-white grid place-items-center hover:bg-ink-2 active:scale-95 transition shrink-0">
+      <i data-lucide="send" style="width:17px;height:17px"></i>
+    </button>
+  </form>
+</div>
+  <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
+    <div class="flex justify-around">
+      <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
+        <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
+        <span class="text-[10px] font-500">Panel</span>
+      </a>
+      <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+        <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
+        <span class="text-[10px]">Köçür</span>
+      </a>
+      <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+        <i data-lucide="credit-card" style="width:20px;height:20px"></i>
+        <span class="text-[10px]">Kartlar</span>
+      </a>
+      <a href="amorabank-analytics.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+        <i data-lucide="pie-chart" style="width:20px;height:20px"></i>
+        <span class="text-[10px]">Analitika</span>
+      </a>
+    </div>
+  </nav>
+
+
+  <script>
+    /* ══════════════════════════════════════════════════════════════
+       1. KONFIQURASIYA — BACKEND BAGLANTISI
+       Butun API cagirislari burdan gecir.
+       ══════════════════════════════════════════════════════════════ */
+
+    const API_BASE = "http://localhost:5150";   // backend unvani
+
+    // DÜZƏLİŞ 1 — Token login səhifəsindən gəlir
+    const getToken = () => localStorage.getItem("token");
+
+    // Token yoxdursa - giriş səhifəsinə yönləndir
+    if (!getToken()) {
+      window.location.href = "amorabank-auth.html";
+    }
+
+    // Butun sorgulara token + dil header-i elave edir
+    async function api(path, options = {}) {
+      const res = await fetch(API_BASE + path, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          "Accept-Language": "az",              // lokalizasiya: az / en / ru
+          ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
+          ...(options.headers || {}),
+        },
+      });
+
+      if (res.status === 401) throw new Error("Sessiya bitib. Yenidən daxil olun.");
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || data.message || "Xəta baş verdi.");
+      return data;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       2. GLOBAL VEZIYYET
+       ══════════════════════════════════════════════════════════════ */
+
+    let accounts = [];        // GET /api/Account/my
+    let activeCardIndex = 0;  // hansi kart on plandadir
+    let privacyMode = false;  // balans gizlidir?
+
+    const AZN = (n) => Number(n).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Köməkçi formatlama funksiyaları (əskik olmasın deyə bura qeyd etdim)
+    const formatIban = (iban) => iban ? iban.replace(/(.{4})/g, '$1 ').trim() : '—';
+    const formatDate = (iso) => iso ? new Date(iso).toLocaleDateString("az-AZ", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : '—';
+
+
+    /* ══════════════════════════════════════════════════════════════
+       3. BACKEND SORGULARI — hər bir catch bloku əsl xətanı göstərir
+       ══════════════════════════════════════════════════════════════ */
+
+    // ── Profil: GET /api/Auth/me ──
+    async function loadProfile() {
+      try {
+        const me = await api("/api/Auth/me");
+        const name = me.fullName || me.email || "İstifadəçi";
+        document.getElementById("userFullName").textContent = name;
+        document.getElementById("userEmail").textContent = me.email ?? "";
+        document.getElementById("userFirstName").textContent = name.split(" ")[0];
+        document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
+      } catch (e) {
+        console.error("Profil yüklənmədi:", e.message);
+        // Demo rejimi: backend qosulmayibsa numune ad
+        document.getElementById("userFullName").textContent = "Sevgi Fərəcli";
+        document.getElementById("userEmail").textContent = "sevgi@amorabank.az";
+        document.getElementById("userFirstName").textContent = "Sevgi";
+        document.getElementById("avatar").textContent = "S";
+      }
+    }
+
+    // ── Hesablar: GET /api/Account/my ──
+    async function loadAccounts() {
+      try {
+        accounts = await api("/api/Account/my");
+      } catch (e) {
+        console.error("Hesablar yüklənmədi:", e.message);
+        // Demo data — backend qosulanda bu blok islemeyecek
+        accounts = [
+          { id: "acc-1", accountNumber: "AZ9925167781751412", balance: 2311.30, currency: "AZN", type: "Savings", status: "Active" },
+          { id: "acc-2", accountNumber: "AZ9978346136349571", balance: 356.00, currency: "AZN", type: "Checking", status: "Active" },
+        ];
+      }
+      renderAccountCards();
+      fillTransferAccounts();
+      if (accounts[0]) loadTransactions(accounts[0].id);
+    }
+
+    // ── Emeliyyatlar: GET /api/Transaction/account/{id}?Page=1&PageSize=6 ──
+    // ── Emeliyyatlar: GET /api/Transaction/account/{id} ──
+    let expandedTx = false;   // "hamisi" rejimi acilibmi
+    async function loadTransactions(accountId, pageSize = 6) {
+      const list = document.getElementById("txList");
+      list.innerHTML = `<li class="px-5 py-8 text-center text-sm text-ink/35">Yüklənir…</li>`;
+
+      let items;
+      try {
+        const res = await api(`/api/Transaction/account/${accountId}?Page=1&PageSize=${pageSize}`);
+        items = res.items ?? [];
+      } catch (e) {
+        console.error("Əməliyyatlar yüklənmədi:", e.message);
+        // Demo data
+        items = [
+          { id: "1", amount: 200, type: "Transfer", description: "Könül İlyasova", createdAt: "2026-07-08T20:59:42Z", fromAccountId: accountId },
+          { id: "2", amount: 15.50, type: "Withdraw", description: "Kommunal ödəniş — Nar", createdAt: "2026-07-07T16:14:44Z", fromAccountId: accountId },
+          { id: "3", amount: 150, type: "Deposit", description: "Balans artımı", createdAt: "2026-07-06T20:55:49Z", toAccountId: accountId },
+          { id: "4", amount: 0.70, type: "Transfer", description: "Round-up yığım", createdAt: "2026-07-05T12:10:00Z", fromAccountId: accountId },
+          { id: "5", amount: 12.50, type: "Withdraw", description: "Köçürmə komissiyası", createdAt: "2026-07-04T09:32:00Z", fromAccountId: accountId },
+        ];
+      }
+      renderTransactions(items, accountId);
+    }
+     
+
+    // ── Xerc kateqoriyalari: GET /api/Analytics/spending ──
+    async function loadSpending() {
+      let data;
+      try {
+        data = await api("/api/Analytics/spending");
+      } catch (e) {
+        console.error("Xərc analitikası yüklənmədi:", e.message);
+        data = {
+          year: 2026, month: 7, totalSpent: 228.70,
+          categories: [
+            { category: "Kommunal", amount: 105.50, percentage: 46.1 },
+            { category: "Köçürmə", amount: 82.00, percentage: 35.9 },
+            { category: "Nağd çıxarış", amount: 34.70, percentage: 15.2 },
+            { category: "Round-up", amount: 6.50, percentage: 2.8 },
+          ]
+        };
+      }
+      renderSpendingRing(data);
+    }
+
+    // ── Kesbek: GET /api/Cashback/status ──
+    async function loadCashback() {
+      try {
+        const c = await api("/api/Cashback/status");
+        document.getElementById("cashbackBalance").textContent = AZN(c.cashbackBalance) + " ₼";
+      } catch (e) {
+        console.error("Keşbek statusu yüklənmədi:", e.message);
+        document.getElementById("cashbackBalance").textContent = "12.40 ₼";
+      }
+    }
+
+    // ── Round-up: GET /api/RoundUp/status ──
+    async function loadRoundUp() {
+      try {
+        const r = await api("/api/RoundUp/status");
+        document.getElementById("roundupTotal").textContent = AZN(r.totalSavedThisMonth) + " ₼";
+      } catch (e) {
+        console.error("Round-up statusu yüklənmədi:", e.message);
+        document.getElementById("roundupTotal").textContent = "6.50 ₼";
+      }
+    }
+
+    // ── Meqsedler: GET /api/SavingsGoal/my ──
+    async function loadGoal() {
+      let goals;
+      try { goals = await api("/api/SavingsGoal/my"); }
+      catch (e) {
+        console.error("Yığım məqsədi yüklənmədi:", e.message);
+        goals = [{ name: "Yeni telefon", targetAmount: 1000, currentAmount: 340, percentage: 34 }];
+      }
+      renderGoal(goals[0]);
+    }
+
+    // ── Bildiris sayi: GET /api/Notification/unread-count ──
+    async function loadNotifCount() {
+      let count;
+      try { count = (await api("/api/Notification/unread-count")).count; }
+      catch (e) {
+        console.error("Bildiriş sayı yüklənmədi:", e.message);
+        count = 3;
+      }
+
+      const badge = document.getElementById("notifBadge");
+      if (count > 0) { badge.textContent = count > 9 ? "9+" : count; badge.classList.remove("hidden"); }
+    }
+
+    // ── Kocurme: POST /api/Transaction/transfer ──
+    async function submitTransfer(e) {
+      e.preventDefault();
+      const btn = document.getElementById("transferBtn");
+
+      const body = {
+        fromAccountId: document.getElementById("fromAccount").value,
+        toAccountNumber: document.getElementById("toAccountNumber").value.replace(/\s/g, ""),
+        amount: parseFloat(document.getElementById("transferAmount").value),
+        description: "Sürətli köçürmə",
+      };
+
+      if (!body.toAccountNumber || !body.amount || body.amount <= 0) {
+        return showTransferMsg("Hesab nömrəsi və məbləği doldurun.", false);
+      }
+
+      btn.disabled = true; btn.textContent = "Göndərilir…";
+      try {
+        await api("/api/Transaction/transfer", { method: "POST", body: JSON.stringify(body) });
+        showTransferMsg(`${AZN(body.amount)} ₼ göndərildi.`, true);
+        document.getElementById("transferForm").reset();
+        await loadAccounts();                       // balansi yenile
+      } catch (err) {
+        console.error("Köçürmə zamanı xəta:", err.message);
+        showTransferMsg(err.message, false);
+      } finally {
+        btn.disabled = false; btn.textContent = "Göndər";
+      }
+    }
+
+    function showTransferMsg(text, ok) {
+      const msg = document.getElementById("transferMsg");
+      msg.textContent = text;
+      msg.className = "mt-3 text-sm px-3 py-2 rounded-lg " +
+        (ok ? "bg-neon/10 text-teal-800" : "bg-red-50 text-red-700");
+      setTimeout(() => msg.classList.add("hidden"), 5000);
+      msg.classList.remove("hidden");
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       4. RENDER FUNKSIYALARI (DOM cizimi)
+       ══════════════════════════════════════════════════════════════ */
+
+    function renderAccountCards() {
+      const stack = document.getElementById("cardStack");
+      const dots = document.getElementById("cardDots");
+
+      stack.innerHTML = accounts.map((a, i) => `
+    <div class="stack-item absolute inset-x-0 top-0 rounded-2xl overflow-hidden shadow-xl shadow-ink/10"
+         data-index="${i}">
+      <div class="relative bg-gradient-to-br from-ink via-ink-2 to-ink-3 p-6 h-[190px]">
+
+        <div class="aurora-blob absolute -top-16 -right-10 w-56 h-56 rounded-full blur-3xl opacity-40"
+             style="background: radial-gradient(circle, #00e5d4 0%, transparent 65%)"></div>
+        <div class="aurora-blob absolute -bottom-20 -left-8 w-48 h-48 rounded-full blur-3xl opacity-30"
+             style="background: radial-gradient(circle, #7c6ff0 0%, transparent 65%); animation-delay:-6s"></div>
+
+        <div class="relative flex flex-col h-full justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-white/50 text-[11px] uppercase tracking-wider">
+                ${a.type === "Savings" ? "Əmanət hesabı" : "Cari hesab"}
+              </p>
+              <p class="mt-1 font-mono text-white/70 text-xs tracking-widest">
+                ${formatIban(a.accountNumber)}
+              </p>
+            </div>
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-600
+                        ${a.status === "Active" ? "bg-neon/20 text-neon" : "bg-red-500/20 text-red-300"}">
+              ${a.status === "Active" ? "Aktiv" : "Dondurulub"}
+            </span>
+          </div>
+
+          <div>
+            <p class="text-white/45 text-[11px] mb-1">Balans</p>
+            <p class="font-mono font-700 text-white text-3xl balance-value">
+              ${AZN(a.balance)} <span class="text-lg text-white/60">₼</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+      dots.innerHTML = accounts.map((_, i) =>
+        `<button data-dot="${i}" class="w-1.5 h-1.5 rounded-full transition-all"></button>`
+      ).join("");
+
+      updateStack();
+      applyPrivacy();
+    }
+
+    function updateStack() {
+      document.querySelectorAll("#cardStack .stack-item").forEach((el, i) => {
+        const offset = i - activeCardIndex;
+        if (offset < 0) {
+          el.style.transform = "translateY(-30px) scale(.9)";
+          el.style.opacity = "0";
+          el.style.pointerEvents = "none";
+        } else {
+          el.style.transform = `translateY(${offset * 14}px) scale(${1 - offset * 0.045})`;
+          el.style.opacity = offset > 2 ? "0" : String(1 - offset * 0.25);
+          el.style.zIndex = String(accounts.length - offset);
+          el.style.pointerEvents = offset === 0 ? "auto" : "none";
+        }
+      });
+
+      document.querySelectorAll("#cardDots [data-dot]").forEach((d, i) => {
+        d.className = "h-1.5 rounded-full transition-all " +
+          (i === activeCardIndex ? "w-5 bg-ink" : "w-1.5 bg-ink/20");
+      });
+
+      document.getElementById("prevCard").onclick = () => { if (activeCardIndex > 0) { activeCardIndex--; updateStack(); expandedTx = false; document.getElementById("toggleTxBtn").textContent = "Hamısına bax"; if (accounts[activeCardIndex]) loadTransactions(accounts[activeCardIndex].id); } };
+      document.getElementById("nextCard").onclick = () => { if (activeCardIndex < accounts.length - 1) { activeCardIndex++; updateStack(); expandedTx = false; document.getElementById("toggleTxBtn").textContent = "Hamısına bax"; if (accounts[activeCardIndex]) loadTransactions(accounts[activeCardIndex].id); } };
+    }
+
+    function fillTransferAccounts() {
+      const select = document.getElementById("fromAccount");
+      if (!select) return;
+      select.innerHTML = accounts.map(a =>
+        `<option value="${a.id}">${a.type === 'Savings' ? 'Əmanət' : 'Cari'} - ${AZN(a.balance)} ₼</option>`
+      ).join("");
+    }
+
+    function renderTransactions(items, accountId) {
+      const list = document.getElementById("txList");
+
+      if (!items.length) {
+        list.innerHTML = `<li class="px-5 py-10 text-center">
+      <p class="text-sm text-ink/40">Hələ əməliyyat yoxdur.</p>
+      <p class="text-xs text-ink/30 mt-1">İlk köçürməni yuxarıdan edin.</p>
+    </li>`;
+        return;
+      }
+
+      list.innerHTML = items.map(t => {
+        const isIn = t.toAccountId === accountId;
+        const icon = t.type === "Deposit" ? "arrow-down-left"
+          : t.type === "Withdraw" ? "arrow-up-right" : "arrow-left-right";
+
+        return `
+      <li class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-mist/60 transition">
+        <div class="w-10 h-10 rounded-xl grid place-items-center shrink-0
+                    ${isIn ? "bg-neon/12 text-teal-700" : "bg-ink/6 text-ink/60"}">
+          <i data-lucide="${icon}" style="width:17px;height:17px"></i>
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-500 text-ink-2 truncate">${t.description || t.type}</p>
+          <p class="text-[11px] text-ink/45 mt-0.5">${formatDate(t.createdAt)}</p>
+        </div>
+
+        <p class="font-mono font-600 text-sm shrink-0 balance-value
+                  ${isIn ? "text-teal-700" : "text-ink-2"}">
+          ${isIn ? "+" : "−"}${AZN(t.amount)} ₼
+        </p>
+      </li>`;
+      }).join("");
+
+      lucide.createIcons();
+    }
+
+    function renderSpendingRing(data) {
+      const colors = ["#2c2966", "#00e5d4", "#7c6ff0", "#c8cbe0"];
+      const R = 52, C = 2 * Math.PI * R;
+      let offset = 0;
+
+      document.getElementById("spendMonthLabel").textContent =
+        new Date(data.year, data.month - 1).toLocaleDateString("az-AZ", { month: "long", year: "numeric" });
+      document.getElementById("spendTotal").textContent = AZN(data.totalSpent) + " ₼";
+
+      document.getElementById("ringSegments").innerHTML = data.categories.map((c, i) => {
+        const len = (c.percentage / 100) * C;
+        const seg = `<circle cx="60" cy="60" r="${R}" fill="none"
+        stroke="${colors[i % colors.length]}" stroke-width="14" stroke-linecap="round"
+        stroke-dasharray="${len - 3} ${C - len + 3}" stroke-dashoffset="${-offset}"/>`;
+        offset += len;
+        return seg;
+      }).join("");
+
+      document.getElementById("spendLegend").innerHTML = data.categories.map((c, i) => `
+    <li class="flex items-center gap-2.5">
+      <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${colors[i % colors.length]}"></span>
+      <span class="text-xs text-ink-2 flex-1 truncate">${c.category}</span>
+      <span class="font-mono text-xs text-ink/60 balance-value">${AZN(c.amount)} ₼</span>
+    </li>
+  `).join("");
+    }
+
+    function renderGoal(g) {
+      const box = document.getElementById("goalBox");
+      if (!g) { box.innerHTML = `<p class="text-xs text-ink/40 text-center py-4">Məqsəd təyin edilməyib.</p>`; return; }
+      box.innerHTML = `
+    <div class="flex justify-between text-xs mb-1.5">
+      <span class="font-500 text-ink-2">${g.name}</span>
+      <span class="font-mono text-ink/50">${AZN(g.currentAmount)} / ${AZN(g.targetAmount)} ₼</span>
+    </div>
+    <div class="w-full h-2 bg-mist rounded-full overflow-hidden">
+      <div class="h-full bg-lilac rounded-full transition-all duration-500" style="width: ${g.percentage}%"></div>
+    </div>
+    <p class="text-[11px] text-ink/40 mt-1.5 text-right">${g.percentage}% tamamlanıb</p>
+  `;
+    }
+
+    function applyPrivacy() {
+      document.querySelectorAll(".balance-value").forEach(el => {
+        if (privacyMode) el.classList.add("blurred");
+        else el.classList.remove("blurred");
+      });
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       5. HADISE DINLEYICILERI VE ILKIN YUKLENME
+       ══════════════════════════════════════════════════════════════ */
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Bugunun tarixi
+      document.getElementById("todayLabel").textContent = new Date().toLocaleDateString("az-AZ", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      // İkonları aktivləşdir
+      lucide.createIcons();
+
+      // Məlumatları backend-dən çək
+      await loadProfile();
+      await loadAccounts();
+      await loadSpending();
+      await loadCashback();
+      await loadRoundUp();
+      await loadGoal();
+      await loadNotifCount();
+
+      // Kart keçidləri
+      document.getElementById("prevCard").onclick = () => { if (activeCardIndex > 0) { activeCardIndex--; updateStack(); if (accounts[activeCardIndex]) loadTransactions(accounts[activeCardIndex].id); } };
+      document.getElementById("nextCard").onclick = () => { if (activeCardIndex < accounts.length - 1) { activeCardIndex++; updateStack(); if (accounts[activeCardIndex]) loadTransactions(accounts[activeCardIndex].id); } };
+
+      // Gizli rejim (Privacy)
+      document.getElementById("privacyBtn").onclick = () => {
+        privacyMode = !privacyMode;
+        applyPrivacy();
+        const icon = document.querySelector("#privacyBtn i");
+        icon.setAttribute("data-lucide", privacyMode ? "eye-off" : "eye");
+        lucide.createIcons();
+      };
+
+      // Tez-tez köçürülənlərə kliklədikdə inputu doldur
+      document.querySelectorAll("[data-quick-name]").forEach(btn => {
+        btn.onclick = () => {
+          // Nümunə olaraq Leyla və ya Könül seçiləndə dummy IBAN yazırıq
+          document.getElementById("toAccountNumber").value = "AZ99 1000 2000 3000 4000";
+          document.getElementById("transferAmount").focus();
+        };
+      });
+
+      // Forma göndərilməsi
+      document.getElementById("transferForm").onsubmit = submitTransfer;
+      // Kesbek "Hesaba kocur" - kesbeyi hesaba kocurur
+      // "Hamisina bax" - cari hesabin butun emeliyyatlarini goster / yigcamlasdir
+      document.getElementById("toggleTxBtn").onclick = async () => {
+        const btn = document.getElementById("toggleTxBtn");
+        const acc = accounts[activeCardIndex];
+        if (!acc) return;
+        expandedTx = !expandedTx;
+        btn.textContent = expandedTx ? "Yığcamlaşdır" : "Hamısına bax";
+        await loadTransactions(acc.id, expandedTx ? 100 : 6);
+      };
+      document.getElementById("cashbackTransferBtn").onclick = async () => {
+        const acc = accounts[activeCardIndex];
+        if (!acc) return showTransferMsg("Əvvəlcə hesab seçin.", false);
+        try {
+          await api("/api/Cashback/redeem", {
+            method: "POST",
+            body: JSON.stringify({ targetAccountId: acc.id }),
+          });
+          showTransferMsg("Keşbek balansınız hesabınıza köçürüldü.", true);
+          await loadCashback();
+          await loadAccounts();
+        } catch (e) {
+          showTransferMsg("Keşbek köçürülə bilmədi: " + e.message, false);
+        }
+      };
+
+      // ── CANLI CHAT (SignalR) ──
+      let chatConnection = null;
+      let chatStarted = false;
+
+      const chatPanel = document.getElementById("chatPanel");
+      const chatMessages = document.getElementById("chatMessages");
+
+      // mesaj kart-i ciz (istifadeci sagda, admin solda)
+      function appendChatMessage(content, isFromAdmin, sentAt) {
+        const time = sentAt ? new Date(sentAt).toLocaleTimeString("az-AZ", { hour: "2-digit", minute: "2-digit" }) : "";
+        const wrap = document.createElement("div");
+        wrap.className = "flex " + (isFromAdmin ? "justify-start" : "justify-end");
+        wrap.innerHTML = `
+          <div class="max-w-[75%]">
+            <div class="px-3.5 py-2.5 rounded-2xl text-sm ${isFromAdmin
+              ? "bg-white border border-line text-ink-2 rounded-tl-sm"
+              : "bg-ink text-white rounded-tr-sm"}">
+              ${content}
+            </div>
+            <p class="text-[10px] text-ink/35 mt-1 ${isFromAdmin ? "text-left" : "text-right"}">${time}</p>
+          </div>`;
+        chatMessages.appendChild(wrap);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function setChatStatus(text, online) {
+        const el = document.getElementById("chatStatus");
+        el.textContent = text;
+        el.className = "text-[11px] " + (online ? "text-neon" : "text-white/50");
+      }
+
+      // kohne mesajlari yukle (REST)
+      async function loadChatHistory() {
+        try {
+          const msgs = await api("/api/Chat/my-messages");
+          chatMessages.innerHTML = "";
+          if (!msgs.length) {
+            chatMessages.innerHTML = `<div class="text-center text-ink/40 text-sm py-8">Salam! Sualınız varsa yazın, dəstək komandası cavab verəcək.</div>`;
+          } else {
+            msgs.forEach(m => appendChatMessage(m.content, m.isFromAdmin, m.sentAt));
+          }
+        } catch (e) {
+          // my-messages admin-only ola biler; xeta olsa bos sohbet goster
+          chatMessages.innerHTML = `<div class="text-center text-ink/40 text-sm py-8">Salam! Necə kömək edə bilərik?</div>`;
+        }
+      }
+
+      // SignalR baglantisini qur
+      async function startChat() {
+        if (chatStarted) return;
+        chatStarted = true;
+
+        await loadChatHistory();
+
+        chatConnection = new signalR.HubConnectionBuilder()
+          .withUrl(`${API_BASE}/chatHub?access_token=${getToken()}`)
+          .withAutomaticReconnect()
+          .build();
+
+        // admin cavab verende real-time gelir
+        chatConnection.on("ReceiveMessage", (msg) => {
+          appendChatMessage(msg.content, msg.isFromAdmin, msg.sentAt);
+        });
+
+        // oz mesajimizin tesdiqi (artiq ekranda gosterdik, ona gore burda sade saxlayiriq)
+        chatConnection.on("MessageSent", (msg) => {
+          // istesek burda "catdirildi" nisani elave ede bilerik
+        });
+
+        chatConnection.onreconnecting(() => setChatStatus("Yenidən qoşulur…", false));
+        chatConnection.onreconnected(() => setChatStatus("Onlayn", true));
+        chatConnection.onclose(() => setChatStatus("Bağlantı kəsildi", false));
+
+        try {
+          await chatConnection.start();
+          setChatStatus("Onlayn", true);
+        } catch (e) {
+          setChatStatus("Bağlantı alınmadı", false);
+          console.error("Chat baglantisi:", e);
+        }
+      }
+
+      // "Sohbete basla" - paneli ac + baglantini qur
+      document.getElementById("supportChatBtn").onclick = async () => {
+        chatPanel.classList.remove("hidden");
+        await startChat();
+        document.getElementById("chatInput").focus();
+      };
+
+      // paneli bagla (baglanti aciq qalir)
+      document.getElementById("chatClose").onclick = () => {
+        chatPanel.classList.add("hidden");
+      };
+
+      // mesaj gonder
+      document.getElementById("chatForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const input = document.getElementById("chatInput");
+        const content = input.value.trim();
+        if (!content) return;
+        if (!chatConnection || chatConnection.state !== "Connected") {
+          setChatStatus("Qoşulma gözlənilir…", false);
+          return;
+        }
+        try {
+          // oz mesajimizi derhal ekranda goster
+          appendChatMessage(content, false, new Date().toISOString());
+          input.value = "";
+          // hub metodu: SendToAdmin
+          await chatConnection.invoke("SendToAdmin", content);
+        } catch (err) {
+          setChatStatus("Mesaj göndərilmədi", false);
+          console.error("Mesaj:", err);
+        }
+      };
+
+      // ── BILDIRIS DROPDOWN ──
+      const notifDropdown = document.getElementById("notifDropdown");
+
+      // bildiris novune gore ikon
+      function notifIcon(type) {
+        const map = {
+          Transaction: "arrow-left-right",
+          Payment: "receipt",
+          Loan: "landmark",
+          Security: "shield",
+          Info: "info",
+          Promo: "badge-percent",
+        };
+        return map[type] || "bell";
+      }
+
+      // bildirisleri yukle ve goster
+      async function loadNotifications() {
+        const list = document.getElementById("notifList");
+        list.innerHTML = `<li class="px-4 py-6 text-center text-sm text-ink/35">Yüklənir…</li>`;
+        let items;
+        try {
+          items = await api("/api/Notification/my");
+        } catch (e) {
+          list.innerHTML = `<li class="px-4 py-6 text-center text-sm text-red-500">${e.message}</li>`;
+          return;
+        }
+        items = Array.isArray(items) ? items : (items.items ?? []);
+
+        if (!items.length) {
+          list.innerHTML = `<li class="px-4 py-8 text-center">
+            <p class="text-sm text-ink/40">Bildiriş yoxdur</p>
+          </li>`;
+          return;
+        }
+
+        list.innerHTML = items.map(n => `
+          <li class="flex gap-3 px-4 py-3 hover:bg-mist/60 transition ${n.isRead ? "" : "bg-neon/[0.04]"}">
+            <div class="w-9 h-9 rounded-lg grid place-items-center shrink-0 ${n.isRead ? "bg-ink/6 text-ink/50" : "bg-neon/12 text-teal-700"}">
+              <i data-lucide="${notifIcon(n.type)}" style="width:16px;height:16px"></i>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-start gap-2">
+                <p class="text-sm font-500 text-ink-2 flex-1">${n.title}</p>
+                ${n.isRead ? "" : `<span class="w-2 h-2 rounded-full bg-neon shrink-0 mt-1.5"></span>`}
+              </div>
+              <p class="text-xs text-ink/55 mt-0.5 leading-relaxed">${n.message}</p>
+              <p class="text-[10px] text-ink/40 mt-1">${formatDate(n.createdAt)}</p>
+            </div>
+          </li>
+        `).join("");
+        lucide.createIcons();
+      }
+
+      // zeng ikonu - dropdown ac/bagla
+      document.getElementById("notifBtn").onclick = (e) => {
+        e.stopPropagation();
+        const isHidden = notifDropdown.classList.contains("hidden");
+        if (isHidden) {
+          notifDropdown.classList.remove("hidden");
+          loadNotifications();
+        } else {
+          notifDropdown.classList.add("hidden");
+        }
+      };
+
+      // dropdown-un icine klik - baglanmasin
+      notifDropdown.onclick = (e) => e.stopPropagation();
+
+      // kenara klik - dropdown baglan
+      document.addEventListener("click", () => {
+        notifDropdown.classList.add("hidden");
+      });
+
+      // "Hamisini oxu" - hamisini oxunmus isarele
+      document.getElementById("markAllReadBtn").onclick = async (e) => {
+        e.stopPropagation();
+        try {
+          await api("/api/Notification/read-all", { method: "POST" });
+          document.getElementById("notifBadge").classList.add("hidden");
+          await loadNotifications();   // siyahini yenile (hamisi oxunmus gorunsun)
+        } catch (err) {
+          showTransferMsg("Bildirişlər oxunmuş işarələnə bilmədi: " + err.message, false);
+        }
+      };
+      // Sol panel: hazir olmayan bolmeler ucun bildiris (Kartlar, Odenisler, ve s.)
+      // Diqqet: real linkler (href="amorabank-transfers.html") toxunulmur - yalniz "#" olanlar
+      document.querySelectorAll('.nav-item[href="#"]').forEach(item => {
+        item.onclick = (e) => {
+          e.preventDefault();
+          const label = item.textContent.trim();
+          showTransferMsg(`"${label}" bolmesi hazirlanir. Tezlikle elcatan olacaq.`, false);
+        };
+      });
+    });
+
+    // DÜZƏLİŞ 2 — Çıxış düyməsi düyməsinin real məntiqi
+    document.getElementById("logoutBtn").onclick = async () => {
+      try {
+        await api("/api/Auth/logout", { method: "POST" });
+      } catch (e) {
+        console.error("Backend logout xətası:", e.message);
+      }
+
+      // Tokenləri tamamilə təmizləyirik
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+
+      // Giriş səhifəsinə qayıt
+      window.location.href = "amorabank-auth.html";
+    };
+  </script>
+</body>
+
+</html>
