@@ -7,6 +7,7 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="i18n.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,30 +53,37 @@ tailwind.config = {
 
     <nav class="flex-1 space-y-1">
       <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Panel
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span data-i18n="nav.dashboard">Panel</span>
       </a>
       <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> Köçürmələr
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span data-i18n="nav.transfers">Köçürmələr</span>
       </a>
       <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="credit-card" style="width:18px;height:18px"></i> Kartlar
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> <span data-i18n="nav.cards">Kartlar</span>
       </a>
       <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="receipt" style="width:18px;height:18px"></i> Ödənişlər
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
       </a>
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> Yığım
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
       <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> Analitika
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="landmark" style="width:18px;height:18px"></i> Kreditlər
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
     </nav>
 
+    <!-- Dil secimi -->
+    <div class="flex justify-center gap-1 mb-3">
+      <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
+      <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
+      <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+    </div>
+
     <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-      <i data-lucide="log-out" style="width:18px;height:18px"></i> Çıxış
+      <i data-lucide="log-out" style="width:18px;height:18px"></i> <span data-i18n="common.logout">Çıxış</span>
     </button>
   </aside>
 
@@ -93,15 +101,15 @@ tailwind.config = {
         </div>
 
         <div class="hidden lg:block">
-          <h1 class="font-display font-600 text-ink text-lg leading-tight">Analitika</h1>
-          <p class="text-xs text-ink/50">Pulun hara gedir — bir baxışda</p>
+          <h1 class="font-display font-600 text-ink text-lg leading-tight" data-i18n="an.title">Analitika</h1>
+          <p class="text-xs text-ink/50" data-i18n="an.subtitle">Pulun hara gedir — bir baxışda</p>
         </div>
 
         <div class="flex-1"></div>
 
         <a href="amorabank-dashboard.html" class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
           <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
-          <span class="hidden sm:inline">Panel</span>
+          <span class="hidden sm:inline" data-i18n="an.panel">Panel</span>
         </a>
 
         <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
@@ -125,7 +133,7 @@ tailwind.config = {
           <div class="w-9 h-9 rounded-xl bg-ink/6 grid place-items-center mb-3">
             <i data-lucide="wallet" style="width:17px;height:17px" class="text-ink"></i>
           </div>
-          <p class="text-[11px] text-ink/50 uppercase tracking-wide">Ümumi balans</p>
+          <p class="text-[11px] text-ink/50 uppercase tracking-wide" data-i18n="an.totalBalance">Ümumi balans</p>
           <p id="statBalance" class="font-mono font-700 text-ink text-xl mt-1">— ₼</p>
           <p id="statAccounts" class="text-[11px] text-ink/40 mt-1">— hesab</p>
         </div>
@@ -134,7 +142,7 @@ tailwind.config = {
           <div class="w-9 h-9 rounded-xl bg-neon/12 grid place-items-center mb-3">
             <i data-lucide="trending-up" style="width:17px;height:17px" class="text-teal-700"></i>
           </div>
-          <p class="text-[11px] text-ink/50 uppercase tracking-wide">Ümumi gəlir</p>
+          <p class="text-[11px] text-ink/50 uppercase tracking-wide" data-i18n="an.totalIncome">Ümumi gəlir</p>
           <p id="statIncome" class="font-mono font-700 text-teal-700 text-xl mt-1">— ₼</p>
         </div>
 
@@ -142,7 +150,7 @@ tailwind.config = {
           <div class="w-9 h-9 rounded-xl bg-red-50 grid place-items-center mb-3">
             <i data-lucide="trending-down" style="width:17px;height:17px" class="text-red-500"></i>
           </div>
-          <p class="text-[11px] text-ink/50 uppercase tracking-wide">Ümumi xərc</p>
+          <p class="text-[11px] text-ink/50 uppercase tracking-wide" data-i18n="an.totalExpense">Ümumi xərc</p>
           <p id="statExpense" class="font-mono font-700 text-red-500 text-xl mt-1">— ₼</p>
         </div>
 
@@ -150,7 +158,7 @@ tailwind.config = {
           <div class="w-9 h-9 rounded-xl bg-white/10 grid place-items-center mb-3">
             <i data-lucide="activity" style="width:17px;height:17px" class="text-neon"></i>
           </div>
-          <p class="text-[11px] text-white/55 uppercase tracking-wide">Net axın</p>
+          <p class="text-[11px] text-white/55 uppercase tracking-wide" data-i18n="an.netFlow">Net axın</p>
           <p id="statNet" class="font-mono font-700 text-xl mt-1">— ₼</p>
           <p id="statTxCount" class="text-[11px] text-white/45 mt-1">— əməliyyat</p>
         </div>
@@ -163,16 +171,16 @@ tailwind.config = {
         <section class="bg-white rounded-2xl border border-line p-5 sm:p-6">
           <div class="flex items-center justify-between mb-6">
             <div>
-              <h2 class="font-display font-600 text-ink">Aylıq gəlir və xərc</h2>
-              <p class="text-xs text-ink/45">Son aylar</p>
+              <h2 class="font-display font-600 text-ink" data-i18n="an.monthlyTitle">Aylıq gəlir və xərc</h2>
+              <p class="text-xs text-ink/45" data-i18n="an.recentMonths">Son aylar</p>
             </div>
             <div class="flex items-center gap-3 text-xs">
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-neon"></span> Gəlir</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-lilac"></span> Xərc</span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-neon"></span> <span data-i18n="an.income">Gəlir</span></span>
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-lilac"></span> <span data-i18n="an.expense">Xərc</span></span>
             </div>
           </div>
           <div id="barChart" class="h-56 flex items-end justify-between gap-2">
-            <div class="w-full text-center text-ink/30 text-sm self-center">Yüklənir…</div>
+            <div class="w-full text-center text-ink/30 text-sm self-center" data-i18n="an.loading">Yüklənir…</div>
           </div>
         </section>
 
@@ -180,7 +188,7 @@ tailwind.config = {
         <!-- ════════════ KATEQORIYA XERCLERI (ring) ════════════ -->
         <section class="bg-white rounded-2xl border border-line p-5 sm:p-6">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="font-display font-600 text-ink">Kateqoriya üzrə</h2>
+            <h2 class="font-display font-600 text-ink" data-i18n="an.byCategory">Kateqoriya üzrə</h2>
             <select id="monthSelect" class="h-8 px-2 rounded-lg border border-line bg-mist text-xs text-ink-2 focus:border-neon outline-none"></select>
           </div>
 
@@ -191,7 +199,7 @@ tailwind.config = {
             </svg>
             <div class="absolute inset-0 grid place-items-center text-center">
               <div>
-                <p class="text-[11px] text-ink/45">Cəmi</p>
+                <p class="text-[11px] text-ink/45" data-i18n="an.total">Cəmi</p>
                 <p class="font-mono font-700 text-ink text-lg" id="ringTotal">— ₼</p>
               </div>
             </div>
@@ -204,9 +212,9 @@ tailwind.config = {
 
       <!-- ════════════ NOV UZRE BOLGU ════════════ -->
       <section class="bg-white rounded-2xl border border-line p-5 sm:p-6">
-        <h2 class="font-display font-600 text-ink mb-5">Əməliyyat növləri</h2>
+        <h2 class="font-display font-600 text-ink mb-5" data-i18n="an.txTypes">Əməliyyat növləri</h2>
         <div id="typeBreakdown" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="col-span-full text-center text-ink/30 text-sm py-6">Yüklənir…</div>
+          <div class="col-span-full text-center text-ink/30 text-sm py-6" data-i18n="an.loading">Yüklənir…</div>
         </div>
       </section>
 
@@ -219,16 +227,16 @@ tailwind.config = {
 <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
   <div class="flex justify-around">
     <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span class="text-[10px]">Panel</span>
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span class="text-[10px]" data-i18n="nav.dashboard">Panel</span>
     </a>
     <a href="amorabank-payments.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-      <i data-lucide="receipt" style="width:20px;height:20px"></i><span class="text-[10px]">Ödə</span>
+      <i data-lucide="receipt" style="width:20px;height:20px"></i><span class="text-[10px]" data-i18n="nav.payments">Ödə</span>
     </a>
     <a href="amorabank-analytics.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
-      <i data-lucide="pie-chart" style="width:20px;height:20px"></i><span class="text-[10px] font-500">Analitika</span>
+      <i data-lucide="pie-chart" style="width:20px;height:20px"></i><span class="text-[10px] font-500" data-i18n="nav.analytics">Analitika</span>
     </a>
     <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-      <i data-lucide="credit-card" style="width:20px;height:20px"></i><span class="text-[10px]">Kartlar</span>
+      <i data-lucide="credit-card" style="width:20px;height:20px"></i><span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
     </a>
   </div>
 </nav>
@@ -247,7 +255,7 @@ async function api(path, options = {}) {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "Accept-Language": "az",
+      "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
       ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
       ...(options.headers || {}),
     },
@@ -263,7 +271,8 @@ async function api(path, options = {}) {
 }
 
 const AZN = (n) => Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const MONTHS_AZ = ["Yan","Fev","Mar","Apr","May","İyn","İyl","Avq","Sen","Okt","Noy","Dek"];
+// ay adi - cari dilde (m: 1-12)
+const monthName = (m) => t("an.month_" + m);
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -282,16 +291,16 @@ async function loadProfile() {
 async function loadDashboard() {
   let d;
   try { d = await api("/api/Analytics/dashboard"); }
-  catch (e) { showMsg("Analitika yüklənmədi: " + e.message, false); return; }
+  catch (e) { showMsg(t("an.loadFailed") + " " + e.message, false); return; }
 
   document.getElementById("statBalance").textContent = AZN(d.totalBalance) + " ₼";
-  document.getElementById("statAccounts").textContent = (d.accountCount ?? 0) + " hesab";
+  document.getElementById("statAccounts").textContent = (d.accountCount ?? 0) + " " + t("an.accounts");
   document.getElementById("statIncome").textContent = AZN(d.totalIncome) + " ₼";
   document.getElementById("statExpense").textContent = AZN(d.totalExpense) + " ₼";
   const net = Number(d.netFlow ?? 0);
   const netEl = document.getElementById("statNet");
   netEl.textContent = (net >= 0 ? "+" : "") + AZN(net) + " ₼";
-  document.getElementById("statTxCount").textContent = (d.transactionCount ?? 0) + " əməliyyat";
+  document.getElementById("statTxCount").textContent = (d.transactionCount ?? 0) + " " + t("an.transactions");
 
   renderBarChart(d.monthlyBreakdown || []);
   renderTypeBreakdown(d.byType || []);
@@ -300,7 +309,7 @@ async function loadDashboard() {
 function renderBarChart(months) {
   const box = document.getElementById("barChart");
   if (!months.length) {
-    box.innerHTML = `<div class="w-full text-center text-ink/30 text-sm self-center">Məlumat yoxdur</div>`;
+    box.innerHTML = `<div class="w-full text-center text-ink/30 text-sm self-center">${t("an.noData")}</div>`;
     return;
   }
   // max deyer (gelir ve xerc arasinda en boyuk)
@@ -310,17 +319,17 @@ function renderBarChart(months) {
     const inc = Number(m.income || 0), exp = Number(m.expense || 0);
     const incH = Math.round((inc / max) * 100);
     const expH = Math.round((exp / max) * 100);
-    const label = m.label || `${MONTHS_AZ[(m.month || 1) - 1]}`;
+    const mName = monthName(m.month || 1);
     return `
     <div class="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group relative">
       <div class="absolute -top-1 opacity-0 group-hover:opacity-100 transition bg-ink-2 text-white text-[10px] rounded-lg px-2 py-1 whitespace-nowrap z-10 pointer-events-none">
-        Gəlir ${AZN(inc)} • Xərc ${AZN(exp)}
+        ${t("an.barIncome")} ${AZN(inc)} • ${t("an.barExpense")} ${AZN(exp)}
       </div>
       <div class="w-full flex items-end justify-center gap-1 h-full">
         <div class="bar w-1/2 max-w-[18px] rounded-t bg-neon" style="height:${incH}%"></div>
         <div class="bar w-1/2 max-w-[18px] rounded-t bg-lilac" style="height:${expH}%"></div>
       </div>
-      <span class="text-[10px] text-ink/45">${MONTHS_AZ[(m.month || 1) - 1] || label}</span>
+      <span class="text-[10px] text-ink/45">${mName}</span>
     </div>`;
   }).join("");
 }
@@ -328,26 +337,29 @@ function renderBarChart(months) {
 function renderTypeBreakdown(types) {
   const box = document.getElementById("typeBreakdown");
   if (!types.length) {
-    box.innerHTML = `<div class="col-span-full text-center text-ink/30 text-sm py-6">Məlumat yoxdur</div>`;
+    box.innerHTML = `<div class="col-span-full text-center text-ink/30 text-sm py-6">${t("an.noData")}</div>`;
     return;
   }
   const TYPE_META = {
-    Deposit:  { az: "Balans artımı", icon: "arrow-down-left", cls: "bg-neon/12 text-teal-700" },
-    Withdraw: { az: "Çıxarış",       icon: "arrow-up-right",  cls: "bg-red-50 text-red-500" },
-    Transfer: { az: "Köçürmə",       icon: "arrow-left-right",cls: "bg-lilac/12 text-lilac" },
+    Deposit:  { key: "an.typeDeposit",  icon: "arrow-down-left",  cls: "bg-neon/12 text-teal-700" },
+    Withdraw: { key: "an.typeWithdraw", icon: "arrow-up-right",   cls: "bg-red-50 text-red-500" },
+    Transfer: { key: "an.typeTransfer", icon: "arrow-left-right", cls: "bg-lilac/12 text-lilac" },
   };
-  box.innerHTML = types.map(t => {
-    const m = TYPE_META[t.type] || { az: t.type, icon: "circle", cls: "bg-ink/6 text-ink/60" };
+  box.innerHTML = types.map(tp => {
+    const meta = TYPE_META[tp.type];
+    const label = meta ? t(meta.key) : tp.type;
+    const icon = meta ? meta.icon : "circle";
+    const cls = meta ? meta.cls : "bg-ink/6 text-ink/60";
     return `
     <div class="rounded-xl border border-line p-4">
       <div class="flex items-center gap-2.5 mb-3">
-        <div class="w-9 h-9 rounded-lg ${m.cls} grid place-items-center">
-          <i data-lucide="${m.icon}" style="width:17px;height:17px"></i>
+        <div class="w-9 h-9 rounded-lg ${cls} grid place-items-center">
+          <i data-lucide="${icon}" style="width:17px;height:17px"></i>
         </div>
-        <span class="text-sm font-500 text-ink-2">${m.az}</span>
+        <span class="text-sm font-500 text-ink-2">${label}</span>
       </div>
-      <p class="font-mono font-700 text-ink text-xl">${AZN(t.total)} ₼</p>
-      <p class="text-[11px] text-ink/45 mt-0.5">${t.count} əməliyyat</p>
+      <p class="font-mono font-700 text-ink text-xl">${AZN(tp.total)} ₼</p>
+      <p class="text-[11px] text-ink/45 mt-0.5">${tp.count} ${t("an.transactions")}</p>
     </div>`;
   }).join("");
   lucide.createIcons();
@@ -364,7 +376,7 @@ function buildMonthOptions() {
   for (let i = 0; i < 6; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const y = d.getFullYear(), mo = d.getMonth() + 1;
-    const label = `${MONTHS_AZ[d.getMonth()]} ${y}`;
+    const label = `${monthName(mo)} ${y}`;
     html += `<option value="${y}-${mo}"${i === 0 ? " selected" : ""}>${label}</option>`;
   }
   sel.innerHTML = html;
@@ -396,7 +408,7 @@ function renderRing(data) {
 
   if (!cats.length) {
     document.getElementById("ringSegments").innerHTML = "";
-    document.getElementById("categoryLegend").innerHTML = `<li class="text-sm text-ink/35 text-center py-2">Bu ay xərc yoxdur</li>`;
+    document.getElementById("categoryLegend").innerHTML = `<li class="text-sm text-ink/35 text-center py-2">${t("an.noExpenseThisMonth")}</li>`;
     return;
   }
 

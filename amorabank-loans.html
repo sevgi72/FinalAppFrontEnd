@@ -7,6 +7,7 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="i18n.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,30 +63,37 @@ tailwind.config = {
 
     <nav class="flex-1 space-y-1">
       <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Panel
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span data-i18n="nav.dashboard">Panel</span>
       </a>
       <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> Köçürmələr
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span data-i18n="nav.transfers">Köçürmələr</span>
       </a>
       <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="credit-card" style="width:18px;height:18px"></i> Kartlar
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> <span data-i18n="nav.cards">Kartlar</span>
       </a>
       <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="receipt" style="width:18px;height:18px"></i> Ödənişlər
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
       </a>
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> Yığım
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
       <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> Analitika
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="landmark" style="width:18px;height:18px"></i> Kreditlər
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
     </nav>
 
+    <!-- Dil secimi -->
+    <div class="flex justify-center gap-1 mb-3">
+      <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
+      <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
+      <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+    </div>
+
     <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-      <i data-lucide="log-out" style="width:18px;height:18px"></i> Çıxış
+      <i data-lucide="log-out" style="width:18px;height:18px"></i> <span data-i18n="common.logout">Çıxış</span>
     </button>
   </aside>
 
@@ -103,15 +111,15 @@ tailwind.config = {
         </div>
 
         <div class="hidden lg:block">
-          <h1 class="font-display font-600 text-ink text-lg leading-tight">Kreditlər</h1>
-          <p class="text-xs text-ink/50">Kredit götür, ödənişləri izlə</p>
+          <h1 class="font-display font-600 text-ink text-lg leading-tight" data-i18n="ln.title">Kreditlər</h1>
+          <p class="text-xs text-ink/50" data-i18n="ln.subtitle">Kredit götür, ödənişləri izlə</p>
         </div>
 
         <div class="flex-1"></div>
 
         <a href="amorabank-dashboard.html" class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
           <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
-          <span class="hidden sm:inline">Panel</span>
+          <span class="hidden sm:inline" data-i18n="ln.panel">Panel</span>
         </a>
 
         <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
@@ -137,20 +145,20 @@ tailwind.config = {
               <i data-lucide="hand-coins" style="width:17px;height:17px" class="text-teal-700"></i>
             </div>
             <div>
-              <h2 class="font-display font-600 text-ink">Yeni kredit</h2>
-              <p class="text-xs text-ink/45">Məbləği və müddəti seçin</p>
+              <h2 class="font-display font-600 text-ink" data-i18n="ln.newLoan">Yeni kredit</h2>
+              <p class="text-xs text-ink/45" data-i18n="ln.newLoanHint">Məbləği və müddəti seçin</p>
             </div>
           </div>
 
           <form id="loanForm" class="space-y-5">
             <div>
-              <label class="block text-xs font-500 text-ink/60 mb-1.5">Hesab (kredit bura köçürüləcək)</label>
+              <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="ln.accountLabel">Hesab (kredit bura köçürüləcək)</label>
               <select id="loanAccount" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
             </div>
 
             <div>
               <div class="flex items-center justify-between mb-2">
-                <label class="text-xs font-500 text-ink/60">Kredit məbləği</label>
+                <label class="text-xs font-500 text-ink/60" data-i18n="ln.loanAmount">Kredit məbləği</label>
                 <span id="amountLabel" class="font-mono font-700 text-ink">1 000 ₼</span>
               </div>
               <input id="amountRange" type="range" min="500" max="50000" step="500" value="1000" class="w-full">
@@ -160,32 +168,32 @@ tailwind.config = {
             </div>
 
             <div>
-              <label class="block text-xs font-500 text-ink/60 mb-2">Müddət</label>
+              <label class="block text-xs font-500 text-ink/60 mb-2" data-i18n="ln.term">Müddət</label>
               <div class="grid grid-cols-4 gap-2" id="termGroup">
-                <button type="button" data-term="6"  class="term-btn h-10 rounded-lg border border-line text-sm font-500 transition">6 ay</button>
-                <button type="button" data-term="12" class="term-btn h-10 rounded-lg border border-line text-sm font-500 transition">12 ay</button>
-                <button type="button" data-term="24" class="term-btn h-10 rounded-lg border border-line text-sm font-500 transition">24 ay</button>
-                <button type="button" data-term="36" class="term-btn h-10 rounded-lg border border-line text-sm font-500 transition">36 ay</button>
+                <button type="button" data-term="6"  class="term-btn h-10 rounded-lg border border-line text-sm font-500 transition" data-i18n="ln.month6">6 ay</button>
+                <button type="button" data-term="12" class="term-btn h-10 rounded-lg border border-line text-sm font-500 transition" data-i18n="ln.month12">12 ay</button>
+                <button type="button" data-term="24" class="term-btn h-10 rounded-lg border border-line text-sm font-500 transition" data-i18n="ln.month24">24 ay</button>
+                <button type="button" data-term="36" class="term-btn h-10 rounded-lg border border-line text-sm font-500 transition" data-i18n="ln.month36">36 ay</button>
               </div>
             </div>
 
             <!-- Texmini kalkulyator -->
             <div class="rounded-xl bg-mist border border-line p-4 space-y-2.5">
               <div class="flex justify-between text-sm">
-                <span class="text-ink/55">Təxmini aylıq ödəniş</span>
+                <span class="text-ink/55" data-i18n="ln.estMonthly">Təxmini aylıq ödəniş</span>
                 <span id="estMonthly" class="font-mono font-700 text-ink">—</span>
               </div>
               <div class="flex justify-between text-sm">
-                <span class="text-ink/55">Ümumi ödəniləcək</span>
+                <span class="text-ink/55" data-i18n="ln.estTotal">Ümumi ödəniləcək</span>
                 <span id="estTotal" class="font-mono font-500 text-ink-2">—</span>
               </div>
-              <p class="text-[10px] text-ink/40 leading-relaxed pt-1 border-t border-line">
+              <p class="text-[10px] text-ink/40 leading-relaxed pt-1 border-t border-line" data-i18n="ln.estNote">
                 * Təxmini hesablama (illik ~18%). Dəqiq faiz və ödəniş bank tərəfindən təsdiqdən sonra müəyyən olunur.
               </p>
             </div>
 
             <button type="submit" class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
-              <i data-lucide="send" style="width:16px;height:16px"></i> Kredit müraciəti göndər
+              <i data-lucide="send" style="width:16px;height:16px"></i> <span data-i18n="ln.apply">Kredit müraciəti göndər</span>
             </button>
           </form>
         </section>
@@ -195,12 +203,12 @@ tailwind.config = {
       <!-- ════════════ SAG: MENIM KREDITLERIM ════════════ -->
       <div class="space-y-4">
         <div class="flex items-center justify-between">
-          <h2 class="font-display font-600 text-ink">Kreditlərim</h2>
+          <h2 class="font-display font-600 text-ink" data-i18n="ln.myLoans">Kreditlərim</h2>
           <i data-lucide="history" style="width:16px;height:16px" class="text-ink/30"></i>
         </div>
 
         <div id="loansList" class="space-y-4">
-          <div class="bg-white rounded-2xl border border-line py-12 text-center text-ink/35 text-sm">Yüklənir…</div>
+          <div class="bg-white rounded-2xl border border-line py-12 text-center text-ink/35 text-sm" data-i18n="ln.loading">Yüklənir…</div>
         </div>
       </div>
 
@@ -214,19 +222,19 @@ tailwind.config = {
   <div class="flex justify-around">
     <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
       <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
-      <span class="text-[10px]">Panel</span>
+      <span class="text-[10px]" data-i18n="nav.dashboard">Panel</span>
     </a>
     <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
       <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
-      <span class="text-[10px]">Köçür</span>
+      <span class="text-[10px]" data-i18n="nav.transferShort">Köçür</span>
     </a>
     <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
       <i data-lucide="credit-card" style="width:20px;height:20px"></i>
-      <span class="text-[10px]">Kartlar</span>
+      <span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
     </a>
     <a href="amorabank-loans.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
       <i data-lucide="landmark" style="width:20px;height:20px"></i>
-      <span class="text-[10px] font-500">Kredit</span>
+      <span class="text-[10px] font-500" data-i18n="nav.loans">Kredit</span>
     </a>
   </div>
 </nav>
@@ -245,7 +253,7 @@ async function api(path, options = {}) {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "Accept-Language": "az",
+      "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
       ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
       ...(options.headers || {}),
     },
@@ -291,13 +299,13 @@ async function loadAccounts() {
 
   const sel = document.getElementById("loanAccount");
   sel.innerHTML = accounts.length
-    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? 'Əmanət' : 'Cari'} • ${AZN(a.balance)} ₼</option>`).join("")
-    : `<option value="">Hesab yoxdur</option>`;
+    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? t("ln.savingsShort") : t("ln.checkingShort")} • ${AZN(a.balance)} ₼</option>`).join("")
+    : `<option value="">${t("ln.noAccountOption")}</option>`;
 }
 
 async function loadLoans() {
   const list = document.getElementById("loansList");
-  list.innerHTML = `<div class="bg-white rounded-2xl border border-line py-12 text-center text-ink/35 text-sm">Yüklənir…</div>`;
+  list.innerHTML = `<div class="bg-white rounded-2xl border border-line py-12 text-center text-ink/35 text-sm">${t("ln.loading")}</div>`;
   let loans;
   try {
     const res = await api("/api/Loan/my?Page=1&PageSize=20");
@@ -314,15 +322,16 @@ async function loadLoans() {
 /* ══════════════════════════════════════════════════════════════
    4. RENDER
    ══════════════════════════════════════════════════════════════ */
-const STATUS_MAP = {
-  Pending:   { az: "Gözləyir",  cls: "bg-amber-100 text-amber-700",  icon: "clock" },
-  Active:    { az: "Aktiv",     cls: "bg-neon/15 text-teal-700",     icon: "circle-check" },
-  Rejected:  { az: "Rədd edildi", cls: "bg-red-100 text-red-600",    icon: "circle-x" },
-  Completed: { az: "Bağlanıb",  cls: "bg-ink/10 text-ink",           icon: "check-check" },
-};
-
 function statusInfo(status) {
-  return STATUS_MAP[status] || { az: status || "—", cls: "bg-ink/10 text-ink", icon: "circle" };
+  const MAP = {
+    Pending:   { key: "ln.statusPending",   cls: "bg-amber-100 text-amber-700",  icon: "clock" },
+    Active:    { key: "ln.statusActive",    cls: "bg-neon/15 text-teal-700",     icon: "circle-check" },
+    Rejected:  { key: "ln.statusRejected",  cls: "bg-red-100 text-red-600",      icon: "circle-x" },
+    Completed: { key: "ln.statusCompleted", cls: "bg-ink/10 text-ink",           icon: "check-check" },
+  };
+  const m = MAP[status];
+  if (m) return { az: t(m.key), cls: m.cls, icon: m.icon };
+  return { az: status || "—", cls: "bg-ink/10 text-ink", icon: "circle" };
 }
 
 function renderLoans(loans) {
@@ -333,8 +342,8 @@ function renderLoans(loans) {
         <div class="w-14 h-14 rounded-2xl bg-mist grid place-items-center mx-auto mb-4">
           <i data-lucide="landmark" style="width:26px;height:26px" class="text-ink/30"></i>
         </div>
-        <h3 class="font-display font-600 text-ink">Hələ kreditiniz yoxdur</h3>
-        <p class="text-sm text-ink/45 mt-1.5">Soldakı formadan ilk kredit müraciətinizi göndərin.</p>
+        <h3 class="font-display font-600 text-ink">${t("ln.noLoansTitle")}</h3>
+        <p class="text-sm text-ink/45 mt-1.5">${t("ln.noLoansHint")}</p>
       </div>`;
     lucide.createIcons();
     return;
@@ -355,8 +364,8 @@ function renderLoans(loans) {
           <i data-lucide="${p.isPaid ? "check" : "clock"}" style="width:14px;height:14px"></i>
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-xs font-500 text-ink-2">${p.paymentNumber}. ödəniş</p>
-          <p class="text-[10px] text-ink/45">${formatDate(p.dueDate)}${p.isPaid && p.paidAt ? " • ödənildi" : ""}</p>
+          <p class="text-xs font-500 text-ink-2">${p.paymentNumber}. ${t("ln.payment")}</p>
+          <p class="text-[10px] text-ink/45">${formatDate(p.dueDate)}${p.isPaid && p.paidAt ? " • " + t("ln.paidMark") : ""}</p>
         </div>
         <p class="font-mono text-xs font-600 ${p.isPaid ? "text-teal-700" : "text-ink-2"}">${AZN(p.amount)} ₼</p>
       </div>
@@ -367,7 +376,7 @@ function renderLoans(loans) {
       <div class="p-5">
         <div class="flex items-start justify-between mb-4">
           <div>
-            <p class="text-xs text-ink/45 mb-0.5">Kredit məbləği</p>
+            <p class="text-xs text-ink/45 mb-0.5">${t("ln.principalLabel")}</p>
             <p class="font-mono font-700 text-ink text-2xl">${AZN(loan.principal)} ₼</p>
           </div>
           <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-600 ${st.cls}">
@@ -377,15 +386,15 @@ function renderLoans(loans) {
 
         <div class="grid grid-cols-3 gap-3 mb-4">
           <div class="rounded-xl bg-mist p-3">
-            <p class="text-[10px] text-ink/45 uppercase tracking-wide">Müddət</p>
-            <p class="font-mono font-600 text-ink-2 text-sm mt-0.5">${loan.termMonths} ay</p>
+            <p class="text-[10px] text-ink/45 uppercase tracking-wide">${t("ln.termLabel")}</p>
+            <p class="font-mono font-600 text-ink-2 text-sm mt-0.5">${loan.termMonths} ${t("ln.months")}</p>
           </div>
           <div class="rounded-xl bg-mist p-3">
-            <p class="text-[10px] text-ink/45 uppercase tracking-wide">Faiz</p>
+            <p class="text-[10px] text-ink/45 uppercase tracking-wide">${t("ln.rateLabel")}</p>
             <p class="font-mono font-600 text-ink-2 text-sm mt-0.5">${loan.interestRate ?? "—"}%</p>
           </div>
           <div class="rounded-xl bg-mist p-3">
-            <p class="text-[10px] text-ink/45 uppercase tracking-wide">Aylıq</p>
+            <p class="text-[10px] text-ink/45 uppercase tracking-wide">${t("ln.monthlyLabel")}</p>
             <p class="font-mono font-600 text-ink-2 text-sm mt-0.5">${AZN(loan.monthlyPayment)} ₼</p>
           </div>
         </div>
@@ -393,8 +402,8 @@ function renderLoans(loans) {
         ${showProgress ? `
         <div class="mb-1">
           <div class="flex justify-between text-xs mb-1.5">
-            <span class="text-ink/55">Ödənilib: ${AZN(paid)} ₼</span>
-            <span class="text-ink/55">Qalıq: ${AZN(loan.remainingBalance)} ₼</span>
+            <span class="text-ink/55">${t("ln.paidLabel")} ${AZN(paid)} ₼</span>
+            <span class="text-ink/55">${t("ln.remainingLabel")} ${AZN(loan.remainingBalance)} ₼</span>
           </div>
           <div class="w-full h-2 bg-mist rounded-full overflow-hidden">
             <div class="h-full bg-neon rounded-full transition-all duration-500" style="width:${progress}%"></div>
@@ -404,7 +413,7 @@ function renderLoans(loans) {
         ${payments.length ? `
         <button onclick="toggleSchedule(${idx})" class="mt-4 w-full h-10 rounded-xl border border-line text-sm font-500 text-ink/70 hover:border-ink/20 transition flex items-center justify-center gap-2">
           <i data-lucide="calendar-days" style="width:15px;height:15px"></i>
-          Ödəniş qrafiki (${payments.length})
+          ${t("ln.schedule")} (${payments.length})
           <i data-lucide="chevron-down" style="width:15px;height:15px" class="sched-chevron-${idx} transition-transform"></i>
         </button>` : ``}
       </div>
@@ -449,7 +458,7 @@ function estimate() {
 document.getElementById("loanForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const accountId = document.getElementById("loanAccount").value;
-  if (!accountId) return showMsg("Kredit üçün hesabınız olmalıdır.", false);
+  if (!accountId) return showMsg(t("ln.needAccount"), false);
 
   const body = {
     accountId,
@@ -461,7 +470,7 @@ document.getElementById("loanForm").addEventListener("submit", async (e) => {
   btn.disabled = true;
   try {
     await api("/api/Loan/request", { method: "POST", body: JSON.stringify(body) });
-    showMsg("Kredit müraciətiniz göndərildi. Bank təsdiqini gözləyin.", true);
+    showMsg(t("ln.applied"), true);
     await loadLoans();
   } catch (err) {
     showMsg(err.message, false);
@@ -492,20 +501,16 @@ range.addEventListener("input", () => {
 
 // muddet secimi
 const termBtns = document.querySelectorAll(".term-btn");
-function setTerm(t) {
-  selectedTerm = t;
+function setTerm(term) {
+  selectedTerm = term;
   termBtns.forEach(b => {
-    const on = Number(b.dataset.term) === t;
+    const on = Number(b.dataset.term) === term;
     b.className = "term-btn h-10 rounded-lg border text-sm font-500 transition " +
       (on ? "border-ink bg-ink text-white" : "border-line text-ink/60 hover:border-ink/30");
   });
   estimate();
 }
 termBtns.forEach(b => b.onclick = () => setTerm(Number(b.dataset.term)));
-
-// document.querySelectorAll(".nav-soon").forEach(item => {
-//   item.onclick = (e) => { e.preventDefault(); showMsg("Bu bölmə hazırlanır. Tezliklə əlçatan olacaq.", false); };
-// });
 
 document.getElementById("logoutBtn").onclick = async () => {
   try { await api("/api/Auth/logout", { method: "POST" }); } catch (e) {}

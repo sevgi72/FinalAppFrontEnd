@@ -10,6 +10,7 @@
 
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+  <script src="i18n.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -119,40 +120,40 @@
 
       <nav class="flex-1 space-y-1">
       <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Panel
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span data-i18n="nav.dashboard">Panel</span>
       </a>
       <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> Köçürmələr
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span data-i18n="nav.transfers">Köçürmələr</span>
       </a>
       <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="credit-card" style="width:18px;height:18px"></i> Kartlar
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> <span data-i18n="nav.cards">Kartlar</span>
       </a>
       <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="receipt" style="width:18px;height:18px"></i> Ödənişlər
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
       </a>
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> Yığım
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
       <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> Analitika
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="landmark" style="width:18px;height:18px"></i> Kreditlər
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
     </nav>
 
       <div class="mt-6 p-4 rounded-2xl bg-gradient-to-br from-ink to-ink-3 border border-white/5">
         <i data-lucide="headset" class="text-neon mb-2" style="width:20px;height:20px"></i>
-        <p class="text-white text-sm font-500">Kömək lazımdır?</p>
-        <p class="text-white/50 text-xs mt-0.5 leading-relaxed">Dəstək 24/7 xəttdədir.</p>
-        <button id="supportChatBtn" class="mt-3 w-full py-2 rounded-lg bg-neon text-ink-2 text-xs font-600 hover:brightness-110 transition">
+        <p class="text-white text-sm font-500" data-i18n="dash.helpNeeded">Kömək lazımdır?</p>
+        <p class="text-white/50 text-xs mt-0.5 leading-relaxed" data-i18n="dash.support247">Dəstək 24/7 xəttdədir.</p>
+        <button id="supportChatBtn" data-i18n="dash.startChat" class="mt-3 w-full py-2 rounded-lg bg-neon text-ink-2 text-xs font-600 hover:brightness-110 transition">
           Söhbətə başla
         </button>
       </div>
 
       <button id="logoutBtn"
         class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="log-out" style="width:18px;height:18px"></i> Çıxış
+        <i data-lucide="log-out" style="width:18px;height:18px"></i> <span data-i18n="common.logout">Çıxış</span>
       </button>
     </aside>
 
@@ -171,14 +172,14 @@
 
           <div class="hidden lg:block">
             <h1 class="font-display font-600 text-ink text-lg leading-tight">
-              Salam, <span id="userFirstName">…</span>
+              <span data-i18n="dash.hello">Salam,</span> <span id="userFirstName">…</span>
             </h1>
             <p class="text-xs text-ink/50" id="todayLabel">—</p>
           </div>
 
           <div class="flex-1"></div>
 
-          <button id="privacyBtn" title="Balansı gizlə"
+          <button id="privacyBtn" title="Balansı gizlə" data-i18n-title="dash.hideBalance"
             class="w-9 h-9 grid place-items-center rounded-xl bg-white border border-line hover:border-ink/20 transition">
             <i data-lucide="eye" style="width:17px;height:17px" class="text-ink/60"></i>
           </button>
@@ -194,8 +195,8 @@
             <!-- Bildiris dropdown -->
             <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 max-w-[90vw] bg-white rounded-2xl border border-line shadow-xl shadow-ink/10 z-50 overflow-hidden">
               <div class="flex items-center justify-between px-4 py-3 border-b border-line">
-                <h3 class="font-display font-600 text-ink text-sm">Bildirişlər</h3>
-                <button id="markAllReadBtn" class="text-[11px] font-500 text-neon hover:underline">Hamısını oxu</button>
+                <h3 class="font-display font-600 text-ink text-sm" data-i18n="dash.notifications">Bildirişlər</h3>
+                <button id="markAllReadBtn" data-i18n="dash.markAllRead" class="text-[11px] font-500 text-neon hover:underline">Hamısını oxu</button>
               </div>
               <ul id="notifList" class="max-h-80 overflow-y-auto divide-y divide-line">
                 <li class="px-4 py-6 text-center text-sm text-ink/35">Yüklənir…</li>
@@ -221,7 +222,7 @@
 
           <section>
             <div class="flex items-center justify-between mb-3">
-              <h2 class="font-display font-600 text-ink">Hesablarım</h2>
+              <h2 class="font-display font-600 text-ink" data-i18n="dash.myAccounts">Hesablarım</h2>
               <div class="flex items-center gap-1.5">
                 <button id="prevCard"
                   class="w-8 h-8 grid place-items-center rounded-lg bg-white border border-line hover:border-ink/20 transition disabled:opacity-40">
@@ -235,7 +236,7 @@
             </div>
 
             <div id="cardStack" class="card-stack relative h-[210px] sm:h-[220px]">
-              <div class="absolute inset-0 grid place-items-center text-ink/30 text-sm">Hesablar yüklənir…</div>
+              <div class="absolute inset-0 grid place-items-center text-ink/30 text-sm" data-i18n="dash.accountsLoading">Hesablar yüklənir…</div>
             </div>
 
             <div id="cardDots" class="flex justify-center gap-1.5 mt-3"></div>
@@ -245,7 +246,7 @@
           <section class="bg-white rounded-2xl border border-line p-5">
             <div class="flex items-center gap-2 mb-4">
               <i data-lucide="send" style="width:17px;height:17px" class="text-neon"></i>
-              <h2 class="font-display font-600 text-ink">Sürətli köçürmə</h2>
+              <h2 class="font-display font-600 text-ink" data-i18n="dash.quickTransfer">Sürətli köçürmə</h2>
             </div>
 
             <div class="flex gap-3 mb-5 overflow-x-auto pb-1">
@@ -255,7 +256,7 @@
                   <i data-lucide="plus" style="width:18px;height:18px"
                     class="text-ink/40 group-hover:text-neon transition"></i>
                 </div>
-                <span class="text-[11px] text-ink/50">Yeni</span>
+                <span class="text-[11px] text-ink/50" data-i18n="dash.new">Yeni</span>
               </button>
               <button class="shrink-0 flex flex-col items-center gap-1.5 w-16" data-quick-name="Könül İ.">
                 <div class="w-12 h-12 rounded-full bg-lilac/15 text-lilac grid place-items-center font-600 text-sm">Kİ
@@ -275,24 +276,24 @@
 
             <form id="transferForm" class="grid sm:grid-cols-[1fr_1fr_auto] gap-3">
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5">Hesabdan</label>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="dash.fromAccount">Hesabdan</label>
                 <select id="fromAccount"
                   class="w-full h-11 px-3 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon outline-none transition">
                 </select>
               </div>
 
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5">Alan hesab nömrəsi</label>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="dash.toAccountNumber">Alan hesab nömrəsi</label>
                 <input id="toAccountNumber" type="text" placeholder="AZ00 0000 0000 0000"
                   class="w-full h-11 px-3 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon outline-none transition">
               </div>
 
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5">Məbləğ</label>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="dash.amount">Məbləğ</label>
                 <div class="flex gap-2">
                   <input id="transferAmount" type="number" step="0.01" min="0.01" placeholder="0.00"
                     class="w-full sm:w-28 h-11 px-3 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon outline-none transition">
-                  <button type="submit" id="transferBtn"
+                  <button type="submit" id="transferBtn" data-i18n="dash.send"
                     class="h-11 px-5 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.98] transition whitespace-nowrap">
                     Göndər
                   </button>
@@ -306,12 +307,12 @@
 
           <section class="bg-white rounded-2xl border border-line overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-line">
-              <h2 class="font-display font-600 text-ink">Son əməliyyatlar</h2>
-              <button id="toggleTxBtn" class="text-xs font-500 text-neon hover:underline">Hamısına bax</button>
+              <h2 class="font-display font-600 text-ink" data-i18n="dash.recentTx">Son əməliyyatlar</h2>
+              <button id="toggleTxBtn" class="text-xs font-500 text-neon hover:underline" data-i18n="dash.viewAll">Hamısına bax</button>
             </div>
 
             <ul id="txList" class="divide-y divide-line">
-              <li class="px-5 py-8 text-center text-sm text-ink/35">Əməliyyatlar yüklənir…</li>
+              <li class="px-5 py-8 text-center text-sm text-ink/35" data-i18n="dash.txLoading">Əməliyyatlar yüklənir…</li>
             </ul>
           </section>
         </div>
@@ -320,7 +321,7 @@
         <div class="space-y-6">
 
           <section class="bg-white rounded-2xl border border-line p-5">
-            <h2 class="font-display font-600 text-ink mb-1">Bu ayın xərcləri</h2>
+            <h2 class="font-display font-600 text-ink mb-1" data-i18n="dash.monthSpending">Bu ayın xərcləri</h2>
             <p class="text-xs text-ink/45 mb-4" id="spendMonthLabel">—</p>
 
             <div class="relative w-40 h-40 mx-auto">
@@ -330,7 +331,7 @@
               </svg>
               <div class="absolute inset-0 grid place-items-center text-center">
                 <div>
-                  <p class="text-[11px] text-ink/45">Cəmi</p>
+                  <p class="text-[11px] text-ink/45" data-i18n="dash.total">Cəmi</p>
                   <p class="font-mono font-700 text-ink text-lg" id="spendTotal">—</p>
                 </div>
               </div>
@@ -343,29 +344,36 @@
           <section class="grid grid-cols-2 gap-3">
             <div class="bg-gradient-to-br from-ink to-ink-3 rounded-2xl p-4 text-white">
               <i data-lucide="badge-percent" style="width:18px;height:18px" class="text-neon mb-3"></i>
-              <p class="text-[11px] text-white/55">Keşbek balansı</p>
+              <p class="text-[11px] text-white/55" data-i18n="dash.cashbackBalance">Keşbek balansı</p>
               <p class="font-mono font-700 text-xl mt-0.5 balance-value" id="cashbackBalance">—</p>
-              <button id="cashbackTransferBtn" class="mt-3 text-[11px] font-600 text-neon hover:underline">Hesaba köçür →</button>
+              <button id="cashbackTransferBtn" data-i18n="dash.transferToAccount" class="mt-3 text-[11px] font-600 text-neon hover:underline">Hesaba köçür →</button>
             </div>
 
             <div class="bg-white rounded-2xl border border-line p-4">
               <i data-lucide="coins" style="width:18px;height:18px" class="text-lilac mb-3"></i>
-              <p class="text-[11px] text-ink/50">Round-up yığım</p>
+              <p class="text-[11px] text-ink/50" data-i18n="dash.roundupSavings">Round-up yığım</p>
               <p class="font-mono font-700 text-xl mt-0.5 text-ink balance-value" id="roundupTotal">—</p>
-              <p class="mt-3 text-[11px] text-ink/40">bu ay yığılıb</p>
+              <p class="mt-3 text-[11px] text-ink/40" data-i18n="dash.savedThisMonth">bu ay yığılıb</p>
             </div>
           </section>
 
 
           <section class="bg-white rounded-2xl border border-line p-5">
             <div class="flex items-center justify-between mb-4">
-              <h2 class="font-display font-600 text-ink">Yığım məqsədim</h2>
+              <h2 class="font-display font-600 text-ink" data-i18n="dash.myGoal">Yığım məqsədim</h2>
               <i data-lucide="target" style="width:16px;height:16px" class="text-ink/30"></i>
             </div>
             <div id="goalBox">
-              <p class="text-sm text-ink/35 text-center py-4">Məqsəd yüklənir…</p>
+              <p class="text-sm text-ink/35 text-center py-4" data-i18n="dash.goalLoading">Məqsəd yüklənir…</p>
             </div>
           </section>
+
+          <!-- Dil secimi -->
+          <div class="flex justify-center gap-1">
+            <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
+            <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
+            <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+          </div>
         </div>
 
       </div>
@@ -380,8 +388,8 @@
       <i data-lucide="headset" style="width:18px;height:18px" class="text-neon"></i>
     </div>
     <div class="flex-1">
-      <p class="text-white text-sm font-600">Amorabank Dəstək</p>
-      <p id="chatStatus" class="text-white/50 text-[11px]">Qoşulur…</p>
+      <p class="text-white text-sm font-600" data-i18n="dash.supportTitle">Amorabank Dəstək</p>
+      <p id="chatStatus" class="text-white/50 text-[11px]" data-i18n="dash.connecting">Qoşulur…</p>
     </div>
     <button id="chatClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-white/10 transition">
       <i data-lucide="x" style="width:18px;height:18px" class="text-white/70"></i>
@@ -395,7 +403,7 @@
 
   <!-- input -->
   <form id="chatForm" class="flex items-center gap-2 px-3 py-3 border-t border-line">
-    <input id="chatInput" type="text" placeholder="Mesaj yaz…" autocomplete="off"
+    <input id="chatInput" type="text" placeholder="Mesaj yaz…" data-i18n-placeholder="dash.messagePlaceholder" autocomplete="off"
            class="flex-1 h-11 px-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
     <button type="submit" id="chatSend" class="w-11 h-11 rounded-xl bg-ink text-white grid place-items-center hover:bg-ink-2 active:scale-95 transition shrink-0">
       <i data-lucide="send" style="width:17px;height:17px"></i>
@@ -406,19 +414,19 @@
     <div class="flex justify-around">
       <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
         <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
-        <span class="text-[10px] font-500">Panel</span>
+        <span class="text-[10px] font-500" data-i18n="nav.dashboard">Panel</span>
       </a>
       <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
         <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
-        <span class="text-[10px]">Köçür</span>
+        <span class="text-[10px]" data-i18n="nav.transferShort">Köçür</span>
       </a>
       <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
         <i data-lucide="credit-card" style="width:20px;height:20px"></i>
-        <span class="text-[10px]">Kartlar</span>
+        <span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
       </a>
       <a href="amorabank-analytics.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
         <i data-lucide="pie-chart" style="width:20px;height:20px"></i>
-        <span class="text-[10px]">Analitika</span>
+        <span class="text-[10px]" data-i18n="nav.analytics">Analitika</span>
       </a>
     </div>
   </nav>
@@ -446,7 +454,7 @@
         ...options,
         headers: {
           "Content-Type": "application/json",
-          "Accept-Language": "az",              // lokalizasiya: az / en / ru
+          "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
           ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
           ...(options.headers || {}),
         },
@@ -620,20 +628,20 @@
       };
 
       if (!body.toAccountNumber || !body.amount || body.amount <= 0) {
-        return showTransferMsg("Hesab nömrəsi və məbləği doldurun.", false);
+        return showTransferMsg(t("dash.fillAccountAmount"), false);
       }
 
-      btn.disabled = true; btn.textContent = "Göndərilir…";
+      btn.disabled = true; btn.textContent = t("dash.sending");
       try {
         await api("/api/Transaction/transfer", { method: "POST", body: JSON.stringify(body) });
-        showTransferMsg(`${AZN(body.amount)} ₼ göndərildi.`, true);
+        showTransferMsg(`${AZN(body.amount)} ₼ ${t("dash.transferSent")}`, true);
         document.getElementById("transferForm").reset();
         await loadAccounts();                       // balansi yenile
       } catch (err) {
         console.error("Köçürmə zamanı xəta:", err.message);
         showTransferMsg(err.message, false);
       } finally {
-        btn.disabled = false; btn.textContent = "Göndər";
+        btn.disabled = false; btn.textContent = t("dash.send");
       }
     }
 
@@ -669,7 +677,7 @@
           <div class="flex items-start justify-between">
             <div>
               <p class="text-white/50 text-[11px] uppercase tracking-wider">
-                ${a.type === "Savings" ? "Əmanət hesabı" : "Cari hesab"}
+                ${a.type === "Savings" ? t("dash.savingsAccount") : t("dash.checkingAccount")}
               </p>
               <p class="mt-1 font-mono text-white/70 text-xs tracking-widest">
                 ${formatIban(a.accountNumber)}
@@ -677,12 +685,12 @@
             </div>
             <span class="px-2 py-0.5 rounded-md text-[10px] font-600
                         ${a.status === "Active" ? "bg-neon/20 text-neon" : "bg-red-500/20 text-red-300"}">
-              ${a.status === "Active" ? "Aktiv" : "Dondurulub"}
+              ${a.status === "Active" ? t("dash.statusActive") : t("dash.statusFrozen")}
             </span>
           </div>
 
           <div>
-            <p class="text-white/45 text-[11px] mb-1">Balans</p>
+            <p class="text-white/45 text-[11px] mb-1">${t("dash.balance")}</p>
             <p class="font-mono font-700 text-white text-3xl balance-value">
               ${AZN(a.balance)} <span class="text-lg text-white/60">₼</span>
             </p>
@@ -720,15 +728,15 @@
           (i === activeCardIndex ? "w-5 bg-ink" : "w-1.5 bg-ink/20");
       });
 
-      document.getElementById("prevCard").onclick = () => { if (activeCardIndex > 0) { activeCardIndex--; updateStack(); expandedTx = false; document.getElementById("toggleTxBtn").textContent = "Hamısına bax"; if (accounts[activeCardIndex]) loadTransactions(accounts[activeCardIndex].id); } };
-      document.getElementById("nextCard").onclick = () => { if (activeCardIndex < accounts.length - 1) { activeCardIndex++; updateStack(); expandedTx = false; document.getElementById("toggleTxBtn").textContent = "Hamısına bax"; if (accounts[activeCardIndex]) loadTransactions(accounts[activeCardIndex].id); } };
+      document.getElementById("prevCard").onclick = () => { if (activeCardIndex > 0) { activeCardIndex--; updateStack(); expandedTx = false; document.getElementById("toggleTxBtn").textContent = t("dash.viewAll"); if (accounts[activeCardIndex]) loadTransactions(accounts[activeCardIndex].id); } };
+      document.getElementById("nextCard").onclick = () => { if (activeCardIndex < accounts.length - 1) { activeCardIndex++; updateStack(); expandedTx = false; document.getElementById("toggleTxBtn").textContent = t("dash.viewAll"); if (accounts[activeCardIndex]) loadTransactions(accounts[activeCardIndex].id); } };
     }
 
     function fillTransferAccounts() {
       const select = document.getElementById("fromAccount");
       if (!select) return;
       select.innerHTML = accounts.map(a =>
-        `<option value="${a.id}">${a.type === 'Savings' ? 'Əmanət' : 'Cari'} - ${AZN(a.balance)} ₼</option>`
+        `<option value="${a.id}">${a.type === 'Savings' ? t("dash.savingsShort") : t("dash.checkingShort")} - ${AZN(a.balance)} ₼</option>`
       ).join("");
     }
 
@@ -737,16 +745,21 @@
 
       if (!items.length) {
         list.innerHTML = `<li class="px-5 py-10 text-center">
-      <p class="text-sm text-ink/40">Hələ əməliyyat yoxdur.</p>
-      <p class="text-xs text-ink/30 mt-1">İlk köçürməni yuxarıdan edin.</p>
+      <p class="text-sm text-ink/40">${t("dash.noTx")}</p>
+      <p class="text-xs text-ink/30 mt-1">${t("dash.noTxHint")}</p>
     </li>`;
         return;
       }
 
-      list.innerHTML = items.map(t => {
-        const isIn = t.toAccountId === accountId;
-        const icon = t.type === "Deposit" ? "arrow-down-left"
-          : t.type === "Withdraw" ? "arrow-up-right" : "arrow-left-right";
+      list.innerHTML = items.map(t2 => {
+        const isIn = t2.toAccountId === accountId;
+        const icon = t2.type === "Deposit" ? "arrow-down-left"
+          : t2.type === "Withdraw" ? "arrow-up-right" : "arrow-left-right";
+
+        // Backend tesviri secilen dilde gonderir (Yol B). Bosdursa type-a fallback.
+        const typeLabel = t("dash.txType_" + t2.type) !== ("dash.txType_" + t2.type)
+          ? t("dash.txType_" + t2.type) : t2.type;
+        const title = t2.description || typeLabel;
 
         return `
       <li class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-mist/60 transition">
@@ -756,13 +769,13 @@
         </div>
 
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-500 text-ink-2 truncate">${t.description || t.type}</p>
-          <p class="text-[11px] text-ink/45 mt-0.5">${formatDate(t.createdAt)}</p>
+          <p class="text-sm font-500 text-ink-2 truncate">${title}</p>
+          <p class="text-[11px] text-ink/45 mt-0.5">${formatDate(t2.createdAt)}</p>
         </div>
 
         <p class="font-mono font-600 text-sm shrink-0 balance-value
                   ${isIn ? "text-teal-700" : "text-ink-2"}">
-          ${isIn ? "+" : "−"}${AZN(t.amount)} ₼
+          ${isIn ? "+" : "−"}${AZN(t2.amount)} ₼
         </p>
       </li>`;
       }).join("");
@@ -799,7 +812,7 @@
 
     function renderGoal(g) {
       const box = document.getElementById("goalBox");
-      if (!g) { box.innerHTML = `<p class="text-xs text-ink/40 text-center py-4">Məqsəd təyin edilməyib.</p>`; return; }
+      if (!g) { box.innerHTML = `<p class="text-xs text-ink/40 text-center py-4">${t("dash.noGoal")}</p>`; return; }
       box.innerHTML = `
     <div class="flex justify-between text-xs mb-1.5">
       <span class="font-500 text-ink-2">${g.name}</span>
@@ -808,7 +821,7 @@
     <div class="w-full h-2 bg-mist rounded-full overflow-hidden">
       <div class="h-full bg-lilac rounded-full transition-all duration-500" style="width: ${g.percentage}%"></div>
     </div>
-    <p class="text-[11px] text-ink/40 mt-1.5 text-right">${g.percentage}% tamamlanıb</p>
+    <p class="text-[11px] text-ink/40 mt-1.5 text-right">${g.percentage}% ${t("dash.completed")}</p>
   `;
     }
 
@@ -871,22 +884,22 @@
         const acc = accounts[activeCardIndex];
         if (!acc) return;
         expandedTx = !expandedTx;
-        btn.textContent = expandedTx ? "Yığcamlaşdır" : "Hamısına bax";
+        btn.textContent = expandedTx ? t("dash.collapse") : t("dash.viewAll");
         await loadTransactions(acc.id, expandedTx ? 100 : 6);
       };
       document.getElementById("cashbackTransferBtn").onclick = async () => {
         const acc = accounts[activeCardIndex];
-        if (!acc) return showTransferMsg("Əvvəlcə hesab seçin.", false);
+        if (!acc) return showTransferMsg(t("dash.selectAccountFirst"), false);
         try {
           await api("/api/Cashback/redeem", {
             method: "POST",
             body: JSON.stringify({ targetAccountId: acc.id }),
           });
-          showTransferMsg("Keşbek balansınız hesabınıza köçürüldü.", true);
+          showTransferMsg(t("dash.cashbackDone"), true);
           await loadCashback();
           await loadAccounts();
         } catch (e) {
-          showTransferMsg("Keşbek köçürülə bilmədi: " + e.message, false);
+          showTransferMsg(t("dash.cashbackFail") + " " + e.message, false);
         }
       };
 
@@ -927,13 +940,13 @@
           const msgs = await api("/api/Chat/my-messages");
           chatMessages.innerHTML = "";
           if (!msgs.length) {
-            chatMessages.innerHTML = `<div class="text-center text-ink/40 text-sm py-8">Salam! Sualınız varsa yazın, dəstək komandası cavab verəcək.</div>`;
+            chatMessages.innerHTML = `<div class="text-center text-ink/40 text-sm py-8">${t("dash.chatGreeting")}</div>`;
           } else {
             msgs.forEach(m => appendChatMessage(m.content, m.isFromAdmin, m.sentAt));
           }
         } catch (e) {
           // my-messages admin-only ola biler; xeta olsa bos sohbet goster
-          chatMessages.innerHTML = `<div class="text-center text-ink/40 text-sm py-8">Salam! Necə kömək edə bilərik?</div>`;
+          chatMessages.innerHTML = `<div class="text-center text-ink/40 text-sm py-8">${t("dash.chatGreetingShort")}</div>`;
         }
       }
 
@@ -959,15 +972,15 @@
           // istesek burda "catdirildi" nisani elave ede bilerik
         });
 
-        chatConnection.onreconnecting(() => setChatStatus("Yenidən qoşulur…", false));
-        chatConnection.onreconnected(() => setChatStatus("Onlayn", true));
-        chatConnection.onclose(() => setChatStatus("Bağlantı kəsildi", false));
+        chatConnection.onreconnecting(() => setChatStatus(t("dash.reconnecting"), false));
+        chatConnection.onreconnected(() => setChatStatus(t("dash.online"), true));
+        chatConnection.onclose(() => setChatStatus(t("dash.disconnected"), false));
 
         try {
           await chatConnection.start();
-          setChatStatus("Onlayn", true);
+          setChatStatus(t("dash.online"), true);
         } catch (e) {
-          setChatStatus("Bağlantı alınmadı", false);
+          setChatStatus(t("dash.connectFailed"), false);
           console.error("Chat baglantisi:", e);
         }
       }
@@ -991,7 +1004,7 @@
         const content = input.value.trim();
         if (!content) return;
         if (!chatConnection || chatConnection.state !== "Connected") {
-          setChatStatus("Qoşulma gözlənilir…", false);
+          setChatStatus(t("dash.waitingConnection"), false);
           return;
         }
         try {
@@ -1001,7 +1014,7 @@
           // hub metodu: SendToAdmin
           await chatConnection.invoke("SendToAdmin", content);
         } catch (err) {
-          setChatStatus("Mesaj göndərilmədi", false);
+          setChatStatus(t("dash.msgFailed"), false);
           console.error("Mesaj:", err);
         }
       };
@@ -1037,7 +1050,7 @@
 
         if (!items.length) {
           list.innerHTML = `<li class="px-4 py-8 text-center">
-            <p class="text-sm text-ink/40">Bildiriş yoxdur</p>
+            <p class="text-sm text-ink/40">${t("dash.noNotif")}</p>
           </li>`;
           return;
         }
@@ -1088,7 +1101,7 @@
           document.getElementById("notifBadge").classList.add("hidden");
           await loadNotifications();   // siyahini yenile (hamisi oxunmus gorunsun)
         } catch (err) {
-          showTransferMsg("Bildirişlər oxunmuş işarələnə bilmədi: " + err.message, false);
+          showTransferMsg(t("dash.notifReadFail") + " " + err.message, false);
         }
       };
       // Sol panel: hazir olmayan bolmeler ucun bildiris (Kartlar, Odenisler, ve s.)

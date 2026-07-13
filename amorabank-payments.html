@@ -7,6 +7,7 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="i18n.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,30 +55,37 @@ tailwind.config = {
 
     <nav class="flex-1 space-y-1">
       <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Panel
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span data-i18n="nav.dashboard">Panel</span>
       </a>
       <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> Köçürmələr
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span data-i18n="nav.transfers">Köçürmələr</span>
       </a>
       <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="credit-card" style="width:18px;height:18px"></i> Kartlar
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> <span data-i18n="nav.cards">Kartlar</span>
       </a>
       <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="receipt" style="width:18px;height:18px"></i> Ödənişlər
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
       </a>
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> Yığım
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
       <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> Analitika
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="landmark" style="width:18px;height:18px"></i> Kreditlər
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
     </nav>
 
+    <!-- Dil secimi -->
+    <div class="flex justify-center gap-1 mb-3">
+      <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
+      <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
+      <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+    </div>
+
     <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-      <i data-lucide="log-out" style="width:18px;height:18px"></i> Çıxış
+      <i data-lucide="log-out" style="width:18px;height:18px"></i> <span data-i18n="common.logout">Çıxış</span>
     </button>
   </aside>
 
@@ -95,15 +103,15 @@ tailwind.config = {
         </div>
 
         <div class="hidden lg:block">
-          <h1 class="font-display font-600 text-ink text-lg leading-tight">Ödənişlər</h1>
-          <p class="text-xs text-ink/50">Kommunal xidmətləri ödə</p>
+          <h1 class="font-display font-600 text-ink text-lg leading-tight" data-i18n="pay.title">Ödənişlər</h1>
+          <p class="text-xs text-ink/50" data-i18n="pay.subtitle">Kommunal xidmətləri ödə</p>
         </div>
 
         <div class="flex-1"></div>
 
         <a href="amorabank-dashboard.html" class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
           <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
-          <span class="hidden sm:inline">Panel</span>
+          <span class="hidden sm:inline" data-i18n="pay.panel">Panel</span>
         </a>
 
         <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
@@ -124,13 +132,13 @@ tailwind.config = {
 
         <div class="bg-white rounded-2xl border border-line p-1.5 flex gap-1">
           <button data-tab="pay" class="tab-btn flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-500 transition">
-            <i data-lucide="zap" style="width:16px;height:16px"></i> Ödəniş
+            <i data-lucide="zap" style="width:16px;height:16px"></i> <span data-i18n="pay.tabPay">Ödəniş</span>
           </button>
           <button data-tab="templates" class="tab-btn flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-500 transition">
-            <i data-lucide="bookmark" style="width:16px;height:16px"></i> Şablonlar
+            <i data-lucide="bookmark" style="width:16px;height:16px"></i> <span data-i18n="pay.tabTemplates">Şablonlar</span>
           </button>
           <button data-tab="scheduled" class="tab-btn flex-1 flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-500 transition">
-            <i data-lucide="calendar-clock" style="width:16px;height:16px"></i> Avtomatik
+            <i data-lucide="calendar-clock" style="width:16px;height:16px"></i> <span data-i18n="pay.tabScheduled">Avtomatik</span>
           </button>
         </div>
 
@@ -144,29 +152,29 @@ tailwind.config = {
                 <i data-lucide="zap" style="width:17px;height:17px" class="text-teal-700"></i>
               </div>
               <div>
-                <h2 class="font-display font-600 text-ink">Kommunal ödəniş</h2>
-                <p class="text-xs text-ink/45">Provayder seç, borcu yoxla, ödə</p>
+                <h2 class="font-display font-600 text-ink" data-i18n="pay.utilityPayment">Kommunal ödəniş</h2>
+                <p class="text-xs text-ink/45" data-i18n="pay.utilityHint">Provayder seç, borcu yoxla, ödə</p>
               </div>
             </div>
 
             <!-- Kateqoriya secimi -->
             <div class="mb-4">
-              <label class="block text-xs font-500 text-ink/60 mb-2">Kateqoriya</label>
+              <label class="block text-xs font-500 text-ink/60 mb-2" data-i18n="pay.category">Kateqoriya</label>
               <div id="categoryChips" class="flex flex-wrap gap-2"></div>
             </div>
 
             <form id="payForm" class="space-y-4">
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5">Provayder</label>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.provider">Provayder</label>
                 <select id="payProvider" class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
               </div>
 
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5">Abunəçi kodu</label>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.subscriberCode">Abunəçi kodu</label>
                 <div class="flex gap-2">
-                  <input id="paySubscriber" type="text" placeholder="Məs: 1234567890"
+                  <input id="paySubscriber" type="text" placeholder="Məs: 1234567890" data-i18n-placeholder="pay.subscriberPlaceholder"
                          class="flex-1 h-12 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
-                  <button type="button" id="debtBtn" class="h-12 px-4 rounded-xl border border-line text-sm font-500 text-ink/70 hover:border-neon hover:text-teal-700 transition whitespace-nowrap">
+                  <button type="button" id="debtBtn" data-i18n="pay.checkDebt" class="h-12 px-4 rounded-xl border border-line text-sm font-500 text-ink/70 hover:border-neon hover:text-teal-700 transition whitespace-nowrap">
                     Borcu yoxla
                   </button>
                 </div>
@@ -174,21 +182,21 @@ tailwind.config = {
               </div>
 
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5">Hesabdan</label>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.fromAccount">Hesabdan</label>
                 <select id="payAccount" class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
               </div>
 
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5">Məbləğ (₼)</label>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.amount">Məbləğ (₼)</label>
                 <input id="payAmount" type="number" step="0.01" min="0.01" placeholder="0.00"
                        class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-lg font-mono font-600 text-ink focus:border-neon focus:bg-white outline-none transition">
               </div>
 
               <div class="flex gap-2">
                 <button type="submit" class="flex-1 h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
-                  <i data-lucide="check" style="width:16px;height:16px"></i> Ödə
+                  <i data-lucide="check" style="width:16px;height:16px"></i> <span data-i18n="pay.pay">Ödə</span>
                 </button>
-                <button type="button" id="saveTemplateBtn" title="Şablon kimi saxla" class="h-12 px-4 rounded-xl border border-line text-ink/60 hover:border-neon hover:text-teal-700 transition">
+                <button type="button" id="saveTemplateBtn" title="Şablon kimi saxla" data-i18n-title="pay.saveTemplate" class="h-12 px-4 rounded-xl border border-line text-ink/60 hover:border-neon hover:text-teal-700 transition">
                   <i data-lucide="bookmark-plus" style="width:18px;height:18px"></i>
                 </button>
               </div>
@@ -204,12 +212,12 @@ tailwind.config = {
                 <i data-lucide="bookmark" style="width:17px;height:17px" class="text-lilac"></i>
               </div>
               <div>
-                <h2 class="font-display font-600 text-ink">Ödəniş şablonları</h2>
-                <p class="text-xs text-ink/45">Tez-tez ödədiklərini bir kliklə ödə</p>
+                <h2 class="font-display font-600 text-ink" data-i18n="pay.templatesTitle">Ödəniş şablonları</h2>
+                <p class="text-xs text-ink/45" data-i18n="pay.templatesHint">Tez-tez ödədiklərini bir kliklə ödə</p>
               </div>
             </div>
             <div id="templatesList" class="space-y-2.5">
-              <p class="text-sm text-ink/35 text-center py-6">Yüklənir…</p>
+              <p class="text-sm text-ink/35 text-center py-6" data-i18n="pay.loading">Yüklənir…</p>
             </div>
           </div>
         </section>
@@ -222,44 +230,44 @@ tailwind.config = {
                 <i data-lucide="calendar-clock" style="width:17px;height:17px" class="text-ink"></i>
               </div>
               <div>
-                <h2 class="font-display font-600 text-ink">Avtomatik ödəniş qur</h2>
-                <p class="text-xs text-ink/45">Hər ay seçilmiş gündə avtomatik ödənilsin</p>
+                <h2 class="font-display font-600 text-ink" data-i18n="pay.scheduleTitle">Avtomatik ödəniş qur</h2>
+                <p class="text-xs text-ink/45" data-i18n="pay.scheduleHint">Hər ay seçilmiş gündə avtomatik ödənilsin</p>
               </div>
             </div>
 
             <form id="scheduleForm" class="space-y-4">
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5">Provayder</label>
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.provider">Provayder</label>
                 <select id="schProvider" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Abunəçi kodu</label>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.subscriberCode">Abunəçi kodu</label>
                   <input id="schSubscriber" type="text" placeholder="1234567890" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
                 </div>
                 <div>
-                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Ayın günü (1–28)</label>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.dayOfMonth">Ayın günü (1–28)</label>
                   <input id="schDay" type="number" min="1" max="28" placeholder="15" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Hesabdan</label>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.fromAccount">Hesabdan</label>
                   <select id="schAccount" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
                 </div>
                 <div>
-                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Məbləğ (₼)</label>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.amount">Məbləğ (₼)</label>
                   <input id="schAmount" type="number" step="0.01" min="0.01" placeholder="0.00" class="w-full h-11 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
                 </div>
               </div>
               <button type="submit" class="w-full h-11 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] transition flex items-center justify-center gap-2">
-                <i data-lucide="plus" style="width:16px;height:16px"></i> Avtomatik ödəniş qur
+                <i data-lucide="plus" style="width:16px;height:16px"></i> <span data-i18n="pay.createSchedule">Avtomatik ödəniş qur</span>
               </button>
             </form>
           </div>
 
           <div id="scheduledList" class="space-y-2.5">
-            <p class="text-sm text-ink/35 text-center py-6">Yüklənir…</p>
+            <p class="text-sm text-ink/35 text-center py-6" data-i18n="pay.loading">Yüklənir…</p>
           </div>
         </section>
 
@@ -270,11 +278,11 @@ tailwind.config = {
       <div class="space-y-6">
         <section class="bg-white rounded-2xl border border-line overflow-hidden">
           <div class="flex items-center justify-between px-5 py-4 border-b border-line">
-            <h2 class="font-display font-600 text-ink">Ödəniş tarixçəsi</h2>
+            <h2 class="font-display font-600 text-ink" data-i18n="pay.history">Ödəniş tarixçəsi</h2>
             <i data-lucide="history" style="width:16px;height:16px" class="text-ink/30"></i>
           </div>
           <ul id="historyList" class="divide-y divide-line max-h-[560px] overflow-y-auto">
-            <li class="px-5 py-8 text-center text-sm text-ink/35">Yüklənir…</li>
+            <li class="px-5 py-8 text-center text-sm text-ink/35" data-i18n="pay.loading">Yüklənir…</li>
           </ul>
         </section>
       </div>
@@ -288,16 +296,16 @@ tailwind.config = {
 <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
   <div class="flex justify-around">
     <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span class="text-[10px]">Panel</span>
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span class="text-[10px]" data-i18n="nav.dashboard">Panel</span>
     </a>
     <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-      <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i><span class="text-[10px]">Köçür</span>
+      <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i><span class="text-[10px]" data-i18n="nav.transferShort">Köçür</span>
     </a>
     <a href="amorabank-payments.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
-      <i data-lucide="receipt" style="width:20px;height:20px"></i><span class="text-[10px] font-500">Ödə</span>
+      <i data-lucide="receipt" style="width:20px;height:20px"></i><span class="text-[10px] font-500" data-i18n="pay.tabPay">Ödə</span>
     </a>
     <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-      <i data-lucide="credit-card" style="width:20px;height:20px"></i><span class="text-[10px]">Kartlar</span>
+      <i data-lucide="credit-card" style="width:20px;height:20px"></i><span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
     </a>
   </div>
 </nav>
@@ -316,7 +324,7 @@ async function api(path, options = {}) {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "Accept-Language": "az",
+      "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
       ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
       ...(options.headers || {}),
     },
@@ -342,16 +350,20 @@ let accounts = [];
 let providers = [];
 let activeCategory = "all";
 
-// UtilityCategory adlari -> az + ikon
+// UtilityCategory adlari -> tercume aciari + ikon
 const CATEGORY_META = {
-  Electricity: { az: "Elektrik", icon: "zap" },
-  Gas:         { az: "Qaz",      icon: "flame" },
-  Water:       { az: "Su",       icon: "droplet" },
-  Internet:    { az: "İnternet", icon: "wifi" },
-  Phone:       { az: "Telefon",  icon: "phone" },
-  TV:          { az: "TV",       icon: "tv" },
+  Electricity: { key: "pay.catElectricity", icon: "zap" },
+  Gas:         { key: "pay.catGas",         icon: "flame" },
+  Water:       { key: "pay.catWater",       icon: "droplet" },
+  Internet:    { key: "pay.catInternet",    icon: "wifi" },
+  Phone:       { key: "pay.catPhone",       icon: "phone" },
+  TV:          { key: "pay.catTV",          icon: "tv" },
 };
-function catMeta(cat) { return CATEGORY_META[cat] || { az: cat || "Digər", icon: "receipt" }; }
+function catMeta(cat) {
+  const m = CATEGORY_META[cat];
+  if (m) return { az: t(m.key), icon: m.icon };
+  return { az: cat || t("pay.catOther"), icon: "receipt" };
+}
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -372,8 +384,8 @@ async function loadAccounts() {
   catch (e) { console.error("Hesablar:", e.message); accounts = []; }
 
   const opts = accounts.length
-    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? 'Əmanət' : 'Cari'} • ${AZN(a.balance)} ₼</option>`).join("")
-    : `<option value="">Hesab yoxdur</option>`;
+    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? t("pay.savingsShort") : t("pay.checkingShort")} • ${AZN(a.balance)} ₼</option>`).join("")
+    : `<option value="">${t("pay.noAccountOption")}</option>`;
   ["payAccount", "schAccount"].forEach(id => { document.getElementById(id).innerHTML = opts; });
 }
 
@@ -387,7 +399,7 @@ async function loadProviders() {
 function renderCategoryChips() {
   const cats = [...new Set(providers.map(p => p.category))];
   const chips = document.getElementById("categoryChips");
-  const all = `<button type="button" data-cat="all" class="cat-chip px-3 h-9 rounded-lg border text-xs font-500 transition flex items-center gap-1.5">Hamısı</button>`;
+  const all = `<button type="button" data-cat="all" class="cat-chip px-3 h-9 rounded-lg border text-xs font-500 transition flex items-center gap-1.5">${t("pay.all")}</button>`;
   chips.innerHTML = all + cats.map(c => {
     const m = catMeta(c);
     return `<button type="button" data-cat="${c}" class="cat-chip px-3 h-9 rounded-lg border text-xs font-500 transition flex items-center gap-1.5">
@@ -413,17 +425,17 @@ function fillProviderSelects() {
   const filtered = activeCategory === "all" ? providers : providers.filter(p => p.category === activeCategory);
   const opts = filtered.length
     ? filtered.map(p => `<option value="${p.id}">${p.name}</option>`).join("")
-    : `<option value="">Provayder yoxdur</option>`;
+    : `<option value="">${t("pay.noProvider")}</option>`;
   document.getElementById("payProvider").innerHTML = opts;
   // scheduled tab-i her provayderi gostersin (kateqoriyadan asili olmasin)
   document.getElementById("schProvider").innerHTML = providers.length
     ? providers.map(p => `<option value="${p.id}">${p.name} (${catMeta(p.category).az})</option>`).join("")
-    : `<option value="">Provayder yoxdur</option>`;
+    : `<option value="">${t("pay.noProvider")}</option>`;
 }
 
 async function loadHistory() {
   const list = document.getElementById("historyList");
-  list.innerHTML = `<li class="px-5 py-8 text-center text-sm text-ink/35">Yüklənir…</li>`;
+  list.innerHTML = `<li class="px-5 py-8 text-center text-sm text-ink/35">${t("pay.loading")}</li>`;
   let items;
   try {
     const res = await api("/api/Utility/my?Page=1&PageSize=20");
@@ -433,7 +445,7 @@ async function loadHistory() {
     return;
   }
   if (!items.length) {
-    list.innerHTML = `<li class="px-5 py-10 text-center"><p class="text-sm text-ink/40">Hələ ödəniş yoxdur.</p></li>`;
+    list.innerHTML = `<li class="px-5 py-10 text-center"><p class="text-sm text-ink/40">${t("pay.noPayments")}</p></li>`;
     return;
   }
   list.innerHTML = items.map(p => {
@@ -450,7 +462,7 @@ async function loadHistory() {
       </div>
       <div class="text-right shrink-0">
         <p class="font-mono font-600 text-sm text-ink-2">−${AZN(p.amount)} ₼</p>
-        <button onclick="downloadReceipt('${p.id}')" class="text-[11px] text-neon hover:underline">PDF qəbz</button>
+        <button onclick="downloadReceipt('${p.id}')" class="text-[11px] text-neon hover:underline">${t("pay.pdfReceipt")}</button>
       </div>
     </li>`;
   }).join("");
@@ -464,23 +476,23 @@ async function loadTemplates() {
   catch (e) { box.innerHTML = `<p class="text-sm text-red-500 text-center py-6">${e.message}</p>`; return; }
   items = Array.isArray(items) ? items : (items.items ?? []);
   if (!items.length) {
-    box.innerHTML = `<p class="text-sm text-ink/35 text-center py-6">Hələ şablon yoxdur. Ödəniş edərkən <i data-lucide="bookmark-plus" style="width:13px;height:13px;display:inline"></i> ilə saxlaya bilərsiniz.</p>`;
+    box.innerHTML = `<p class="text-sm text-ink/35 text-center py-6">${t("pay.noTemplates")}</p>`;
     lucide.createIcons();
     return;
   }
-  box.innerHTML = items.map(t => {
-    const m = catMeta(t.category);
+  box.innerHTML = items.map(tp => {
+    const m = catMeta(tp.category);
     return `
     <div class="flex items-center gap-3 p-3 rounded-xl border border-line hover:border-ink/20 transition">
       <div class="w-9 h-9 rounded-lg bg-mist grid place-items-center shrink-0">
         <i data-lucide="${m.icon}" style="width:16px;height:16px" class="text-ink/60"></i>
       </div>
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-500 text-ink-2 truncate">${t.name}</p>
-        <p class="text-[11px] text-ink/45">${t.providerName} • ${t.subscriberCode}</p>
+        <p class="text-sm font-500 text-ink-2 truncate">${tp.name}</p>
+        <p class="text-[11px] text-ink/45">${tp.providerName} • ${tp.subscriberCode}</p>
       </div>
-      <button onclick="useTemplate('${t.providerId}','${t.subscriberCode}')" class="h-8 px-3 rounded-lg bg-ink text-white text-xs font-500 hover:bg-ink-2 transition">Ödə</button>
-      <button onclick="deleteTemplate('${t.id}')" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-red-50 text-ink/40 hover:text-red-500 transition">
+      <button onclick="useTemplate('${tp.providerId}','${tp.subscriberCode}')" class="h-8 px-3 rounded-lg bg-ink text-white text-xs font-500 hover:bg-ink-2 transition">${t("pay.pay")}</button>
+      <button onclick="deleteTemplate('${tp.id}')" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-red-50 text-ink/40 hover:text-red-500 transition">
         <i data-lucide="trash-2" style="width:15px;height:15px"></i>
       </button>
     </div>`;
@@ -495,7 +507,7 @@ async function loadScheduled() {
   catch (e) { box.innerHTML = `<p class="text-sm text-red-500 text-center py-6">${e.message}</p>`; return; }
   items = Array.isArray(items) ? items : (items.items ?? []);
   if (!items.length) {
-    box.innerHTML = `<p class="text-sm text-ink/35 text-center py-6">Avtomatik ödəniş qurulmayıb.</p>`;
+    box.innerHTML = `<p class="text-sm text-ink/35 text-center py-6">${t("pay.noScheduled")}</p>`;
     return;
   }
   box.innerHTML = items.map(s => `
@@ -505,9 +517,9 @@ async function loadScheduled() {
       </div>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-500 text-ink-2 truncate">${s.providerName}</p>
-        <p class="text-[11px] text-ink/45">${s.subscriberCode} • hər ayın ${s.dayOfMonth}-i • ${AZN(s.amount)} ₼</p>
+        <p class="text-[11px] text-ink/45">${s.subscriberCode} • ${t("pay.everyMonthDay")} ${s.dayOfMonth}${t("pay.dayOrdinal")} • ${AZN(s.amount)} ₼</p>
       </div>
-      <button onclick="toggleScheduled('${s.id}', ${!s.isActive})" title="${s.isActive ? 'Dayandır' : 'Aktivləşdir'}"
+      <button onclick="toggleScheduled('${s.id}', ${!s.isActive})" title="${s.isActive ? t('pay.stop') : t('pay.activate')}"
               class="w-9 h-9 grid place-items-center rounded-lg border border-line hover:border-ink/20 transition ${s.isActive ? "text-teal-700" : "text-ink/40"}">
         <i data-lucide="${s.isActive ? "pause" : "play"}" style="width:15px;height:15px"></i>
       </button>
@@ -528,14 +540,14 @@ document.getElementById("debtBtn").addEventListener("click", async () => {
   const providerId = document.getElementById("payProvider").value;
   const subscriberCode = document.getElementById("paySubscriber").value.trim();
   const res = document.getElementById("debtResult");
-  if (!providerId || !subscriberCode) return showMsg("Provayder və abunəçi kodunu daxil edin.", false);
+  if (!providerId || !subscriberCode) return showMsg(t("pay.enterProviderSubscriber"), false);
 
-  res.textContent = "Yoxlanılır…";
+  res.textContent = t("pay.checking");
   res.classList.remove("hidden");
   try {
     const d = await api("/api/Utility/debt", { method: "POST", body: JSON.stringify({ providerId, subscriberCode }) });
     res.className = "mt-2 text-sm px-3 py-2 rounded-lg bg-neon/10 text-teal-800";
-    res.textContent = `Borc: ${AZN(d.debtAmount)} ₼`;
+    res.textContent = `${t("pay.debt")} ${AZN(d.debtAmount)} ₼`;
     // borcu avtomatik mebleg xanasina yaz
     if (d.debtAmount > 0) document.getElementById("payAmount").value = d.debtAmount;
   } catch (e) {
@@ -554,13 +566,13 @@ document.getElementById("payForm").addEventListener("submit", async (e) => {
     amount: parseFloat(document.getElementById("payAmount").value),
   };
   if (!body.providerId || !body.subscriberCode || !body.accountId || !body.amount || body.amount <= 0)
-    return showMsg("Bütün xanaları düzgün doldurun.", false);
+    return showMsg(t("pay.fillAllFields"), false);
 
   const btn = e.target.querySelector("button[type=submit]");
   btn.disabled = true;
   try {
     await api("/api/Utility/pay", { method: "POST", body: JSON.stringify(body) });
-    showMsg(`${AZN(body.amount)} ₼ ödənildi.`, true);
+    showMsg(`${AZN(body.amount)} ₼ ${t("pay.paid")}`, true);
     document.getElementById("payForm").reset();
     document.getElementById("debtResult").classList.add("hidden");
     await loadAccounts();
@@ -576,13 +588,13 @@ document.getElementById("payForm").addEventListener("submit", async (e) => {
 document.getElementById("saveTemplateBtn").addEventListener("click", async () => {
   const providerId = document.getElementById("payProvider").value;
   const subscriberCode = document.getElementById("paySubscriber").value.trim();
-  if (!providerId || !subscriberCode) return showMsg("Şablon üçün provayder və abunəçi kodu lazımdır.", false);
+  if (!providerId || !subscriberCode) return showMsg(t("pay.templateNeedsProvider"), false);
 
-  const name = prompt("Şablon adı (məs: Ev elektrik):");
+  const name = prompt(t("pay.templateNamePrompt"));
   if (!name) return;
   try {
     await api("/api/PaymentTemplate", { method: "POST", body: JSON.stringify({ name: name.trim(), providerId, subscriberCode }) });
-    showMsg("Şablon saxlanıldı.", true);
+    showMsg(t("pay.templateSaved"), true);
     await loadTemplates();
   } catch (e) { showMsg(e.message, false); }
 });
@@ -611,15 +623,15 @@ document.getElementById("scheduleForm").addEventListener("submit", async (e) => 
     dayOfMonth: parseInt(document.getElementById("schDay").value),
   };
   if (!body.accountId || !body.providerId || !body.subscriberCode || !body.amount || !body.dayOfMonth)
-    return showMsg("Bütün xanaları doldurun.", false);
+    return showMsg(t("pay.fillAll"), false);
   if (body.dayOfMonth < 1 || body.dayOfMonth > 28)
-    return showMsg("Ayın günü 1–28 arası olmalıdır.", false);
+    return showMsg(t("pay.dayRange"), false);
 
   const btn = e.target.querySelector("button[type=submit]");
   btn.disabled = true;
   try {
     await api("/api/ScheduledPayment", { method: "POST", body: JSON.stringify(body) });
-    showMsg("Avtomatik ödəniş quruldu.", true);
+    showMsg(t("pay.scheduleCreated"), true);
     document.getElementById("scheduleForm").reset();
     await loadScheduled();
   } catch (err) { showMsg(err.message, false); }
@@ -639,7 +651,7 @@ async function deleteScheduled(id) {
 async function downloadReceipt(id) {
   try {
     const res = await fetch(`${API_BASE}/api/Utility/${id}/receipt/pdf`, { headers: { "Authorization": "Bearer " + getToken() } });
-    if (!res.ok) throw new Error("PDF alına bilmədi.");
+    if (!res.ok) throw new Error(t("pay.pdfFailed"));
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -674,10 +686,6 @@ function setTab(name) {
   lucide.createIcons();
 }
 tabBtns.forEach(b => b.onclick = () => setTab(b.dataset.tab));
-
-// document.querySelectorAll(".nav-soon").forEach(item => {
-//   item.onclick = (e) => { e.preventDefault(); showMsg("Bu bölmə hazırlanır. Tezliklə əlçatan olacaq.", false); };
-// });
 
 document.getElementById("logoutBtn").onclick = async () => {
   try { await api("/api/Auth/logout", { method: "POST" }); } catch (e) {}

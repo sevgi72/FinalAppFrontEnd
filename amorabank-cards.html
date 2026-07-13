@@ -7,6 +7,7 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="i18n.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,30 +65,37 @@ tailwind.config = {
 
     <nav class="flex-1 space-y-1">
       <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> Panel
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span data-i18n="nav.dashboard">Panel</span>
       </a>
       <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> Köçürmələr
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span data-i18n="nav.transfers">Köçürmələr</span>
       </a>
       <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="credit-card" style="width:18px;height:18px"></i> Kartlar
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> <span data-i18n="nav.cards">Kartlar</span>
       </a>
       <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="receipt" style="width:18px;height:18px"></i> Ödənişlər
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
       </a>
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> Yığım
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
       <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> Analitika
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="landmark" style="width:18px;height:18px"></i> Kreditlər
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
     </nav>
 
+    <!-- Dil secimi -->
+    <div class="flex justify-center gap-1 mb-3">
+      <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
+      <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
+      <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+    </div>
+
     <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-      <i data-lucide="log-out" style="width:18px;height:18px"></i> Çıxış
+      <i data-lucide="log-out" style="width:18px;height:18px"></i> <span data-i18n="common.logout">Çıxış</span>
     </button>
   </aside>
 
@@ -105,20 +113,20 @@ tailwind.config = {
         </div>
 
         <div class="hidden lg:block">
-          <h1 class="font-display font-600 text-ink text-lg leading-tight">Kartlarım</h1>
-          <p class="text-xs text-ink/50">Bank kartlarını idarə et</p>
+          <h1 class="font-display font-600 text-ink text-lg leading-tight" data-i18n="cards.myCards">Kartlarım</h1>
+          <p class="text-xs text-ink/50" data-i18n="cards.subtitle">Bank kartlarını idarə et</p>
         </div>
 
         <div class="flex-1"></div>
 
         <button id="newCardBtn" class="flex items-center gap-2 px-4 h-9 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.98] transition">
           <i data-lucide="plus" style="width:16px;height:16px"></i>
-          <span class="hidden sm:inline">Yeni kart</span>
+          <span class="hidden sm:inline" data-i18n="cards.newCard">Yeni kart</span>
         </button>
 
         <a href="amorabank-dashboard.html" class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
           <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
-          <span class="hidden sm:inline">Panel</span>
+          <span class="hidden sm:inline" data-i18n="cards.panel">Panel</span>
         </a>
 
         <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
@@ -138,7 +146,7 @@ tailwind.config = {
 
       <!-- Kartlar setki -->
       <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        <div class="col-span-full py-16 text-center text-ink/35 text-sm">Kartlar yüklənir…</div>
+        <div class="col-span-full py-16 text-center text-ink/35 text-sm" data-i18n="cards.loading">Kartlar yüklənir…</div>
       </div>
 
     </div>
@@ -157,16 +165,16 @@ tailwind.config = {
       <i data-lucide="credit-card" style="width:22px;height:22px" class="text-teal-700"></i>
     </div>
 
-    <h3 class="font-display font-600 text-ink text-lg">Yeni kart aç</h3>
-    <p class="text-sm text-ink/50 mt-1 mb-5">Kartın bağlanacağı hesabı seçin.</p>
+    <h3 class="font-display font-600 text-ink text-lg" data-i18n="cards.createTitle">Yeni kart aç</h3>
+    <p class="text-sm text-ink/50 mt-1 mb-5" data-i18n="cards.createSubtitle">Kartın bağlanacağı hesabı seçin.</p>
 
     <form id="createForm" class="space-y-4">
       <div>
-        <label class="block text-xs font-500 text-ink/60 mb-1.5">Hesab</label>
+        <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="cards.account">Hesab</label>
         <select id="cardAccount" class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
       </div>
       <button type="submit" class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
-        <i data-lucide="plus" style="width:16px;height:16px"></i> Kartı yarat
+        <i data-lucide="plus" style="width:16px;height:16px"></i> <span data-i18n="cards.createBtn">Kartı yarat</span>
       </button>
     </form>
   </div>
@@ -178,19 +186,19 @@ tailwind.config = {
   <div class="flex justify-around">
     <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
       <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
-      <span class="text-[10px]">Panel</span>
+      <span class="text-[10px]" data-i18n="nav.dashboard">Panel</span>
     </a>
     <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
       <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
-      <span class="text-[10px]">Köçür</span>
+      <span class="text-[10px]" data-i18n="nav.transferShort">Köçür</span>
     </a>
     <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
       <i data-lucide="credit-card" style="width:20px;height:20px"></i>
-      <span class="text-[10px] font-500">Kartlar</span>
+      <span class="text-[10px] font-500" data-i18n="nav.cards">Kartlar</span>
     </a>
     <button class="nav-soon flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
       <i data-lucide="pie-chart" style="width:20px;height:20px"></i>
-      <span class="text-[10px]">Analitika</span>
+      <span class="text-[10px]" data-i18n="nav.analytics">Analitika</span>
     </button>
   </div>
 </nav>
@@ -210,7 +218,7 @@ async function api(path, options = {}) {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "Accept-Language": "az",
+      "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
       ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
       ...(options.headers || {}),
     },
@@ -264,16 +272,16 @@ async function loadAccounts() {
   const sel = document.getElementById("cardAccount");
   if (accounts.length) {
     sel.innerHTML = accounts.map(a =>
-      `<option value="${a.id}">${a.type === 'Savings' ? 'Əmanət' : 'Cari'} • ${formatIban(a.accountNumber)}</option>`
+      `<option value="${a.id}">${a.type === 'Savings' ? t("cards.savingsShort") : t("cards.checkingShort")} • ${formatIban(a.accountNumber)}</option>`
     ).join("");
   } else {
-    sel.innerHTML = `<option value="">Hesab yoxdur</option>`;
+    sel.innerHTML = `<option value="">${t("cards.noAccountOption")}</option>`;
   }
 }
 
 async function loadCards() {
   const grid = document.getElementById("cardsGrid");
-  grid.innerHTML = `<div class="col-span-full py-16 text-center text-ink/35 text-sm">Kartlar yüklənir…</div>`;
+  grid.innerHTML = `<div class="col-span-full py-16 text-center text-ink/35 text-sm">${t("cards.loading")}</div>`;
   try {
     const res = await api("/api/Card/my?Page=1&PageSize=20");
     // cavab {items:[...]} ya birbasa massiv ola biler
@@ -310,8 +318,8 @@ function cardStatus(card) {
 function accountTypeLabel(card) {
   // kart hansi hesaba baglidir - hesabdan tipi tapmaga calis
   const acc = accounts.find(a => a.id === card.accountId);
-  if (acc) return acc.type === "Savings" ? "Əmanət hesabı" : "Cari hesab";
-  return card.accountType === "Savings" ? "Əmanət hesabı" : "Cari hesab";
+  if (acc) return acc.type === "Savings" ? t("cards.savingsAccount") : t("cards.checkingAccount");
+  return card.accountType === "Savings" ? t("cards.savingsAccount") : t("cards.checkingAccount");
 }
 
 function expiryLabel(card) {
@@ -332,10 +340,10 @@ function renderCards() {
           <div class="w-14 h-14 rounded-2xl bg-mist grid place-items-center mx-auto mb-4">
             <i data-lucide="credit-card" style="width:26px;height:26px" class="text-ink/30"></i>
           </div>
-          <h3 class="font-display font-600 text-ink">Hələ kartınız yoxdur</h3>
-          <p class="text-sm text-ink/45 mt-1.5 mb-5">İlk kartınızı açın — hesabınıza bağlanacaq.</p>
+          <h3 class="font-display font-600 text-ink">${t("cards.noCardsTitle")}</h3>
+          <p class="text-sm text-ink/45 mt-1.5 mb-5">${t("cards.noCardsHint")}</p>
           <button onclick="openCreate()" class="inline-flex items-center gap-2 px-5 h-11 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 transition">
-            <i data-lucide="plus" style="width:16px;height:16px"></i> Kart aç
+            <i data-lucide="plus" style="width:16px;height:16px"></i> ${t("cards.openCard")}
           </button>
         </div>
       </div>`;
@@ -359,7 +367,7 @@ function renderCards() {
             <div class="flex items-start justify-between">
               <div class="chip w-10 h-7 rounded-md"></div>
               <span class="px-2 py-0.5 rounded-md text-[10px] font-600 ${blocked ? "bg-red-500/20 text-red-300" : "bg-neon/20 text-neon"}">
-                ${blocked ? "Bloklu" : "Aktiv"}
+                ${blocked ? t("cards.statusBlocked") : t("cards.statusActive")}
               </span>
             </div>
 
@@ -369,11 +377,11 @@ function renderCards() {
 
             <div class="flex items-end justify-between">
               <div>
-                <p class="text-white/40 text-[9px] uppercase tracking-wider">Hesab</p>
+                <p class="text-white/40 text-[9px] uppercase tracking-wider">${t("cards.accountLabel")}</p>
                 <p class="text-white/80 text-xs">${accountTypeLabel(card)}</p>
               </div>
               <div class="text-right">
-                <p class="text-white/40 text-[9px] uppercase tracking-wider">Bitmə</p>
+                <p class="text-white/40 text-[9px] uppercase tracking-wider">${t("cards.expiry")}</p>
                 <p class="text-white/80 text-xs font-mono">${expiryLabel(card)}</p>
               </div>
               <span class="font-display font-700 text-white/90 text-sm italic">amora</span>
@@ -386,10 +394,10 @@ function renderCards() {
       <div class="flex gap-2">
         ${blocked
           ? `<button onclick="unblockCard('${card.id}')" class="flex-1 h-10 rounded-xl bg-white border border-line text-sm font-500 text-teal-700 hover:border-neon transition flex items-center justify-center gap-1.5">
-               <i data-lucide="lock-open" style="width:15px;height:15px"></i> Aktivləşdir
+               <i data-lucide="lock-open" style="width:15px;height:15px"></i> ${t("cards.activate")}
              </button>`
           : `<button onclick="blockCard('${card.id}')" class="flex-1 h-10 rounded-xl bg-white border border-line text-sm font-500 text-ink/70 hover:border-red-300 hover:text-red-600 transition flex items-center justify-center gap-1.5">
-               <i data-lucide="lock" style="width:15px;height:15px"></i> Blokla
+               <i data-lucide="lock" style="width:15px;height:15px"></i> ${t("cards.block")}
              </button>`
         }
       </div>
@@ -406,7 +414,7 @@ function renderCards() {
 async function blockCard(id) {
   try {
     await api(`/api/Card/${id}/block`, { method: "POST" });
-    showMsg("Kart bloklandı.", true);
+    showMsg(t("cards.blocked"), true);
     await loadCards();
   } catch (e) { showMsg(e.message, false); }
 }
@@ -414,7 +422,7 @@ async function blockCard(id) {
 async function unblockCard(id) {
   try {
     await api(`/api/Card/${id}/unblock`, { method: "POST" });
-    showMsg("Kart aktivləşdirildi.", true);
+    showMsg(t("cards.activated"), true);
     await loadCards();
   } catch (e) { showMsg(e.message, false); }
 }
@@ -422,14 +430,14 @@ async function unblockCard(id) {
 document.getElementById("createForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const accountId = document.getElementById("cardAccount").value;
-  if (!accountId) return showMsg("Əvvəlcə hesab lazımdır.", false);
+  if (!accountId) return showMsg(t("cards.needAccount"), false);
 
   const btn = e.target.querySelector("button[type=submit]");
   btn.disabled = true;
   try {
     await api("/api/Card", { method: "POST", body: JSON.stringify({ accountId }) });
     closeCreate();
-    showMsg("Yeni kart yaradıldı.", true);
+    showMsg(t("cards.created"), true);
     await loadCards();
   } catch (err) {
     showMsg(err.message, false);
@@ -452,7 +460,7 @@ function showMsg(text, ok) {
 }
 
 function openCreate() {
-  if (!accounts.length) return showMsg("Kart açmaq üçün əvvəlcə hesabınız olmalıdır.", false);
+  if (!accounts.length) return showMsg(t("cards.needAccountFirst"), false);
   document.getElementById("createModal").classList.remove("hidden");
 }
 function closeCreate() { document.getElementById("createModal").classList.add("hidden"); }
@@ -460,10 +468,6 @@ function closeCreate() { document.getElementById("createModal").classList.add("h
 document.getElementById("newCardBtn").onclick = openCreate;
 document.getElementById("closeCreate").onclick = closeCreate;
 document.getElementById("createModal").onclick = (e) => { if (e.target.id === "createModal") closeCreate(); };
-
-// document.querySelectorAll(".nav-soon").forEach(item => {
-//   item.onclick = (e) => { e.preventDefault(); showMsg("Bu bölmə hazırlanır. Tezliklə əlçatan olacaq.", false); };
-// });
 
 document.getElementById("logoutBtn").onclick = async () => {
   try { await api("/api/Auth/logout", { method: "POST" }); } catch (e) {}
