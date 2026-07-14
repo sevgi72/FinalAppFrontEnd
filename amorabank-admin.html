@@ -1,728 +1,643 @@
 <!DOCTYPE html>
 <html lang="az">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amorabank — Back-office</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amorabank — Back-office</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-  <script src="i18n.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
-    rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+<script src="i18n.js"></script>
+<script src="currency.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <script>
-    // ====== TOKENLER (musteri paneli ile eyni sistem, fon daha aciq) ======
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            ink: '#2c2966', 'ink-2': '#1b1940', 'ink-3': '#14122e',
-            neon: '#00e5d4', lilac: '#7c6ff0',
-            mist: '#f7f8fb', line: '#e6e8f2',
-            danger: '#dc2626', warn: '#d97706', ok: '#0f766e',
-          },
-          fontFamily: {
-            display: ['Sora', 'sans-serif'], body: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'],
-          },
-        }
-      }
-    }
-  </script>
+<script>
+// ====== TOKENLER (musteri paneli ile eyni sistem, fon daha aciq) ======
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      ink:'#2c2966', 'ink-2':'#1b1940', 'ink-3':'#14122e',
+      neon:'#00e5d4', lilac:'#7c6ff0',
+      mist:'#f7f8fb', line:'#e6e8f2',
+      danger:'#dc2626', warn:'#d97706', ok:'#0f766e',
+    },
+    fontFamily: {
+      display:['Sora','sans-serif'], body:['Inter','sans-serif'], mono:['JetBrains Mono','monospace'],
+    },
+  }}
+}
+</script>
 
-  <style>
-    /* Cedvel setirleri - sakit hover, data oxunaqli qalsin */
-    tbody tr:hover {
-      background: #fafbfd;
-    }
+<style>
+  /* Cedvel setirleri - sakit hover, data oxunaqli qalsin */
+  tbody tr:hover { background: #fafbfd; }
 
-    /* Panel (drawer) - sagdan sururek acilir */
-    #drawer {
-      transition: transform .32s cubic-bezier(.22, 1, .36, 1);
-    }
+  /* Panel (drawer) - sagdan sururek acilir */
+  #drawer { transition: transform .32s cubic-bezier(.22,1,.36,1); }
+  #drawer.hidden-panel { transform: translateX(100%); }
 
-    #drawer.hidden-panel {
-      transform: translateX(100%);
-    }
+  /* Bolmeler arasi kecid */
+  .page { display:none }
+  .page.active { display:block; animation: fade .25s ease }
+  @keyframes fade { from{opacity:0; transform:translateY(6px)} to{opacity:1;transform:none} }
 
-    /* Bolmeler arasi kecid */
-    .page {
-      display: none
-    }
+  /* SuperAdmin teleb olunan elementler - Admin ucun sondurulur */
+  .super-only.locked { opacity:.4; pointer-events:none }
 
-    .page.active {
-      display: block;
-      animation: fade .25s ease
-    }
-
-    @keyframes fade {
-      from {
-        opacity: 0;
-        transform: translateY(6px)
-      }
-
-      to {
-        opacity: 1;
-        transform: none
-      }
-    }
-
-    /* SuperAdmin teleb olunan elementler - Admin ucun sondurulur */
-    .super-only.locked {
-      opacity: .4;
-      pointer-events: none
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #cfd3e6;
-      border-radius: 99px
-    }
-
-    :focus-visible {
-      outline: 2px solid #00e5d4;
-      outline-offset: 2px;
-      border-radius: 6px
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        transition: none !important
-      }
-
-      .page {
-        animation: none
-      }
-    }
-  </style>
+  ::-webkit-scrollbar { width:6px; height:6px }
+  ::-webkit-scrollbar-thumb { background:#cfd3e6; border-radius:99px }
+  :focus-visible { outline:2px solid #00e5d4; outline-offset:2px; border-radius:6px }
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important} .page{animation:none} }
+</style>
 </head>
 
 <body class="bg-mist font-body text-ink-2 antialiased text-[13px]">
 
-  <div class="flex min-h-screen">
+<div class="flex min-h-screen">
 
-    <aside class="hidden lg:flex w-60 shrink-0 flex-col bg-ink-2 text-white/65 px-4 py-5">
+  <aside class="hidden lg:flex w-60 shrink-0 flex-col bg-ink-2 text-white/65 px-4 py-5">
 
-      <div class="flex items-center gap-2.5 px-2 mb-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
-          <i data-lucide="gem" style="width:16px;height:16px" class="text-ink-2"></i>
-        </div>
-        <div class="leading-tight">
-          <p class="font-display font-700 text-white text-sm">Amorabank</p>
-          <p class="text-[10px] text-white/40 uppercase tracking-wider" data-i18n="adm.backoffice">Back-office</p>
-        </div>
+    <div class="flex items-center gap-2.5 px-2 mb-2">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
+        <i data-lucide="gem" style="width:16px;height:16px" class="text-ink-2"></i>
       </div>
-
-      <div id="roleBadge" class="mx-2 mb-6 px-2.5 py-1.5 rounded-lg bg-white/6 flex items-center gap-2">
-        <i data-lucide="shield" style="width:13px;height:13px" class="text-neon"></i>
-        <span class="text-[11px] font-500 text-white/80" id="roleLabel">—</span>
+      <div class="leading-tight">
+        <p class="font-display font-700 text-white text-sm">Amorabank</p>
+        <p class="text-[10px] text-white/40 uppercase tracking-wider" data-i18n="adm.backoffice">Back-office</p>
       </div>
-
-      <nav class="flex-1 space-y-0.5">
-        <button data-page="overview"
-          class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
-          <i data-lucide="gauge" style="width:16px;height:16px"></i> <span data-i18n="adm.navOverview">İcmal</span>
-        </button>
-        <button data-page="users"
-          class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
-          <i data-lucide="users" style="width:16px;height:16px"></i> <span data-i18n="adm.navUsers">Müştərilər</span>
-        </button>
-        <button data-page="loans"
-          class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
-          <i data-lucide="landmark" style="width:16px;height:16px"></i> <span data-i18n="adm.navLoans">Kredit
-            sorğuları</span>
-          <span id="loanBadge"
-            class="hidden ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-neon text-ink-2 text-[10px] font-700 grid place-items-center">0</span>
-        </button>
-        <button data-page="support"
-          class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
-          <i data-lucide="messages-square" style="width:16px;height:16px"></i> <span
-            data-i18n="adm.navSupport">Dəstək</span>
-        </button>
-        <button data-page="broadcast"
-          class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
-          <i data-lucide="megaphone" style="width:16px;height:16px"></i> <span data-i18n="adm.navBroadcast">Elan
-            göndər</span>
-        </button>
-
-        <p class="px-3 pt-5 pb-2 text-[10px] uppercase tracking-wider text-white/25" data-i18n="adm.superOnly">Yalnız
-          SuperAdmin</p>
-
-        <button data-page="audit"
-          class="nav-btn super-only w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
-          <i data-lucide="scroll-text" style="width:16px;height:16px"></i> <span data-i18n="adm.navAudit">Audit
-            jurnalı</span>
-        </button>
-        <button data-page="settings"
-          class="nav-btn super-only w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
-          <i data-lucide="sliders-horizontal" style="width:16px;height:16px"></i> <span
-            data-i18n="adm.navSettings">Sistem tənzimləri</span>
-        </button>
-      </nav>
-
-      <!-- Dil secimi -->
-      <div class="flex justify-center gap-1 mb-3">
-        <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
-        <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
-        <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
-      </div>
-
-      <div class="pt-4 border-t border-white/8">
-        <div class="flex items-center gap-2.5 px-2 py-2">
-          <div id="adminAvatar"
-            class="w-8 h-8 rounded-full bg-white/10 text-white grid place-items-center font-600 text-xs">—</div>
-          <div class="min-w-0 leading-tight">
-            <p class="text-[12px] text-white/85 truncate" id="adminName">…</p>
-            <p class="text-[10px] text-white/35 truncate" id="adminEmail">…</p>
-          </div>
-        </div>
-        <button id="logoutBtn"
-          class="w-full flex items-center gap-2.5 px-3 py-2 mt-1 rounded-lg hover:bg-white/5 hover:text-white text-[13px] transition">
-          <i data-lucide="log-out" style="width:16px;height:16px"></i> <span data-i18n="adm.logout">Çıxış</span>
-        </button>
-      </div>
-    </aside>
-
-
-    <main class="flex-1 min-w-0">
-
-      <header class="sticky top-0 z-20 bg-white border-b border-line">
-        <div class="flex items-center gap-3 px-5 lg:px-7 h-14">
-          <h1 id="pageTitle" class="font-display font-600 text-ink text-[15px]">İcmal</h1>
-          <div class="flex-1"></div>
-          <span class="hidden sm:flex items-center gap-1.5 text-[11px] text-ink/40">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span data-i18n="adm.systemHealthy">Sistem
-              sağlam</span>
-          </span>
-          <button id="refreshBtn"
-            class="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-line hover:border-ink/20 text-[12px] font-500 transition">
-            <i data-lucide="refresh-cw" style="width:13px;height:13px"></i> <span data-i18n="adm.refresh">Yenilə</span>
-          </button>
-        </div>
-      </header>
-
-      <div class="px-5 lg:px-7 pt-4">
-        <p id="toast" class="hidden text-[12px] px-3.5 py-2.5 rounded-lg"></p>
-      </div>
-
-      <div class="px-5 lg:px-7 py-5">
-
-        <section class="page active" data-page="overview">
-
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-            <div class="bg-white rounded-xl border border-line p-4">
-              <p class="text-[11px] text-ink/45" data-i18n="adm.todayTx">Bu gün əməliyyat</p>
-              <p class="font-mono font-700 text-2xl text-ink mt-1" id="stTodayCount">—</p>
-              <p class="text-[11px] text-ink/40 mt-1"><span id="stTodayVolume">—</span> ₼ <span
-                  data-i18n="adm.turnover">dövriyyə</span></p>
-            </div>
-            <div class="bg-white rounded-xl border border-line p-4">
-              <p class="text-[11px] text-ink/45" data-i18n="adm.monthTurnover">Bu ay dövriyyə</p>
-              <p class="font-mono font-700 text-2xl text-ink mt-1" id="stMonthVolume">—</p>
-              <p class="text-[11px] text-ink/40 mt-1"><span id="stMonthCount">—</span> <span
-                  data-i18n="adm.transactions">əməliyyat</span></p>
-            </div>
-            <div class="bg-white rounded-xl border border-line p-4">
-              <p class="text-[11px] text-ink/45" data-i18n="adm.customers">Müştəri</p>
-              <p class="font-mono font-700 text-2xl text-ink mt-1" id="stUsers">—</p>
-              <p class="text-[11px] text-danger mt-1"><span id="stBlocked">—</span> <span
-                  data-i18n="adm.blocked">bloklu</span></p>
-            </div>
-            <div class="bg-gradient-to-br from-ink to-ink-3 rounded-xl p-4 text-white">
-              <p class="text-[11px] text-white/50" data-i18n="adm.systemFunds">Sistemdəki vəsait</p>
-              <p class="font-mono font-700 text-2xl mt-1" id="stBalance">—</p>
-              <p class="text-[11px] text-white/40 mt-1"><span id="stAccounts">—</span> <span
-                  data-i18n="adm.accounts">hesab</span></p>
-            </div>
-          </div>
-
-          <div class="grid lg:grid-cols-2 gap-4">
-            <div class="bg-white rounded-xl border border-line overflow-hidden">
-              <div class="px-4 py-3 border-b border-line">
-                <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.topUsers">Ən aktiv müştərilər</h2>
-                <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.topUsersHint">Bu ay, əməliyyat sayına görə</p>
-              </div>
-              <table class="w-full">
-                <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide">
-                  <tr>
-                    <th class="text-left font-500 px-4 py-2" data-i18n="adm.thCustomer">Müştəri</th>
-                    <th class="text-right font-500 px-4 py-2" data-i18n="adm.thTx">Əməliyyat</th>
-                    <th class="text-right font-500 px-4 py-2" data-i18n="adm.thVolume">Həcm</th>
-                  </tr>
-                </thead>
-                <tbody id="topUsersBody" class="divide-y divide-line"></tbody>
-              </table>
-            </div>
-
-            <div class="bg-white rounded-xl border border-line overflow-hidden">
-              <div class="px-4 py-3 border-b border-line">
-                <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.utilityPayments">Kommunal
-                  ödənişlər</h2>
-                <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.utilityHint">Provayder üzrə, bu ay</p>
-              </div>
-              <table class="w-full">
-                <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide">
-                  <tr>
-                    <th class="text-left font-500 px-4 py-2" data-i18n="adm.thProvider">Provayder</th>
-                    <th class="text-right font-500 px-4 py-2" data-i18n="adm.thPayment">Ödəniş</th>
-                    <th class="text-right font-500 px-4 py-2" data-i18n="adm.thAmount">Məbləğ</th>
-                  </tr>
-                </thead>
-                <tbody id="providerBody" class="divide-y divide-line"></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-
-        <section class="page" data-page="users">
-
-          <div class="bg-white rounded-xl border border-line p-3 mb-4 flex flex-wrap gap-2.5 items-center">
-            <div class="relative flex-1 min-w-[220px]">
-              <i data-lucide="search" style="width:15px;height:15px"
-                class="absolute left-3 top-1/2 -translate-y-1/2 text-ink/30"></i>
-              <input id="userSearch" type="text" placeholder="Ad və ya email üzrə axtar…"
-                data-i18n-placeholder="adm.searchUsers"
-                class="w-full h-9 pl-9 pr-3 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition">
-            </div>
-
-            <div class="flex gap-1 p-0.5 rounded-lg bg-mist border border-line">
-              <button data-filter="" class="filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition"
-                data-i18n="adm.filterAll">Hamısı</button>
-              <button data-filter="false" class="filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition"
-                data-i18n="adm.filterActive">Aktiv</button>
-              <button data-filter="true" class="filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition"
-                data-i18n="adm.filterBlocked">Bloklu</button>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-xl border border-line overflow-hidden">
-            <div class="overflow-x-auto">
-              <table class="w-full min-w-[680px]">
-                <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide border-b border-line">
-                  <tr>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thCustomer">Müştəri</th>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thRole">Rol</th>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thEmail">Email</th>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thStatus">Status</th>
-                    <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thAction">Əməliyyat</th>
-                  </tr>
-                </thead>
-                <tbody id="usersBody" class="divide-y divide-line">
-                  <tr>
-                    <td colspan="5" class="px-4 py-10 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="flex items-center justify-between px-4 py-3 border-t border-line">
-              <p class="text-[11px] text-ink/45" id="userCount">—</p>
-              <div class="flex gap-1.5">
-                <button id="userPrev"
-                  class="h-8 px-3 rounded-lg border border-line text-[12px] font-500 hover:border-ink/20 disabled:opacity-40 transition"
-                  data-i18n="adm.prev">Əvvəlki</button>
-                <button id="userNext"
-                  class="h-8 px-3 rounded-lg border border-line text-[12px] font-500 hover:border-ink/20 disabled:opacity-40 transition"
-                  data-i18n="adm.next">Növbəti</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-
-        <section class="page" data-page="loans">
-          <div class="bg-white rounded-xl border border-line overflow-hidden">
-            <div class="px-4 py-3 border-b border-line">
-              <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.pendingLoans">Təsdiq gözləyən
-                kreditlər</h2>
-              <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.pendingLoansHint">Qərar verildikdən sonra geri
-                qaytarılmır.</p>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full min-w-[720px]">
-                <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide border-b border-line">
-                  <tr>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thCustomer">Müştəri</th>
-                    <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thAmount">Məbləğ</th>
-                    <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thTerm">Müddət</th>
-                    <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thMonthly">Aylıq ödəniş</th>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thDate">Tarix</th>
-                    <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thDecision">Qərar</th>
-                  </tr>
-                </thead>
-                <tbody id="loansBody" class="divide-y divide-line">
-                  <tr>
-                    <td colspan="6" class="px-4 py-10 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-
-        <section class="page" data-page="support">
-          <div class="grid lg:grid-cols-[300px_1fr] gap-4">
-
-            <div class="bg-white rounded-xl border border-line overflow-hidden">
-              <div class="px-4 py-3 border-b border-line">
-                <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.conversations">Söhbətlər</h2>
-              </div>
-              <ul id="convList" class="divide-y divide-line max-h-[520px] overflow-y-auto">
-                <li class="px-4 py-8 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</li>
-              </ul>
-            </div>
-
-            <div class="bg-white rounded-xl border border-line flex flex-col h-[560px]">
-              <div class="px-4 py-3 border-b border-line flex items-center gap-2.5">
-                <div id="convAvatar"
-                  class="w-8 h-8 rounded-full bg-ink/8 text-ink grid place-items-center font-600 text-[11px]">—</div>
-                <div class="leading-tight">
-                  <p class="text-[13px] font-500" id="convName" data-i18n="adm.selectConv">Söhbət seçin</p>
-                  <p class="text-[11px] text-ink/40" id="convEmail">—</p>
-                </div>
-              </div>
-
-              <div id="msgArea" class="flex-1 overflow-y-auto p-4 space-y-2.5 bg-mist/50">
-                <p class="text-center text-ink/30 text-[12px] py-16" data-i18n="adm.pickConvLeft">Soldan bir söhbət
-                  seçin.</p>
-              </div>
-
-              <form id="chatForm" class="p-3 border-t border-line flex gap-2">
-                <input id="chatInput" type="text" placeholder="Cavab yazın…"
-                  data-i18n-placeholder="adm.replyPlaceholder" disabled
-                  class="flex-1 h-10 px-3.5 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition disabled:opacity-50">
-                <button type="submit" disabled id="chatSend"
-                  class="h-10 px-4 rounded-lg bg-ink text-white text-[12px] font-600 hover:bg-ink-2 disabled:opacity-40 transition"
-                  data-i18n="adm.send">
-                  Göndər
-                </button>
-              </form>
-            </div>
-          </div>
-        </section>
-
-
-        <section class="page" data-page="broadcast">
-          <div class="max-w-xl bg-white rounded-xl border border-line p-5">
-            <h2 class="font-display font-600 text-ink text-[14px]" data-i18n="adm.broadcastTitle">Bütün müştərilərə elan
-            </h2>
-            <p class="text-[12px] text-ink/45 mt-1 mb-5" data-i18n="adm.broadcastHint">
-              Elan həm bildiriş siyahısına düşür, həm də onlayn müştərilərə dərhal çatır.
-            </p>
-
-            <form id="broadcastForm" class="space-y-3.5">
-              <div>
-                <label class="block text-[11px] font-500 text-ink/60 mb-1.5" data-i18n="adm.title">Başlıq</label>
-                <input name="title" required maxlength="200" placeholder="Bayram kampaniyası"
-                  data-i18n-placeholder="adm.titlePlaceholder"
-                  class="w-full h-10 px-3.5 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition">
-              </div>
-              <div>
-                <label class="block text-[11px] font-500 text-ink/60 mb-1.5" data-i18n="adm.message">Mətn</label>
-                <textarea name="message" required maxlength="1000" rows="4" placeholder="Bu həftə keşbek iki qat."
-                  data-i18n-placeholder="adm.messagePlaceholder"
-                  class="w-full px-3.5 py-2.5 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition resize-none"></textarea>
-              </div>
-              <button type="submit" id="broadcastBtn"
-                class="h-10 px-5 rounded-lg bg-ink text-white text-[12px] font-600 hover:bg-ink-2 active:scale-[.99] transition"
-                data-i18n="adm.sendBroadcast">
-                Elanı göndər
-              </button>
-            </form>
-          </div>
-        </section>
-
-
-        <section class="page" data-page="audit">
-          <div class="bg-white rounded-xl border border-line overflow-hidden">
-            <div class="px-4 py-3 border-b border-line">
-              <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.auditLog">Audit jurnalı</h2>
-              <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.auditHint">Sistemdəki hər dəyişiklik burada qeyd
-                olunur.</p>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full min-w-[720px]">
-                <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide border-b border-line">
-                  <tr>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thTime">Vaxt</th>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thEvent">Əməl</th>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thWho">Kim</th>
-                    <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thDetails">Təfərrüat</th>
-                  </tr>
-                </thead>
-                <tbody id="auditBody" class="divide-y divide-line">
-                  <tr>
-                    <td colspan="4" class="px-4 py-10 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-
-        <section class="page" data-page="settings">
-          <div class="grid lg:grid-cols-2 gap-4">
-
-            <div class="bg-white rounded-xl border border-line overflow-hidden">
-              <div class="px-4 py-3 border-b border-line">
-                <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.commissionRules">Komissiya
-                  qaydaları</h2>
-                <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.commissionHint">Həddən yuxarı köçürmələrdən
-                  tutulur.</p>
-              </div>
-              <div id="commissionList" class="divide-y divide-line">
-                <p class="px-4 py-8 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</p>
-              </div>
-            </div>
-
-            <div class="bg-white rounded-xl border border-line overflow-hidden">
-              <div class="px-4 py-3 border-b border-line">
-                <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.utilityProviders">Kommunal
-                  provayderlər</h2>
-                <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.providersHint">Söndürülən provayderə ödəniş
-                  qəbul edilmir.</p>
-              </div>
-              <ul id="providerToggleList" class="divide-y divide-line max-h-[420px] overflow-y-auto">
-                <li class="px-4 py-8 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-      </div>
-    </main>
-  </div>
-
-
-  <div id="drawerOverlay" class="hidden fixed inset-0 bg-ink-3/40 backdrop-blur-[2px] z-30"></div>
-
-  <aside id="drawer"
-    class="hidden-panel fixed top-0 right-0 h-full w-full sm:w-[440px] bg-white z-40 shadow-2xl overflow-y-auto">
-    <div class="sticky top-0 bg-white border-b border-line px-5 py-3.5 flex items-center gap-3">
-      <button id="drawerClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
-        <i data-lucide="x" style="width:16px;height:16px" class="text-ink/50"></i>
-      </button>
-      <h2 class="font-display font-600 text-ink text-[14px]" data-i18n="adm.customerCard">Müştəri kartı</h2>
     </div>
 
-    <div id="drawerBody" class="p-5">
-      <p class="text-center text-ink/35 py-16" data-i18n="adm.loading">Yüklənir…</p>
+    <div id="roleBadge" class="mx-2 mb-6 px-2.5 py-1.5 rounded-lg bg-white/6 flex items-center gap-2">
+      <i data-lucide="shield" style="width:13px;height:13px" class="text-neon"></i>
+      <span class="text-[11px] font-500 text-white/80" id="roleLabel">—</span>
+    </div>
+
+    <nav class="flex-1 space-y-0.5">
+      <button data-page="overview" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
+        <i data-lucide="gauge" style="width:16px;height:16px"></i> <span data-i18n="adm.navOverview">İcmal</span>
+      </button>
+      <button data-page="users" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
+        <i data-lucide="users" style="width:16px;height:16px"></i> <span data-i18n="adm.navUsers">Müştərilər</span>
+      </button>
+      <button data-page="loans" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
+        <i data-lucide="landmark" style="width:16px;height:16px"></i> <span data-i18n="adm.navLoans">Kredit sorğuları</span>
+        <span id="loanBadge" class="hidden ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-neon text-ink-2 text-[10px] font-700 grid place-items-center">0</span>
+      </button>
+      <button data-page="support" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
+        <i data-lucide="messages-square" style="width:16px;height:16px"></i> <span data-i18n="adm.navSupport">Dəstək</span>
+      </button>
+      <button data-page="broadcast" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
+        <i data-lucide="megaphone" style="width:16px;height:16px"></i> <span data-i18n="adm.navBroadcast">Elan göndər</span>
+      </button>
+
+      <p class="px-3 pt-5 pb-2 text-[10px] uppercase tracking-wider text-white/25" data-i18n="adm.superOnly">Yalnız SuperAdmin</p>
+
+      <button data-page="audit" class="nav-btn super-only w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
+        <i data-lucide="scroll-text" style="width:16px;height:16px"></i> <span data-i18n="adm.navAudit">Audit jurnalı</span>
+      </button>
+      <button data-page="settings" class="nav-btn super-only w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] transition">
+        <i data-lucide="sliders-horizontal" style="width:16px;height:16px"></i> <span data-i18n="adm.navSettings">Sistem tənzimləri</span>
+      </button>
+    </nav>
+
+    <!-- Dil + Valyuta secimi (kompakt dropdown) -->
+    <div class="flex gap-2 justify-center mb-3">
+      <!-- Dil -->
+      <div class="relative flex-1">
+        <button id="langTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-8 px-2.5 rounded-lg bg-white/8 hover:bg-white/12 text-xs font-500 text-white/85 transition">
+          <i data-lucide="globe" style="width:13px;height:13px" class="text-white/50"></i>
+          <span id="langTriggerLabel">AZ</span>
+          <i data-lucide="chevron-down" style="width:12px;height:12px" class="text-white/40"></i>
+        </button>
+        <div id="langMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-black/20 p-1 z-50">
+          <button data-lang="az" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan <span class="text-[10px] text-ink/40">AZ</span></button>
+          <button data-lang="en" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English <span class="text-[10px] text-ink/40">EN</span></button>
+          <button data-lang="ru" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский <span class="text-[10px] text-ink/40">RU</span></button>
+        </div>
+      </div>
+      <!-- Valyuta -->
+      <div class="relative flex-1">
+        <button id="curTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-8 px-2.5 rounded-lg bg-white/8 hover:bg-white/12 text-xs font-500 text-white/85 transition">
+          <span id="curTriggerLabel">₼ AZN</span>
+          <i data-lucide="chevron-down" style="width:12px;height:12px" class="text-white/40"></i>
+        </button>
+        <div id="curMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-black/20 p-1 z-50">
+          <button data-cur="AZN" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat <span class="text-[11px] text-ink/40">₼</span></button>
+          <button data-cur="USD" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar <span class="text-[11px] text-ink/40">$</span></button>
+          <button data-cur="EUR" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro <span class="text-[11px] text-ink/40">€</span></button>
+          <button data-cur="TRY" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə <span class="text-[11px] text-ink/40">₺</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-4 border-t border-white/8">
+      <div class="flex items-center gap-2.5 px-2 py-2">
+        <div id="adminAvatar" class="w-8 h-8 rounded-full bg-white/10 text-white grid place-items-center font-600 text-xs">—</div>
+        <div class="min-w-0 leading-tight">
+          <p class="text-[12px] text-white/85 truncate" id="adminName">…</p>
+          <p class="text-[10px] text-white/35 truncate" id="adminEmail">…</p>
+        </div>
+      </div>
+      <button id="logoutBtn" class="w-full flex items-center gap-2.5 px-3 py-2 mt-1 rounded-lg hover:bg-white/5 hover:text-white text-[13px] transition">
+        <i data-lucide="log-out" style="width:16px;height:16px"></i> <span data-i18n="adm.logout">Çıxış</span>
+      </button>
     </div>
   </aside>
 
 
-  <script>
-    /* ══════════════════════════════════════════════════════════════
-       1. KONFIQURASIYA
-       ══════════════════════════════════════════════════════════════ */
+  <main class="flex-1 min-w-0">
 
-    const API_BASE = "http://localhost:5150";
+    <header class="sticky top-0 z-20 bg-white border-b border-line">
+      <div class="flex items-center gap-3 px-5 lg:px-7 h-14">
+        <h1 id="pageTitle" class="font-display font-600 text-ink text-[15px]">İcmal</h1>
+        <div class="flex-1"></div>
+        <span class="hidden sm:flex items-center gap-1.5 text-[11px] text-ink/40">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span data-i18n="adm.systemHealthy">Sistem sağlam</span>
+        </span>
+        <button id="refreshBtn" class="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-line hover:border-ink/20 text-[12px] font-500 transition">
+          <i data-lucide="refresh-cw" style="width:13px;height:13px"></i> <span data-i18n="adm.refresh">Yenilə</span>
+        </button>
+      </div>
+    </header>
 
-    // DÜZƏLİŞ 1: Token əsl login səhifəsindən (localStorage) oxunur
-    const getToken = () => localStorage.getItem("token");
+    <div class="px-5 lg:px-7 pt-4">
+      <p id="toast" class="hidden text-[12px] px-3.5 py-2.5 rounded-lg"></p>
+    </div>
 
-    // Əgər token yoxdursa, birbaşa giriş (auth) səhifəsinə yönləndirilir
-    if (!getToken()) {
-      window.location.href = "amorabank-auth.html";
-    }
+    <div class="px-5 lg:px-7 py-5">
 
-    // Cari rol: token-den oxunur. SuperAdmin ise elave hüquqlar acilir.
-    let CURRENT_ROLE = "Admin";
-    const isSuper = () => CURRENT_ROLE === "SuperAdmin";
+      <section class="page active" data-page="overview">
 
-    const AZN = (n) => Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const initials = (s) => (s || "?").trim().charAt(0).toUpperCase();
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+          <div class="bg-white rounded-xl border border-line p-4">
+            <p class="text-[11px] text-ink/45" data-i18n="adm.todayTx">Bu gün əməliyyat</p>
+            <p class="font-mono font-700 text-2xl text-ink mt-1" id="stTodayCount">—</p>
+            <p class="text-[11px] text-ink/40 mt-1"><span id="stTodayVolume">—</span> <span data-i18n="adm.turnover">dövriyyə</span></p>
+          </div>
+          <div class="bg-white rounded-xl border border-line p-4">
+            <p class="text-[11px] text-ink/45" data-i18n="adm.monthTurnover">Bu ay dövriyyə</p>
+            <p class="font-mono font-700 text-2xl text-ink mt-1" id="stMonthVolume">—</p>
+            <p class="text-[11px] text-ink/40 mt-1"><span id="stMonthCount">—</span> <span data-i18n="adm.transactions">əməliyyat</span></p>
+          </div>
+          <div class="bg-white rounded-xl border border-line p-4">
+            <p class="text-[11px] text-ink/45" data-i18n="adm.customers">Müştəri</p>
+            <p class="font-mono font-700 text-2xl text-ink mt-1" id="stUsers">—</p>
+            <p class="text-[11px] text-danger mt-1"><span id="stBlocked">—</span> <span data-i18n="adm.blocked">bloklu</span></p>
+          </div>
+          <div class="bg-gradient-to-br from-ink to-ink-3 rounded-xl p-4 text-white">
+            <p class="text-[11px] text-white/50" data-i18n="adm.systemFunds">Sistemdəki vəsait</p>
+            <p class="font-mono font-700 text-2xl mt-1" id="stBalance">—</p>
+            <p class="text-[11px] text-white/40 mt-1"><span id="stAccounts">—</span> <span data-i18n="adm.accounts">hesab</span></p>
+          </div>
+        </div>
 
+        <div class="grid lg:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl border border-line overflow-hidden">
+            <div class="px-4 py-3 border-b border-line">
+              <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.topUsers">Ən aktiv müştərilər</h2>
+              <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.topUsersHint">Bu ay, əməliyyat sayına görə</p>
+            </div>
+            <table class="w-full">
+              <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide">
+                <tr>
+                  <th class="text-left font-500 px-4 py-2" data-i18n="adm.thCustomer">Müştəri</th>
+                  <th class="text-right font-500 px-4 py-2" data-i18n="adm.thTx">Əməliyyat</th>
+                  <th class="text-right font-500 px-4 py-2" data-i18n="adm.thVolume">Həcm</th>
+                </tr>
+              </thead>
+              <tbody id="topUsersBody" class="divide-y divide-line"></tbody>
+            </table>
+          </div>
 
-    /* ══════════════════════════════════════════════════════════════
-       2. API KOMEKCISI
-       ══════════════════════════════════════════════════════════════ */
-
-    async function api(path, options = {}) {
-      const res = await fetch(API_BASE + path, {
-        ...options,
-        headers: {
-          "Content-Type": "application/json",
-          "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
-          ...(getToken() ? { Authorization: "Bearer " + getToken() } : {}),
-          ...(options.headers || {}),
-        },
-      });
-
-      if (res.status === 401) throw new Error(t("adm.sessionExpired"));
-      if (res.status === 403) throw new Error(t("adm.superRequired"));
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || data.message || t("adm.error"));
-      return data;
-    }
-
-    // Token-den rolu oxu (JWT payload-i base64-dur)
-    function readRoleFromToken(token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const roleClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
-        const nameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
-        const mailClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
-        return {
-          role: payload[roleClaim] || "Admin",
-          name: payload[nameClaim] || "Admin",
-          email: payload[mailClaim] || "",
-        };
-      } catch { return null; }
-    }
-
-
-    /* ══════════════════════════════════════════════════════════════
-       3. ROL IDARESI — Admin ucun SuperAdmin bolmeleri baglanir
-       ══════════════════════════════════════════════════════════════ */
-
-    function applyRoleGuards() {
-      document.getElementById("roleLabel").textContent = isSuper() ? "SuperAdmin" : "Admin";
-
-      // SuperAdmin-e aid duymeler / bolmeler
-      document.querySelectorAll(".super-only").forEach(el => el.classList.toggle("locked", !isSuper()));
-
-      // Naviqasiyada SuperAdmin bolmelerine kliki bagla
-      document.querySelectorAll(".nav-btn.super-only").forEach(btn => {
-        btn.title = isSuper() ? "" : t("adm.superOnlyView");
-      });
-    }
-
-
-    /* ══════════════════════════════════════════════════════════════
-       4. BOLME NAVIQASIYASI
-       ══════════════════════════════════════════════════════════════ */
-
-    function pageTitle(name) {
-      const map = {
-        overview: "adm.navOverview", users: "adm.navUsers", loans: "adm.navLoans",
-        support: "adm.navSupport", broadcast: "adm.navBroadcast", audit: "adm.navAudit", settings: "adm.navSettings",
-      };
-      return t(map[name] || "adm.navOverview");
-    }
-
-    function showPage(name) {
-      document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.dataset.page === name));
-      document.querySelectorAll(".nav-btn").forEach(b =>
-        b.className = b.className.replace(/bg-white\/10 text-white|hover:bg-white\/5/g, "").trim() +
-        (b.dataset.page === name ? " bg-white/10 text-white" : " hover:bg-white/5"));
-      document.getElementById("pageTitle").textContent = pageTitle(name);
-
-      // Bolme acilanda datani cek
-      ({
-        overview: loadStats, users: () => loadUsers(1), loans: loadLoans,
-        support: loadConversations, audit: loadAudit, settings: loadSettings
-      }[name] || (() => { }))();
-    }
-
-    document.querySelectorAll(".nav-btn").forEach(btn => {
-      btn.onclick = () => {
-        if (btn.classList.contains("super-only") && !isSuper()) return toast(t("adm.superOnlyViewDot"), false);
-        showPage(btn.dataset.page);
-      };
-    });
+          <div class="bg-white rounded-xl border border-line overflow-hidden">
+            <div class="px-4 py-3 border-b border-line">
+              <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.utilityPayments">Kommunal ödənişlər</h2>
+              <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.utilityHint">Provayder üzrə, bu ay</p>
+            </div>
+            <table class="w-full">
+              <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide">
+                <tr>
+                  <th class="text-left font-500 px-4 py-2" data-i18n="adm.thProvider">Provayder</th>
+                  <th class="text-right font-500 px-4 py-2" data-i18n="adm.thPayment">Ödəniş</th>
+                  <th class="text-right font-500 px-4 py-2" data-i18n="adm.thAmount">Məbləğ</th>
+                </tr>
+              </thead>
+              <tbody id="providerBody" class="divide-y divide-line"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
 
-    /* ══════════════════════════════════════════════════════════════
-       5. ICMAL — GET /api/Admin/stats
-       ══════════════════════════════════════════════════════════════ */
+      <section class="page" data-page="users">
 
-    async function loadStats() {
-      let s;
-      try { s = await api("/api/Admin/stats"); }
-      catch (e) {
-        s = {
-          todayTransactionCount: 14, todayTransactionVolume: 3240.50, monthTransactionCount: 186,
-          monthTransactionVolume: 48920.10, totalUsers: 37, blockedUsers: 2, totalAccounts: 52, totalBalance: 184320.75,
-          topActiveUsers: [
-            { email: "sevgi@amorabank.az", transactionCount: 23, totalVolume: 4120.00 },
-            { email: "konul@amorabank.az", transactionCount: 18, totalVolume: 2890.50 },
-            { email: "leyla@amorabank.az", transactionCount: 11, totalVolume: 1740.20 }],
-          utilityByProvider: [
-            { providerName: "Azərişıq", paymentCount: 24, totalAmount: 1420.00 },
-            { providerName: "Azəriqaz", paymentCount: 19, totalAmount: 980.40 },
-            { providerName: "Nar", paymentCount: 31, totalAmount: 465.50 }]
-        };
-      }
+        <div class="bg-white rounded-xl border border-line p-3 mb-4 flex flex-wrap gap-2.5 items-center">
+          <div class="relative flex-1 min-w-[220px]">
+            <i data-lucide="search" style="width:15px;height:15px" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink/30"></i>
+            <input id="userSearch" type="text" placeholder="Ad və ya email üzrə axtar…" data-i18n-placeholder="adm.searchUsers"
+                   class="w-full h-9 pl-9 pr-3 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition">
+          </div>
 
-      document.getElementById("stTodayCount").textContent = s.todayTransactionCount;
-      document.getElementById("stTodayVolume").textContent = AZN(s.todayTransactionVolume);
-      document.getElementById("stMonthVolume").textContent = AZN(s.monthTransactionVolume);
-      document.getElementById("stMonthCount").textContent = s.monthTransactionCount;
-      document.getElementById("stUsers").textContent = s.totalUsers;
-      document.getElementById("stBlocked").textContent = s.blockedUsers;
-      document.getElementById("stBalance").textContent = AZN(s.totalBalance) + " ₼";
-      document.getElementById("stAccounts").textContent = s.totalAccounts;
+          <div class="flex gap-1 p-0.5 rounded-lg bg-mist border border-line">
+            <button data-filter="" class="filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition" data-i18n="adm.filterAll">Hamısı</button>
+            <button data-filter="false" class="filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition" data-i18n="adm.filterActive">Aktiv</button>
+            <button data-filter="true" class="filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition" data-i18n="adm.filterBlocked">Bloklu</button>
+          </div>
+        </div>
 
-      document.getElementById("topUsersBody").innerHTML = (s.topActiveUsers || []).map(u => `
+        <div class="bg-white rounded-xl border border-line overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[680px]">
+              <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide border-b border-line">
+                <tr>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thCustomer">Müştəri</th>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thRole">Rol</th>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thEmail">Email</th>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thStatus">Status</th>
+                  <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thAction">Əməliyyat</th>
+                </tr>
+              </thead>
+              <tbody id="usersBody" class="divide-y divide-line">
+                <tr><td colspan="5" class="px-4 py-10 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex items-center justify-between px-4 py-3 border-t border-line">
+            <p class="text-[11px] text-ink/45" id="userCount">—</p>
+            <div class="flex gap-1.5">
+              <button id="userPrev" class="h-8 px-3 rounded-lg border border-line text-[12px] font-500 hover:border-ink/20 disabled:opacity-40 transition" data-i18n="adm.prev">Əvvəlki</button>
+              <button id="userNext" class="h-8 px-3 rounded-lg border border-line text-[12px] font-500 hover:border-ink/20 disabled:opacity-40 transition" data-i18n="adm.next">Növbəti</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="page" data-page="loans">
+        <div class="bg-white rounded-xl border border-line overflow-hidden">
+          <div class="px-4 py-3 border-b border-line">
+            <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.pendingLoans">Təsdiq gözləyən kreditlər</h2>
+            <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.pendingLoansHint">Qərar verildikdən sonra geri qaytarılmır.</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[720px]">
+              <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide border-b border-line">
+                <tr>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thCustomer">Müştəri</th>
+                  <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thAmount">Məbləğ</th>
+                  <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thTerm">Müddət</th>
+                  <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thMonthly">Aylıq ödəniş</th>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thDate">Tarix</th>
+                  <th class="text-right font-500 px-4 py-2.5" data-i18n="adm.thDecision">Qərar</th>
+                </tr>
+              </thead>
+              <tbody id="loansBody" class="divide-y divide-line">
+                <tr><td colspan="6" class="px-4 py-10 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="page" data-page="support">
+        <div class="grid lg:grid-cols-[300px_1fr] gap-4">
+
+          <div class="bg-white rounded-xl border border-line overflow-hidden">
+            <div class="px-4 py-3 border-b border-line">
+              <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.conversations">Söhbətlər</h2>
+            </div>
+            <ul id="convList" class="divide-y divide-line max-h-[520px] overflow-y-auto">
+              <li class="px-4 py-8 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</li>
+            </ul>
+          </div>
+
+          <div class="bg-white rounded-xl border border-line flex flex-col h-[560px]">
+            <div class="px-4 py-3 border-b border-line flex items-center gap-2.5">
+              <div id="convAvatar" class="w-8 h-8 rounded-full bg-ink/8 text-ink grid place-items-center font-600 text-[11px]">—</div>
+              <div class="leading-tight">
+                <p class="text-[13px] font-500" id="convName" data-i18n="adm.selectConv">Söhbət seçin</p>
+                <p class="text-[11px] text-ink/40" id="convEmail">—</p>
+              </div>
+            </div>
+
+            <div id="msgArea" class="flex-1 overflow-y-auto p-4 space-y-2.5 bg-mist/50">
+              <p class="text-center text-ink/30 text-[12px] py-16" data-i18n="adm.pickConvLeft">Soldan bir söhbət seçin.</p>
+            </div>
+
+            <form id="chatForm" class="p-3 border-t border-line flex gap-2">
+              <input id="chatInput" type="text" placeholder="Cavab yazın…" data-i18n-placeholder="adm.replyPlaceholder" disabled
+                     class="flex-1 h-10 px-3.5 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition disabled:opacity-50">
+              <button type="submit" disabled id="chatSend"
+                      class="h-10 px-4 rounded-lg bg-ink text-white text-[12px] font-600 hover:bg-ink-2 disabled:opacity-40 transition" data-i18n="adm.send">
+                Göndər
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="page" data-page="broadcast">
+        <div class="max-w-xl bg-white rounded-xl border border-line p-5">
+          <h2 class="font-display font-600 text-ink text-[14px]" data-i18n="adm.broadcastTitle">Bütün müştərilərə elan</h2>
+          <p class="text-[12px] text-ink/45 mt-1 mb-5" data-i18n="adm.broadcastHint">
+            Elan həm bildiriş siyahısına düşür, həm də onlayn müştərilərə dərhal çatır.
+          </p>
+
+          <form id="broadcastForm" class="space-y-3.5">
+            <div>
+              <label class="block text-[11px] font-500 text-ink/60 mb-1.5" data-i18n="adm.title">Başlıq</label>
+              <input name="title" required maxlength="200" placeholder="Bayram kampaniyası" data-i18n-placeholder="adm.titlePlaceholder"
+                     class="w-full h-10 px-3.5 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition">
+            </div>
+            <div>
+              <label class="block text-[11px] font-500 text-ink/60 mb-1.5" data-i18n="adm.message">Mətn</label>
+              <textarea name="message" required maxlength="1000" rows="4" placeholder="Bu həftə keşbek iki qat." data-i18n-placeholder="adm.messagePlaceholder"
+                        class="w-full px-3.5 py-2.5 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition resize-none"></textarea>
+            </div>
+            <button type="submit" id="broadcastBtn"
+                    class="h-10 px-5 rounded-lg bg-ink text-white text-[12px] font-600 hover:bg-ink-2 active:scale-[.99] transition" data-i18n="adm.sendBroadcast">
+              Elanı göndər
+            </button>
+          </form>
+        </div>
+      </section>
+
+
+      <section class="page" data-page="audit">
+        <div class="bg-white rounded-xl border border-line overflow-hidden">
+          <div class="px-4 py-3 border-b border-line">
+            <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.auditLog">Audit jurnalı</h2>
+            <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.auditHint">Sistemdəki hər dəyişiklik burada qeyd olunur.</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[720px]">
+              <thead class="bg-mist text-[11px] text-ink/45 uppercase tracking-wide border-b border-line">
+                <tr>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thTime">Vaxt</th>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thEvent">Əməl</th>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thWho">Kim</th>
+                  <th class="text-left font-500 px-4 py-2.5" data-i18n="adm.thDetails">Təfərrüat</th>
+                </tr>
+              </thead>
+              <tbody id="auditBody" class="divide-y divide-line">
+                <tr><td colspan="4" class="px-4 py-10 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <section class="page" data-page="settings">
+        <div class="grid lg:grid-cols-2 gap-4">
+
+          <div class="bg-white rounded-xl border border-line overflow-hidden">
+            <div class="px-4 py-3 border-b border-line">
+              <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.commissionRules">Komissiya qaydaları</h2>
+              <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.commissionHint">Həddən yuxarı köçürmələrdən tutulur.</p>
+            </div>
+            <div id="commissionList" class="divide-y divide-line">
+              <p class="px-4 py-8 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-line overflow-hidden">
+            <div class="px-4 py-3 border-b border-line">
+              <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.utilityProviders">Kommunal provayderlər</h2>
+              <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.providersHint">Söndürülən provayderə ödəniş qəbul edilmir.</p>
+            </div>
+            <ul id="providerToggleList" class="divide-y divide-line max-h-[420px] overflow-y-auto">
+              <li class="px-4 py-8 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+
+<div id="drawerOverlay" class="hidden fixed inset-0 bg-ink-3/40 backdrop-blur-[2px] z-30"></div>
+
+<aside id="drawer" class="hidden-panel fixed top-0 right-0 h-full w-full sm:w-[440px] bg-white z-40 shadow-2xl overflow-y-auto">
+  <div class="sticky top-0 bg-white border-b border-line px-5 py-3.5 flex items-center gap-3">
+    <button id="drawerClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
+      <i data-lucide="x" style="width:16px;height:16px" class="text-ink/50"></i>
+    </button>
+    <h2 class="font-display font-600 text-ink text-[14px]" data-i18n="adm.customerCard">Müştəri kartı</h2>
+  </div>
+
+  <div id="drawerBody" class="p-5">
+    <p class="text-center text-ink/35 py-16" data-i18n="adm.loading">Yüklənir…</p>
+  </div>
+</aside>
+
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   1. KONFIQURASIYA
+   ══════════════════════════════════════════════════════════════ */
+
+const API_BASE = "http://localhost:5150";
+
+// DÜZƏLİŞ 1: Token əsl login səhifəsindən (localStorage) oxunur
+const getToken = () => localStorage.getItem("token");
+
+// Əgər token yoxdursa, birbaşa giriş (auth) səhifəsinə yönləndirilir
+if (!getToken()) {
+  window.location.href = "amorabank-auth.html";
+}
+
+// Cari rol: token-den oxunur. SuperAdmin ise elave hüquqlar acilir.
+let CURRENT_ROLE = "Admin";
+const isSuper = () => CURRENT_ROLE === "SuperAdmin";
+
+const AZN = (n) => (typeof money === "function" ? money(n) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20bc");
+const AZNnum = (n) => (typeof moneyNum === "function" ? Number(moneyNum(n)).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const curSym = () => (typeof symbol === "function" ? symbol() : "\u20bc");
+const initials = (s) => (s || "?").trim().charAt(0).toUpperCase();
+
+
+/* ══════════════════════════════════════════════════════════════
+   2. API KOMEKCISI
+   ══════════════════════════════════════════════════════════════ */
+
+async function api(path, options = {}) {
+  const res = await fetch(API_BASE + path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
+      ...(getToken() ? { Authorization: "Bearer " + getToken() } : {}),
+      ...(options.headers || {}),
+    },
+  });
+
+  if (res.status === 401) throw new Error(t("adm.sessionExpired"));
+  if (res.status === 403) throw new Error(t("adm.superRequired"));
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || data.message || t("adm.error"));
+  return data;
+}
+
+// Token-den rolu oxu (JWT payload-i base64-dur)
+function readRoleFromToken(token) {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const roleClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+    const nameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+    const mailClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+    return {
+      role:  payload[roleClaim] || "Admin",
+      name:  payload[nameClaim] || "Admin",
+      email: payload[mailClaim] || "",
+    };
+  } catch { return null; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   3. ROL IDARESI — Admin ucun SuperAdmin bolmeleri baglanir
+   ══════════════════════════════════════════════════════════════ */
+
+function applyRoleGuards() {
+  document.getElementById("roleLabel").textContent = isSuper() ? "SuperAdmin" : "Admin";
+
+  // SuperAdmin-e aid duymeler / bolmeler
+  document.querySelectorAll(".super-only").forEach(el => el.classList.toggle("locked", !isSuper()));
+
+  // Naviqasiyada SuperAdmin bolmelerine kliki bagla
+  document.querySelectorAll(".nav-btn.super-only").forEach(btn => {
+    btn.title = isSuper() ? "" : t("adm.superOnlyView");
+  });
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   4. BOLME NAVIQASIYASI
+   ══════════════════════════════════════════════════════════════ */
+
+function pageTitle(name) {
+  const map = {
+    overview: "adm.navOverview", users: "adm.navUsers", loans: "adm.navLoans",
+    support: "adm.navSupport", broadcast: "adm.navBroadcast", audit: "adm.navAudit", settings: "adm.navSettings",
+  };
+  return t(map[name] || "adm.navOverview");
+}
+
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.dataset.page === name));
+  document.querySelectorAll(".nav-btn").forEach(b =>
+    b.className = b.className.replace(/bg-white\/10 text-white|hover:bg-white\/5/g, "").trim() +
+      (b.dataset.page === name ? " bg-white/10 text-white" : " hover:bg-white/5"));
+  document.getElementById("pageTitle").textContent = pageTitle(name);
+
+  // Bolme acilanda datani cek
+  ({ overview: loadStats, users: () => loadUsers(1), loans: loadLoans,
+     support: loadConversations, audit: loadAudit, settings: loadSettings }[name] || (() => {}))();
+}
+
+document.querySelectorAll(".nav-btn").forEach(btn => {
+  btn.onclick = () => {
+    if (btn.classList.contains("super-only") && !isSuper()) return toast(t("adm.superOnlyViewDot"), false);
+    showPage(btn.dataset.page);
+  };
+});
+
+
+/* ══════════════════════════════════════════════════════════════
+   5. ICMAL — GET /api/Admin/stats
+   ══════════════════════════════════════════════════════════════ */
+
+async function loadStats() {
+  let s;
+  try { s = await api("/api/Admin/stats"); }
+  catch (e) {
+    s = { todayTransactionCount:14, todayTransactionVolume:3240.50, monthTransactionCount:186,
+          monthTransactionVolume:48920.10, totalUsers:37, blockedUsers:2, totalAccounts:52, totalBalance:184320.75,
+          topActiveUsers:[
+            { email:"sevgi@amorabank.az", transactionCount:23, totalVolume:4120.00 },
+            { email:"konul@amorabank.az", transactionCount:18, totalVolume:2890.50 },
+            { email:"leyla@amorabank.az", transactionCount:11, totalVolume:1740.20 }],
+          utilityByProvider:[
+            { providerName:"Azərişıq", paymentCount:24, totalAmount:1420.00 },
+            { providerName:"Azəriqaz", paymentCount:19, totalAmount:980.40 },
+            { providerName:"Nar",      paymentCount:31, totalAmount:465.50 }] };
+  }
+
+  document.getElementById("stTodayCount").textContent   = s.todayTransactionCount;
+  document.getElementById("stTodayVolume").textContent  = AZN(s.todayTransactionVolume);
+  document.getElementById("stMonthVolume").textContent  = AZN(s.monthTransactionVolume);
+  document.getElementById("stMonthCount").textContent   = s.monthTransactionCount;
+  document.getElementById("stUsers").textContent        = s.totalUsers;
+  document.getElementById("stBlocked").textContent      = s.blockedUsers;
+  document.getElementById("stBalance").textContent      = AZN(s.totalBalance);
+  document.getElementById("stAccounts").textContent     = s.totalAccounts;
+
+  document.getElementById("topUsersBody").innerHTML = (s.topActiveUsers || []).map(u => `
     <tr>
       <td class="px-4 py-2.5 text-[12px]">${u.email}</td>
       <td class="px-4 py-2.5 text-right font-mono text-[12px]">${u.transactionCount}</td>
-      <td class="px-4 py-2.5 text-right font-mono text-[12px] text-ink">${AZN(u.totalVolume)} ₼</td>
+      <td class="px-4 py-2.5 text-right font-mono text-[12px] text-ink">${AZN(u.totalVolume)}</td>
     </tr>`).join("") || emptyRow(3);
 
-      document.getElementById("providerBody").innerHTML = (s.utilityByProvider || []).map(p => `
+  document.getElementById("providerBody").innerHTML = (s.utilityByProvider || []).map(p => `
     <tr>
       <td class="px-4 py-2.5 text-[12px]">${p.providerName}</td>
       <td class="px-4 py-2.5 text-right font-mono text-[12px]">${p.paymentCount}</td>
-      <td class="px-4 py-2.5 text-right font-mono text-[12px] text-ink">${AZN(p.totalAmount)} ₼</td>
+      <td class="px-4 py-2.5 text-right font-mono text-[12px] text-ink">${AZN(p.totalAmount)}</td>
     </tr>`).join("") || emptyRow(3);
-    }
+}
 
-    const emptyRow = (cols) => `<tr><td colspan="${cols}" class="px-4 py-8 text-center text-ink/30 text-[12px]">${t("adm.noData")}</td></tr>`;
+const emptyRow = (cols) => `<tr><td colspan="${cols}" class="px-4 py-8 text-center text-ink/30 text-[12px]">${t("adm.noData")}</td></tr>`;
 
 
-    /* ══════════════════════════════════════════════════════════════
-       6. MUSTERILER — GET /api/Admin/users?search=&blocked=&Page=
-       ══════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   6. MUSTERILER — GET /api/Admin/users?search=&blocked=&Page=
+   ══════════════════════════════════════════════════════════════ */
 
-    let userPage = 1, userFilter = "", userSearchTerm = "", userTotalPages = 1;
+let userPage = 1, userFilter = "", userSearchTerm = "", userTotalPages = 1;
 
-    async function loadUsers(page = 1) {
-      userPage = page;
-      const body = document.getElementById("usersBody");
-      body.innerHTML = `<tr><td colspan="5" class="px-4 py-10 text-center text-ink/35">${t("adm.loading")}</td></tr>`;
+async function loadUsers(page = 1) {
+  userPage = page;
+  const body = document.getElementById("usersBody");
+  body.innerHTML = `<tr><td colspan="5" class="px-4 py-10 text-center text-ink/35">${t("adm.loading")}</td></tr>`;
 
-      const qs = new URLSearchParams({ Page: page, PageSize: 10 });
-      if (userSearchTerm) qs.set("search", userSearchTerm);
-      if (userFilter !== "") qs.set("blocked", userFilter);
+  const qs = new URLSearchParams({ Page: page, PageSize: 10 });
+  if (userSearchTerm) qs.set("search", userSearchTerm);
+  if (userFilter !== "") qs.set("blocked", userFilter);
 
-      let res;
-      try { res = await api(`/api/Admin/users?${qs}`); }
-      catch (e) {
-        res = {
-          items: [
-            { id: "u1", fullName: "Sevgi Fərəcli", email: "sevgi@amorabank.az", roles: ["Customer"], isBlocked: false, emailConfirmed: true },
-            { id: "u2", fullName: "Könül İlyasova", email: "konul@amorabank.az", roles: ["Customer"], isBlocked: true, emailConfirmed: true },
-            { id: "u3", fullName: "Super Admin", email: "superadmin@bank.az", roles: ["SuperAdmin"], isBlocked: false, emailConfirmed: true },
-          ], page: 1, pageSize: 10, totalCount: 3, totalPages: 1
-        };
-      }
+  let res;
+  try { res = await api(`/api/Admin/users?${qs}`); }
+  catch (e) {
+    res = { items:[
+      { id:"u1", fullName:"Sevgi Fərəcli",  email:"sevgi@amorabank.az",  roles:["Customer"],   isBlocked:false, emailConfirmed:true },
+      { id:"u2", fullName:"Könül İlyasova", email:"konul@amorabank.az",  roles:["Customer"],   isBlocked:true,  emailConfirmed:true },
+      { id:"u3", fullName:"Super Admin",    email:"superadmin@bank.az",  roles:["SuperAdmin"], isBlocked:false, emailConfirmed:true },
+    ], page:1, pageSize:10, totalCount:3, totalPages:1 };
+  }
 
-      userTotalPages = res.totalPages || 1;
-      document.getElementById("userCount").textContent =
-        `${res.totalCount} ${t("adm.usersCount")} ${res.page}/${userTotalPages}`;
-      document.getElementById("userPrev").disabled = res.page <= 1;
-      document.getElementById("userNext").disabled = res.page >= userTotalPages;
+  userTotalPages = res.totalPages || 1;
+  document.getElementById("userCount").textContent =
+    `${res.totalCount} ${t("adm.usersCount")} ${res.page}/${userTotalPages}`;
+  document.getElementById("userPrev").disabled = res.page <= 1;
+  document.getElementById("userNext").disabled = res.page >= userTotalPages;
 
-      body.innerHTML = (res.items || []).map(u => {
-        const priv = u.roles?.some(r => r === "Admin" || r === "SuperAdmin");
-        return `
+  body.innerHTML = (res.items || []).map(u => {
+    const priv = u.roles?.some(r => r === "Admin" || r === "SuperAdmin");
+    return `
     <tr class="cursor-pointer" data-user="${u.id}">
       <td class="px-4 py-3">
         <div class="flex items-center gap-2.5">
@@ -735,13 +650,13 @@
       <td class="px-4 py-3">
         ${(u.roles || []).map(r => `
           <span class="px-1.5 py-0.5 rounded text-[10px] font-600
-            ${r === "SuperAdmin" ? "bg-lilac/12 text-lilac" : r === "Admin" ? "bg-ink/8 text-ink" : "bg-mist text-ink/50"}">${r}</span>`).join(" ")}
+            ${r==="SuperAdmin" ? "bg-lilac/12 text-lilac" : r==="Admin" ? "bg-ink/8 text-ink" : "bg-mist text-ink/50"}">${r}</span>`).join(" ")}
       </td>
       <td class="px-4 py-3 text-[12px] text-ink/60">${u.email}</td>
       <td class="px-4 py-3">
         ${u.isBlocked
-            ? `<span class="inline-flex items-center gap-1 text-[11px] font-500 text-danger"><span class="w-1.5 h-1.5 rounded-full bg-danger"></span> ${t("adm.statusBlocked")}</span>`
-            : `<span class="inline-flex items-center gap-1 text-[11px] font-500 text-ok"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ${t("adm.statusActive")}</span>`}
+          ? `<span class="inline-flex items-center gap-1 text-[11px] font-500 text-danger"><span class="w-1.5 h-1.5 rounded-full bg-danger"></span> ${t("adm.statusBlocked")}</span>`
+          : `<span class="inline-flex items-center gap-1 text-[11px] font-500 text-ok"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ${t("adm.statusActive")}</span>`}
         ${!u.emailConfirmed ? `<span class="ml-1.5 text-[10px] text-warn">${t("adm.emailUnconfirmed")}</span>` : ""}
       </td>
       <td class="px-4 py-3 text-right">
@@ -749,73 +664,73 @@
           ${t("adm.card")}
         </button>
         ${u.isBlocked
-            ? `<button data-unblock="${u.id}" class="h-7 px-2.5 rounded-md bg-ok/10 text-ok text-[11px] font-600 hover:bg-ok/15 transition ml-1">${t("adm.unblock")}</button>`
-            : `<button data-block="${u.id}" class="h-7 px-2.5 rounded-md bg-danger/8 text-danger text-[11px] font-600 hover:bg-danger/12 transition ml-1">${t("adm.block")}</button>`}
+          ? `<button data-unblock="${u.id}" class="h-7 px-2.5 rounded-md bg-ok/10 text-ok text-[11px] font-600 hover:bg-ok/15 transition ml-1">${t("adm.unblock")}</button>`
+          : `<button data-block="${u.id}" class="h-7 px-2.5 rounded-md bg-danger/8 text-danger text-[11px] font-600 hover:bg-danger/12 transition ml-1">${t("adm.block")}</button>`}
       </td>
     </tr>`;
-      }).join("") || emptyRow(5);
+  }).join("") || emptyRow(5);
 
-      lucide.createIcons();
-    }
+  lucide.createIcons();
+}
 
-    // Axtaris (yazdiqca, 400ms gecikme ile) — Tamamlandı
-    let searchTimer;
-    document.getElementById("userSearch").oninput = (e) => {
-      clearTimeout(searchTimer);
-      userSearchTerm = e.target.value.trim();
-      searchTimer = setTimeout(() => {
-        loadUsers(1);
-      }, 400);
-    };
-
-
-    /* ══════════════════════════════════════════════════════════════
-       7. TOAST + KOMEKCILER
-       ══════════════════════════════════════════════════════════════ */
-    function toast(msg, success) {
-      const toastEl = document.getElementById("toast");
-      toastEl.textContent = msg;
-      toastEl.className = `text-[12px] px-3.5 py-2.5 rounded-lg ${success ? 'bg-ok/10 text-ok' : 'bg-danger/10 text-danger'}`;
-      toastEl.classList.remove("hidden");
-      setTimeout(() => toastEl.classList.add("hidden"), 3500);
-    }
-    const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString("az-AZ", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+// Axtaris (yazdiqca, 400ms gecikme ile) — Tamamlandı
+let searchTimer;
+document.getElementById("userSearch").oninput = (e) => {
+  clearTimeout(searchTimer);
+  userSearchTerm = e.target.value.trim();
+  searchTimer = setTimeout(() => {
+    loadUsers(1);
+  }, 400);
+};
 
 
-    /* ══════════════════════════════════════════════════════════════
-       7a. MUSTERI KARTI (drawer) + blok/ac
-       ══════════════════════════════════════════════════════════════ */
-    const drawer = document.getElementById("drawer");
-    const drawerOverlay = document.getElementById("drawerOverlay");
+/* ══════════════════════════════════════════════════════════════
+   7. TOAST + KOMEKCILER
+   ══════════════════════════════════════════════════════════════ */
+function toast(msg, success) {
+  const toastEl = document.getElementById("toast");
+  toastEl.textContent = msg;
+  toastEl.className = `text-[12px] px-3.5 py-2.5 rounded-lg ${success ? 'bg-ok/10 text-ok' : 'bg-danger/10 text-danger'}`;
+  toastEl.classList.remove("hidden");
+  setTimeout(() => toastEl.classList.add("hidden"), 3500);
+}
+const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString("az-AZ", { day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" }) : "—";
 
-    function openDrawer() {
-      drawer.classList.remove("hidden-panel");
-      drawerOverlay.classList.remove("hidden");
-    }
-    function closeDrawer() {
-      drawer.classList.add("hidden-panel");
-      drawerOverlay.classList.add("hidden");
-    }
-    document.getElementById("drawerClose").onclick = closeDrawer;
-    drawerOverlay.onclick = closeDrawer;
 
-    async function openUserDetail(userId) {
-      openDrawer();
-      const box = document.getElementById("drawerBody");
-      box.innerHTML = `<p class="text-center text-ink/35 py-16">${t("adm.loading")}</p>`;
-      let u;
-      try { u = await api(`/api/Admin/users/${userId}`); }
-      catch (e) { box.innerHTML = `<p class="text-center text-danger py-16">${e.message}</p>`; return; }
+/* ══════════════════════════════════════════════════════════════
+   7a. MUSTERI KARTI (drawer) + blok/ac
+   ══════════════════════════════════════════════════════════════ */
+const drawer = document.getElementById("drawer");
+const drawerOverlay = document.getElementById("drawerOverlay");
 
-      const accounts = u.accounts || [];
-      box.innerHTML = `
+function openDrawer() {
+  drawer.classList.remove("hidden-panel");
+  drawerOverlay.classList.remove("hidden");
+}
+function closeDrawer() {
+  drawer.classList.add("hidden-panel");
+  drawerOverlay.classList.add("hidden");
+}
+document.getElementById("drawerClose").onclick = closeDrawer;
+drawerOverlay.onclick = closeDrawer;
+
+async function openUserDetail(userId) {
+  openDrawer();
+  const box = document.getElementById("drawerBody");
+  box.innerHTML = `<p class="text-center text-ink/35 py-16">${t("adm.loading")}</p>`;
+  let u;
+  try { u = await api(`/api/Admin/users/${userId}`); }
+  catch (e) { box.innerHTML = `<p class="text-center text-danger py-16">${e.message}</p>`; return; }
+
+  const accounts = u.accounts || [];
+  box.innerHTML = `
     <div class="flex items-center gap-3 mb-5">
       <div class="w-14 h-14 rounded-2xl bg-ink text-white grid place-items-center font-700 text-lg">${initials(u.fullName)}</div>
       <div class="min-w-0">
         <p class="font-display font-600 text-ink text-[15px]">${u.fullName || "—"}</p>
         <p class="text-[12px] text-ink/50">${u.email || ""}</p>
         <div class="flex gap-1 mt-1">
-          ${(u.roles || []).map(r => `<span class="px-1.5 py-0.5 rounded text-[10px] font-600 ${r === "SuperAdmin" ? "bg-lilac/12 text-lilac" : r === "Admin" ? "bg-ink/8 text-ink" : "bg-mist text-ink/50"}">${r}</span>`).join("")}
+          ${(u.roles || []).map(r => `<span class="px-1.5 py-0.5 rounded text-[10px] font-600 ${r==="SuperAdmin"?"bg-lilac/12 text-lilac":r==="Admin"?"bg-ink/8 text-ink":"bg-mist text-ink/50"}">${r}</span>`).join("")}
           ${u.isBlocked ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-600 bg-danger/10 text-danger">${t("adm.statusBlocked")}</span>` : ""}
         </div>
       </div>
@@ -832,7 +747,7 @@
       </div>
       <div class="rounded-lg bg-mist p-3">
         <p class="text-[10px] text-ink/45 uppercase">${t("adm.emailConfirm")}</p>
-        <p class="text-[12px] font-500 mt-0.5 ${u.emailConfirmed ? "text-ok" : "text-warn"}">${u.emailConfirmed ? t("adm.confirmed") : t("adm.unconfirmed")}</p>
+        <p class="text-[12px] font-500 mt-0.5 ${u.emailConfirmed?"text-ok":"text-warn"}">${u.emailConfirmed ? t("adm.confirmed") : t("adm.unconfirmed")}</p>
       </div>
       <div class="rounded-lg bg-mist p-3">
         <p class="text-[10px] text-ink/45 uppercase">${t("adm.accountCount")}</p>
@@ -846,14 +761,14 @@
         <div class="rounded-lg border border-line p-3">
           <div class="flex items-center justify-between">
             <div>
-              <p class="text-[12px] font-500 text-ink-2">${a.type === "Savings" ? t("adm.savings") : t("adm.checking")}</p>
+              <p class="text-[12px] font-500 text-ink-2">${a.type==="Savings"?t("adm.savings"):t("adm.checking")}</p>
               <p class="text-[11px] font-mono text-ink/50">${a.accountNumber || ""}</p>
             </div>
             <div class="text-right">
-              <p class="text-[13px] font-mono font-700 text-ink">${AZN(a.balance)} ₼</p>
-              ${a.status && a.status !== "Active"
-          ? `<button data-unfreeze="${a.id}" class="mt-1 h-6 px-2 rounded bg-ok/10 text-ok text-[10px] font-600">${t("adm.unfreeze")}</button>`
-          : `<button data-freeze="${a.id}" class="mt-1 h-6 px-2 rounded bg-warn/10 text-warn text-[10px] font-600">${t("adm.freeze")}</button>`}
+              <p class="text-[13px] font-mono font-700 text-ink">${AZN(a.balance)}</p>
+              ${a.status && a.status!=="Active"
+                ? `<button data-unfreeze="${a.id}" class="mt-1 h-6 px-2 rounded bg-ok/10 text-ok text-[10px] font-600">${t("adm.unfreeze")}</button>`
+                : `<button data-freeze="${a.id}" class="mt-1 h-6 px-2 rounded bg-warn/10 text-warn text-[10px] font-600">${t("adm.freeze")}</button>`}
             </div>
           </div>
         </div>`).join("") : `<p class="text-[12px] text-ink/35 text-center py-3">${t("adm.noAccounts")}</p>`}
@@ -861,8 +776,8 @@
 
     <div class="flex gap-2">
       ${u.isBlocked
-          ? `<button data-unblock="${u.id}" class="flex-1 h-10 rounded-lg bg-ok/10 text-ok text-[12px] font-600 hover:bg-ok/15 transition">${t("adm.unblockUser")}</button>`
-          : `<button data-block="${u.id}" class="flex-1 h-10 rounded-lg bg-danger/8 text-danger text-[12px] font-600 hover:bg-danger/12 transition">${t("adm.block")}</button>`}
+        ? `<button data-unblock="${u.id}" class="flex-1 h-10 rounded-lg bg-ok/10 text-ok text-[12px] font-600 hover:bg-ok/15 transition">${t("adm.unblockUser")}</button>`
+        : `<button data-block="${u.id}" class="flex-1 h-10 rounded-lg bg-danger/8 text-danger text-[12px] font-600 hover:bg-danger/12 transition">${t("adm.block")}</button>`}
     </div>
 
     ${isSuper() ? `
@@ -877,143 +792,143 @@
       </div>
     </div>` : ""}
   `;
-      lucide.createIcons();
-    }
+  lucide.createIcons();
+}
 
-    async function blockUser(userId) {
-      try { await api(`/api/Admin/users/${userId}/block`, { method: "POST" }); toast(t("adm.userBlocked"), true); closeDrawer(); loadUsers(userPage); }
-      catch (e) { toast(e.message, false); }
-    }
-    async function unblockUser(userId) {
-      try { await api(`/api/Admin/users/${userId}/unblock`, { method: "POST" }); toast(t("adm.blockOpened"), true); closeDrawer(); loadUsers(userPage); }
-      catch (e) { toast(e.message, false); }
-    }
-    async function freezeAccount(accountId) {
-      const reason = prompt(t("adm.freezeReason")) || "";
-      try { await api(`/api/Admin/accounts/${accountId}/freeze?reason=${encodeURIComponent(reason)}`, { method: "POST" }); toast(t("adm.accountFrozen"), true); }
-      catch (e) { toast(e.message, false); }
-    }
-    async function unfreezeAccount(accountId) {
-      try { await api(`/api/Admin/accounts/${accountId}/unfreeze`, { method: "POST" }); toast(t("adm.accountOpened"), true); }
-      catch (e) { toast(e.message, false); }
-    }
-    async function assignRole(userId, role) {
-      try { await api(`/api/Admin/users/${userId}/roles`, { method: "POST", body: JSON.stringify({ role }) }); toast(t("adm.roleAssigned"), true); loadUsers(userPage); }
-      catch (e) { toast(e.message, false); }
-    }
+async function blockUser(userId) {
+  try { await api(`/api/Admin/users/${userId}/block`, { method:"POST" }); toast(t("adm.userBlocked"), true); closeDrawer(); loadUsers(userPage); }
+  catch (e) { toast(e.message, false); }
+}
+async function unblockUser(userId) {
+  try { await api(`/api/Admin/users/${userId}/unblock`, { method:"POST" }); toast(t("adm.blockOpened"), true); closeDrawer(); loadUsers(userPage); }
+  catch (e) { toast(e.message, false); }
+}
+async function freezeAccount(accountId) {
+  const reason = prompt(t("adm.freezeReason")) || "";
+  try { await api(`/api/Admin/accounts/${accountId}/freeze?reason=${encodeURIComponent(reason)}`, { method:"POST" }); toast(t("adm.accountFrozen"), true); }
+  catch (e) { toast(e.message, false); }
+}
+async function unfreezeAccount(accountId) {
+  try { await api(`/api/Admin/accounts/${accountId}/unfreeze`, { method:"POST" }); toast(t("adm.accountOpened"), true); }
+  catch (e) { toast(e.message, false); }
+}
+async function assignRole(userId, role) {
+  try { await api(`/api/Admin/users/${userId}/roles`, { method:"POST", body: JSON.stringify({ role }) }); toast(t("adm.roleAssigned"), true); loadUsers(userPage); }
+  catch (e) { toast(e.message, false); }
+}
 
-    // cedvel + drawer daxili duymeler (event delegation)
-    document.body.addEventListener("click", (e) => {
-      const el = e.target.closest("[data-detail],[data-block],[data-unblock],[data-freeze],[data-unfreeze],[data-assign-role],[data-user]");
-      if (!el) return;
-      if (el.dataset.detail) { e.stopPropagation(); openUserDetail(el.dataset.detail); }
-      else if (el.dataset.block) { e.stopPropagation(); blockUser(el.dataset.block); }
-      else if (el.dataset.unblock) { e.stopPropagation(); unblockUser(el.dataset.unblock); }
-      else if (el.dataset.freeze) { freezeAccount(el.dataset.freeze); }
-      else if (el.dataset.unfreeze) { unfreezeAccount(el.dataset.unfreeze); }
-      else if (el.dataset.assignRole) { assignRole(el.dataset.assignRole, document.getElementById("roleSelect").value); }
-      else if (el.dataset.user) { openUserDetail(el.dataset.user); }
-    });
+// cedvel + drawer daxili duymeler (event delegation)
+document.body.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-detail],[data-block],[data-unblock],[data-freeze],[data-unfreeze],[data-assign-role],[data-user]");
+  if (!el) return;
+  if (el.dataset.detail)     { e.stopPropagation(); openUserDetail(el.dataset.detail); }
+  else if (el.dataset.block)   { e.stopPropagation(); blockUser(el.dataset.block); }
+  else if (el.dataset.unblock) { e.stopPropagation(); unblockUser(el.dataset.unblock); }
+  else if (el.dataset.freeze)  { freezeAccount(el.dataset.freeze); }
+  else if (el.dataset.unfreeze){ unfreezeAccount(el.dataset.unfreeze); }
+  else if (el.dataset.assignRole) { assignRole(el.dataset.assignRole, document.getElementById("roleSelect").value); }
+  else if (el.dataset.user)    { openUserDetail(el.dataset.user); }
+});
 
 
-    /* ══════════════════════════════════════════════════════════════
-       7b. KREDIT SORGULARI — GET /api/Loan/pending
-       ══════════════════════════════════════════════════════════════ */
-    async function loadLoans() {
-      const body = document.getElementById("loansBody");
-      body.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-ink/35">${t("adm.loading")}</td></tr>`;
-      let res;
-      try { res = await api("/api/Loan/pending?Page=1&PageSize=50"); }
-      catch (e) { body.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-danger">${e.message}</td></tr>`; return; }
+/* ══════════════════════════════════════════════════════════════
+   7b. KREDIT SORGULARI — GET /api/Loan/pending
+   ══════════════════════════════════════════════════════════════ */
+async function loadLoans() {
+  const body = document.getElementById("loansBody");
+  body.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-ink/35">${t("adm.loading")}</td></tr>`;
+  let res;
+  try { res = await api("/api/Loan/pending?Page=1&PageSize=50"); }
+  catch (e) { body.innerHTML = `<tr><td colspan="6" class="px-4 py-10 text-center text-danger">${e.message}</td></tr>`; return; }
 
-      const items = res.items ?? (Array.isArray(res) ? res : []);
-      document.getElementById("loanBadge").textContent = items.length;
-      document.getElementById("loanBadge").classList.toggle("hidden", items.length === 0);
+  const items = res.items ?? (Array.isArray(res) ? res : []);
+  document.getElementById("loanBadge").textContent = items.length;
+  document.getElementById("loanBadge").classList.toggle("hidden", items.length === 0);
 
-      if (!items.length) { body.innerHTML = emptyRow(6); return; }
+  if (!items.length) { body.innerHTML = emptyRow(6); return; }
 
-      body.innerHTML = items.map(l => `
+  body.innerHTML = items.map(l => `
     <tr>
       <td class="px-4 py-3 text-[12px]">${l.userName || l.userEmail || l.accountNumber || "—"}</td>
-      <td class="px-4 py-3 text-right font-mono text-[12px] font-600">${AZN(l.principal)} ₼</td>
+      <td class="px-4 py-3 text-right font-mono text-[12px] font-600">${AZN(l.principal)}</td>
       <td class="px-4 py-3 text-right font-mono text-[12px]">${l.termMonths} ${t("adm.months")}</td>
-      <td class="px-4 py-3 text-right font-mono text-[12px]">${AZN(l.monthlyPayment)} ₼</td>
+      <td class="px-4 py-3 text-right font-mono text-[12px]">${AZN(l.monthlyPayment)}</td>
       <td class="px-4 py-3 text-[11px] text-ink/50">${fmtDate(l.createdAt)}</td>
       <td class="px-4 py-3 text-right whitespace-nowrap">
         <button data-loan-approve="${l.id}" class="h-7 px-2.5 rounded-md bg-ok/10 text-ok text-[11px] font-600 hover:bg-ok/15 transition">${t("adm.approve")}</button>
         <button data-loan-reject="${l.id}" class="h-7 px-2.5 rounded-md bg-danger/8 text-danger text-[11px] font-600 hover:bg-danger/12 transition ml-1">${t("adm.reject")}</button>
       </td>
     </tr>`).join("");
-    }
+}
 
-    document.body.addEventListener("click", async (e) => {
-      const ap = e.target.closest("[data-loan-approve]");
-      const rj = e.target.closest("[data-loan-reject]");
-      if (ap) {
-        if (!confirm(t("adm.confirmApprove"))) return;
-        try { await api(`/api/Loan/${ap.dataset.loanApprove}/approve`, { method: "POST" }); toast(t("adm.loanApproved"), true); loadLoans(); }
-        catch (err) { toast(err.message, false); }
-      }
-      if (rj) {
-        if (!confirm(t("adm.confirmReject"))) return;
-        try { await api(`/api/Loan/${rj.dataset.loanReject}/reject`, { method: "POST" }); toast(t("adm.loanRejected"), true); loadLoans(); }
-        catch (err) { toast(err.message, false); }
-      }
-    });
+document.body.addEventListener("click", async (e) => {
+  const ap = e.target.closest("[data-loan-approve]");
+  const rj = e.target.closest("[data-loan-reject]");
+  if (ap) {
+    if (!confirm(t("adm.confirmApprove"))) return;
+    try { await api(`/api/Loan/${ap.dataset.loanApprove}/approve`, { method:"POST" }); toast(t("adm.loanApproved"), true); loadLoans(); }
+    catch (err) { toast(err.message, false); }
+  }
+  if (rj) {
+    if (!confirm(t("adm.confirmReject"))) return;
+    try { await api(`/api/Loan/${rj.dataset.loanReject}/reject`, { method:"POST" }); toast(t("adm.loanRejected"), true); loadLoans(); }
+    catch (err) { toast(err.message, false); }
+  }
+});
 
 
-    /* ══════════════════════════════════════════════════════════════
-       7c. AUDIT JURNALI — GET /api/Audit
-       ══════════════════════════════════════════════════════════════ */
-    async function loadAudit() {
-      const body = document.getElementById("auditBody");
-      body.innerHTML = `<tr><td colspan="4" class="px-4 py-10 text-center text-ink/35">${t("adm.loading")}</td></tr>`;
-      let res;
-      try { res = await api("/api/Audit?Page=1&PageSize=50"); }
-      catch (e) { body.innerHTML = `<tr><td colspan="4" class="px-4 py-10 text-center text-danger">${e.message}</td></tr>`; return; }
+/* ══════════════════════════════════════════════════════════════
+   7c. AUDIT JURNALI — GET /api/Audit
+   ══════════════════════════════════════════════════════════════ */
+async function loadAudit() {
+  const body = document.getElementById("auditBody");
+  body.innerHTML = `<tr><td colspan="4" class="px-4 py-10 text-center text-ink/35">${t("adm.loading")}</td></tr>`;
+  let res;
+  try { res = await api("/api/Audit?Page=1&PageSize=50"); }
+  catch (e) { body.innerHTML = `<tr><td colspan="4" class="px-4 py-10 text-center text-danger">${e.message}</td></tr>`; return; }
 
-      const items = res.items ?? (Array.isArray(res) ? res : []);
-      if (!items.length) { body.innerHTML = emptyRow(4); return; }
+  const items = res.items ?? (Array.isArray(res) ? res : []);
+  if (!items.length) { body.innerHTML = emptyRow(4); return; }
 
-      body.innerHTML = items.map(a => `
+  body.innerHTML = items.map(a => `
     <tr>
       <td class="px-4 py-2.5 text-[11px] text-ink/50 whitespace-nowrap">${fmtDate(a.createdAt || a.timestamp)}</td>
       <td class="px-4 py-2.5 text-[12px] font-500">${a.action || a.event || "—"}</td>
       <td class="px-4 py-2.5 text-[12px] text-ink/60">${a.userName || a.userEmail || a.userId || "—"}</td>
       <td class="px-4 py-2.5 text-[11px] text-ink/50">${a.details || a.description || a.entityName || "—"}</td>
     </tr>`).join("");
-    }
+}
 
 
-    /* ══════════════════════════════════════════════════════════════
-       7d. TENZIMLEMELER — komissiya + provayder
-       ══════════════════════════════════════════════════════════════ */
-    async function loadSettings() {
-      // komissiya qaydalari
-      const cbox = document.getElementById("commissionList");
-      cbox.innerHTML = `<p class="px-4 py-8 text-center text-ink/35">${t("adm.loading")}</p>`;
-      try {
-        const rules = await api("/api/Admin/commission-rules");
-        const list = Array.isArray(rules) ? rules : (rules.items ?? []);
-        cbox.innerHTML = list.length ? list.map(r => `
+/* ══════════════════════════════════════════════════════════════
+   7d. TENZIMLEMELER — komissiya + provayder
+   ══════════════════════════════════════════════════════════════ */
+async function loadSettings() {
+  // komissiya qaydalari
+  const cbox = document.getElementById("commissionList");
+  cbox.innerHTML = `<p class="px-4 py-8 text-center text-ink/35">${t("adm.loading")}</p>`;
+  try {
+    const rules = await api("/api/Admin/commission-rules");
+    const list = Array.isArray(rules) ? rules : (rules.items ?? []);
+    cbox.innerHTML = list.length ? list.map(r => `
       <div class="px-4 py-3 flex items-center justify-between">
         <div>
           <p class="text-[12px] font-500 text-ink-2">${r.transactionType}</p>
-          <p class="text-[11px] text-ink/45">${(r.percentage * 100).toFixed(1)}% · ${t("adm.min")} ${AZN(r.minAmount)} ₼ · ${t("adm.cap")} ${AZN(r.maxCommission)} ₼</p>
+          <p class="text-[11px] text-ink/45">${(r.percentage*100).toFixed(1)}% · ${t("adm.min")} ${AZN(r.minAmount)} · ${t("adm.cap")} ${AZN(r.maxCommission)}</p>
         </div>
-        <span class="text-[10px] font-600 px-1.5 py-0.5 rounded ${r.isActive ? "bg-ok/10 text-ok" : "bg-ink/8 text-ink/50"}">${r.isActive ? t("adm.active") : t("adm.disabled")}</span>
+        <span class="text-[10px] font-600 px-1.5 py-0.5 rounded ${r.isActive?"bg-ok/10 text-ok":"bg-ink/8 text-ink/50"}">${r.isActive?t("adm.active"):t("adm.disabled")}</span>
       </div>`).join("") : `<p class="px-4 py-6 text-center text-ink/35 text-[12px]">${t("adm.noRules")}</p>`;
-      } catch (e) {
-        cbox.innerHTML = `<p class="px-4 py-6 text-center text-danger text-[12px]">${e.message}</p>`;
-      }
+  } catch (e) {
+    cbox.innerHTML = `<p class="px-4 py-6 text-center text-danger text-[12px]">${e.message}</p>`;
+  }
 
-      // provayderler (ac/sondur — yalniz SuperAdmin)
-      const pbox = document.getElementById("providerToggleList");
-      pbox.innerHTML = `<li class="px-4 py-8 text-center text-ink/35">${t("adm.loading")}</li>`;
-      try {
-        const provs = await api("/api/Utility/providers");
-        const list = Array.isArray(provs) ? provs : (provs.items ?? []);
-        pbox.innerHTML = list.length ? list.map(p => `
+  // provayderler (ac/sondur — yalniz SuperAdmin)
+  const pbox = document.getElementById("providerToggleList");
+  pbox.innerHTML = `<li class="px-4 py-8 text-center text-ink/35">${t("adm.loading")}</li>`;
+  try {
+    const provs = await api("/api/Utility/providers");
+    const list = Array.isArray(provs) ? provs : (provs.items ?? []);
+    pbox.innerHTML = list.length ? list.map(p => `
       <li class="px-4 py-3 flex items-center justify-between">
         <div>
           <p class="text-[12px] font-500 text-ink-2">${p.name}</p>
@@ -1021,67 +936,67 @@
         </div>
         ${isSuper() ? `
         <button data-prov-toggle="${p.id}" data-prov-active="${p.isActive !== false}"
-                class="h-7 px-2.5 rounded-md text-[11px] font-600 transition ${p.isActive !== false ? "bg-ok/10 text-ok" : "bg-ink/8 text-ink/50"}">
-          ${p.isActive !== false ? t("adm.active") : t("adm.disabled")}
-        </button>` : `<span class="text-[11px] text-ink/40">${p.isActive !== false ? t("adm.active") : t("adm.disabled")}</span>`}
+                class="h-7 px-2.5 rounded-md text-[11px] font-600 transition ${p.isActive!==false?"bg-ok/10 text-ok":"bg-ink/8 text-ink/50"}">
+          ${p.isActive!==false?t("adm.active"):t("adm.disabled")}
+        </button>` : `<span class="text-[11px] text-ink/40">${p.isActive!==false?t("adm.active"):t("adm.disabled")}</span>`}
       </li>`).join("") : `<li class="px-4 py-6 text-center text-ink/35 text-[12px]">${t("adm.noProviders")}</li>`;
-        lucide.createIcons();
-      } catch (e) {
-        pbox.innerHTML = `<li class="px-4 py-6 text-center text-danger text-[12px]">${e.message}</li>`;
-      }
-    }
+    lucide.createIcons();
+  } catch (e) {
+    pbox.innerHTML = `<li class="px-4 py-6 text-center text-danger text-[12px]">${e.message}</li>`;
+  }
+}
 
-    document.body.addEventListener("click", async (e) => {
-      const btn = e.target.closest("[data-prov-toggle]");
-      if (!btn) return;
-      const id = btn.dataset.provToggle;
-      const newState = btn.dataset.provActive !== "true";  // toggle
-      try {
-        await api(`/api/Utility/providers/${id}/toggle?isActive=${newState}`, { method: "POST" });
-        toast(t("adm.providerUpdated"), true);
-        loadSettings();
-      } catch (err) { toast(err.message, false); }
-    });
-
-
-    /* ══════════════════════════════════════════════════════════════
-       7e. BROADCAST — POST /api/Notification/broadcast
-       ══════════════════════════════════════════════════════════════ */
-    document.getElementById("broadcastForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById("broadcastBtn");
-      const fd = new FormData(e.target);
-      const body = { title: fd.get("title").trim(), message: fd.get("message").trim() };
-      if (!body.title || !body.message) return toast(t("adm.titleMessageRequired"), false);
-
-      btn.disabled = true;
-      try {
-        await api("/api/Notification/broadcast", { method: "POST", body: JSON.stringify(body) });
-        toast(t("adm.broadcastSent"), true);
-        e.target.reset();
-      } catch (err) { toast(err.message, false); }
-      finally { btn.disabled = false; }
-    };
+document.body.addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-prov-toggle]");
+  if (!btn) return;
+  const id = btn.dataset.provToggle;
+  const newState = btn.dataset.provActive !== "true";  // toggle
+  try {
+    await api(`/api/Utility/providers/${id}/toggle?isActive=${newState}`, { method:"POST" });
+    toast(t("adm.providerUpdated"), true);
+    loadSettings();
+  } catch (err) { toast(err.message, false); }
+});
 
 
-    /* ══════════════════════════════════════════════════════════════
-       7f. DESTEK CHAT — GET /api/Chat/conversations + SignalR
-       ══════════════════════════════════════════════════════════════ */
-    let adminChatConn = null;
-    let activeConvUserId = null;
+/* ══════════════════════════════════════════════════════════════
+   7e. BROADCAST — POST /api/Notification/broadcast
+   ══════════════════════════════════════════════════════════════ */
+document.getElementById("broadcastForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("broadcastBtn");
+  const fd = new FormData(e.target);
+  const body = { title: fd.get("title").trim(), message: fd.get("message").trim() };
+  if (!body.title || !body.message) return toast(t("adm.titleMessageRequired"), false);
 
-    async function loadConversations() {
-      const list = document.getElementById("convList");
-      list.innerHTML = `<li class="px-4 py-8 text-center text-ink/35">${t("adm.loading")}</li>`;
-      let convs;
-      try { convs = await api("/api/Chat/conversations"); }
-      catch (e) { list.innerHTML = `<li class="px-4 py-8 text-center text-danger text-[12px]">${e.message}</li>`; return; }
+  btn.disabled = true;
+  try {
+    await api("/api/Notification/broadcast", { method:"POST", body: JSON.stringify(body) });
+    toast(t("adm.broadcastSent"), true);
+    e.target.reset();
+  } catch (err) { toast(err.message, false); }
+  finally { btn.disabled = false; }
+};
 
-      convs = Array.isArray(convs) ? convs : (convs.items ?? []);
-      if (!convs.length) { list.innerHTML = `<li class="px-4 py-8 text-center text-ink/35 text-[12px]">${t("adm.noConversations")}</li>`; return; }
 
-      list.innerHTML = convs.map(c => `
-    <li data-conv="${c.userId}" data-conv-name="${(c.userName || '').replace(/"/g, '&quot;')}" class="px-4 py-3 cursor-pointer hover:bg-mist transition flex items-center gap-2.5">
+/* ══════════════════════════════════════════════════════════════
+   7f. DESTEK CHAT — GET /api/Chat/conversations + SignalR
+   ══════════════════════════════════════════════════════════════ */
+let adminChatConn = null;
+let activeConvUserId = null;
+
+async function loadConversations() {
+  const list = document.getElementById("convList");
+  list.innerHTML = `<li class="px-4 py-8 text-center text-ink/35">${t("adm.loading")}</li>`;
+  let convs;
+  try { convs = await api("/api/Chat/conversations"); }
+  catch (e) { list.innerHTML = `<li class="px-4 py-8 text-center text-danger text-[12px]">${e.message}</li>`; return; }
+
+  convs = Array.isArray(convs) ? convs : (convs.items ?? []);
+  if (!convs.length) { list.innerHTML = `<li class="px-4 py-8 text-center text-ink/35 text-[12px]">${t("adm.noConversations")}</li>`; return; }
+
+  list.innerHTML = convs.map(c => `
+    <li data-conv="${c.userId}" data-conv-name="${(c.userName||'').replace(/"/g,'&quot;')}" class="px-4 py-3 cursor-pointer hover:bg-mist transition flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full bg-ink/8 text-ink grid place-items-center font-600 text-[11px]">${initials(c.userName)}</div>
       <div class="min-w-0 flex-1">
         <p class="text-[12px] font-500 truncate">${c.userName || t("adm.user")}</p>
@@ -1090,142 +1005,144 @@
       ${c.unreadCount ? `<span class="min-w-[18px] h-[18px] px-1 rounded-full bg-neon text-ink-2 text-[10px] font-700 grid place-items-center">${c.unreadCount}</span>` : ""}
     </li>`).join("");
 
-      // SignalR baglantisini bir defe qur
-      await ensureAdminChat();
-    }
+  // SignalR baglantisini bir defe qur
+  await ensureAdminChat();
+}
 
-    async function ensureAdminChat() {
-      if (adminChatConn) return;
-      if (typeof signalR === "undefined") return;  // signalr script yuklenmeyibse
-      adminChatConn = new signalR.HubConnectionBuilder()
-        .withUrl(`${API_BASE}/chatHub?access_token=${getToken()}`)
-        .withAutomaticReconnect()
-        .build();
-      adminChatConn.on("ReceiveMessage", (msg) => {
-        // acdigin sohbetdirse ekrana elave et
-        if (msg.senderId === activeConvUserId) appendAdminMsg(msg.content, false, msg.sentAt);
-        // siyahini tezele (yeni mesaj gelib)
-        if (document.querySelector('.page[data-page="support"]').classList.contains("active")) loadConversations();
-      });
-      try { await adminChatConn.start(); } catch (e) { console.error("Admin chat:", e); }
-    }
+async function ensureAdminChat() {
+  if (adminChatConn) return;
+  if (typeof signalR === "undefined") return;  // signalr script yuklenmeyibse
+  adminChatConn = new signalR.HubConnectionBuilder()
+    .withUrl(`${API_BASE}/chatHub?access_token=${getToken()}`)
+    .withAutomaticReconnect()
+    .build();
+  adminChatConn.on("ReceiveMessage", (msg) => {
+    // acdigin sohbetdirse ekrana elave et
+    if (msg.senderId === activeConvUserId) appendAdminMsg(msg.content, false, msg.sentAt);
+    // siyahini tezele (yeni mesaj gelib)
+    if (document.querySelector('.page[data-page="support"]').classList.contains("active")) loadConversations();
+  });
+  try { await adminChatConn.start(); } catch (e) { console.error("Admin chat:", e); }
+}
 
-    async function openConversation(userId, userName) {
-      activeConvUserId = userId;
-      document.getElementById("convName").textContent = userName || t("adm.user");
-      document.getElementById("convEmail").textContent = "";
-      document.getElementById("convAvatar").textContent = initials(userName);
-      document.getElementById("chatInput").disabled = false;
-      document.getElementById("chatSend").disabled = false;
+async function openConversation(userId, userName) {
+  activeConvUserId = userId;
+  document.getElementById("convName").textContent = userName || t("adm.user");
+  document.getElementById("convEmail").textContent = "";
+  document.getElementById("convAvatar").textContent = initials(userName);
+  document.getElementById("chatInput").disabled = false;
+  document.getElementById("chatSend").disabled = false;
 
-      const area = document.getElementById("msgArea");
-      area.innerHTML = `<p class="text-center text-ink/30 text-[12px] py-8">${t("adm.loading")}</p>`;
-      let msgs;
-      try { msgs = await api(`/api/Chat/conversation/${userId}`); }
-      catch (e) { area.innerHTML = `<p class="text-center text-danger text-[12px] py-8">${e.message}</p>`; return; }
+  const area = document.getElementById("msgArea");
+  area.innerHTML = `<p class="text-center text-ink/30 text-[12px] py-8">${t("adm.loading")}</p>`;
+  let msgs;
+  try { msgs = await api(`/api/Chat/conversation/${userId}`); }
+  catch (e) { area.innerHTML = `<p class="text-center text-danger text-[12px] py-8">${e.message}</p>`; return; }
 
-      area.innerHTML = "";
-      (msgs || []).forEach(m => appendAdminMsg(m.content, m.isFromAdmin, m.sentAt));
-    }
+  area.innerHTML = "";
+  (msgs || []).forEach(m => appendAdminMsg(m.content, m.isFromAdmin, m.sentAt));
+}
 
-    function appendAdminMsg(content, isFromAdmin, sentAt) {
-      const area = document.getElementById("msgArea");
-      const time = sentAt ? new Date(sentAt).toLocaleTimeString("az-AZ", { hour: "2-digit", minute: "2-digit" }) : "";
-      const wrap = document.createElement("div");
-      // admin sagda (bizik), istifadeci solda
-      wrap.className = "flex " + (isFromAdmin ? "justify-end" : "justify-start");
-      wrap.innerHTML = `
+function appendAdminMsg(content, isFromAdmin, sentAt) {
+  const area = document.getElementById("msgArea");
+  const time = sentAt ? new Date(sentAt).toLocaleTimeString("az-AZ", {hour:"2-digit",minute:"2-digit"}) : "";
+  const wrap = document.createElement("div");
+  // admin sagda (bizik), istifadeci solda
+  wrap.className = "flex " + (isFromAdmin ? "justify-end" : "justify-start");
+  wrap.innerHTML = `
     <div class="max-w-[75%]">
       <div class="px-3 py-2 rounded-xl text-[12px] ${isFromAdmin ? "bg-ink text-white rounded-tr-sm" : "bg-white border border-line rounded-tl-sm"}">${content}</div>
-      <p class="text-[10px] text-ink/35 mt-0.5 ${isFromAdmin ? "text-right" : "text-left"}">${time}</p>
+      <p class="text-[10px] text-ink/35 mt-0.5 ${isFromAdmin?"text-right":"text-left"}">${time}</p>
     </div>`;
-      area.appendChild(wrap);
-      area.scrollTop = area.scrollHeight;
-    }
+  area.appendChild(wrap);
+  area.scrollTop = area.scrollHeight;
+}
 
-    document.getElementById("convList").addEventListener("click", (e) => {
-      const li = e.target.closest("[data-conv]");
-      if (!li) return;
-      openConversation(li.dataset.conv, li.dataset.convName);
-    });
+document.getElementById("convList").addEventListener("click", (e) => {
+  const li = e.target.closest("[data-conv]");
+  if (!li) return;
+  openConversation(li.dataset.conv, li.dataset.convName);
+});
 
-    document.getElementById("chatForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const input = document.getElementById("chatInput");
-      const content = input.value.trim();
-      if (!content || !activeConvUserId) return;
-      if (!adminChatConn || adminChatConn.state !== "Connected") return toast(t("adm.noChatConn"), false);
-      try {
-        appendAdminMsg(content, true, new Date().toISOString());
-        input.value = "";
-        await adminChatConn.invoke("SendToUser", activeConvUserId, content);
-      } catch (err) { toast(t("adm.msgFailed"), false); }
-    };
+document.getElementById("chatForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const input = document.getElementById("chatInput");
+  const content = input.value.trim();
+  if (!content || !activeConvUserId) return;
+  if (!adminChatConn || adminChatConn.state !== "Connected") return toast(t("adm.noChatConn"), false);
+  try {
+    appendAdminMsg(content, true, new Date().toISOString());
+    input.value = "";
+    await adminChatConn.invoke("SendToUser", activeConvUserId, content);
+  } catch (err) { toast(t("adm.msgFailed"), false); }
+};
 
 
-    /* ══════════════════════════════════════════════════════════════
-       8. INIT (SAYFA YÜKLƏNƏNDƏ)
-       ══════════════════════════════════════════════════════════════ */
-    function init() {
-      lucide.createIcons();
+/* ══════════════════════════════════════════════════════════════
+   8. INIT (SAYFA YÜKLƏNƏNDƏ)
+   ══════════════════════════════════════════════════════════════ */
+async function init() {
+  lucide.createIcons();
 
-      const token = getToken();
-      if (token) {
-        const info = readRoleFromToken(token);
-        if (info) {
-          CURRENT_ROLE = info.role;
-          document.getElementById("adminName").textContent = info.name;
-          document.getElementById("adminEmail").textContent = info.email;
-          document.getElementById("adminAvatar").textContent = initials(info.name);
+  // Valyuta mezennelerini cek (data cekilmeden EVVEL)
+  if (typeof initCurrency === "function") await initCurrency();
 
-          applyRoleGuards();
-          // pageTitle-i cari dilde goster
-          document.getElementById("pageTitle").textContent = pageTitle("overview");
-          loadStats();
-        } else {
-          // DÜZƏLİŞ 2: Token oxuna bilmədisə və ya korlanıbsa, birbaşa çıxışa atır
-          window.location.href = "amorabank-auth.html";
-          return;
-        }
-      } else {
-        // Əgər heç token yoxdursa (gözlənilməz hal) təhlükəsizlik üçün yenə yönləndirir
-        window.location.href = "amorabank-auth.html";
-        return;
-      }
-    }
-    document.getElementById("refreshBtn").onclick = () => {
-      const active = document.querySelector(".page.active")?.dataset.page || "overview";
-      showPage(active);
-      toast(t("adm.refreshed"), true);
-    };
-    function setActiveFilter(btn) {
-      document.querySelectorAll(".filter-btn").forEach(x => {
-        x.className = "filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition text-ink/55";
-      });
-      btn.className = "filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition bg-white shadow-sm text-ink";
-    }
+  const token = getToken();
+  if (token) {
+    const info = readRoleFromToken(token);
+    if (info) {
+      CURRENT_ROLE = info.role;
+      document.getElementById("adminName").textContent  = info.name;
+      document.getElementById("adminEmail").textContent = info.email;
+      document.getElementById("adminAvatar").textContent = initials(info.name);
 
-    document.querySelectorAll(".filter-btn").forEach(b => {
-      b.onclick = () => {
-        userFilter = b.dataset.filter;
-        setActiveFilter(b);
-        loadUsers(1);
-      };
-    });
-
-    // baslangicda "Hamisi" secili gorunsun
-    setActiveFilter(document.querySelector('.filter-btn[data-filter=""]'));
-    document.getElementById("userPrev").onclick = () => { if (userPage > 1) loadUsers(userPage - 1); };
-    document.getElementById("userNext").onclick = () => { if (userPage < userTotalPages) loadUsers(userPage + 1); };
-    window.onload = init;
-
-    // Çıxış düyməsi məntiqi
-    document.getElementById("logoutBtn").onclick = () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
+      applyRoleGuards();
+      // pageTitle-i cari dilde goster
+      document.getElementById("pageTitle").textContent = pageTitle("overview");
+      loadStats();
+    } else {
+      // DÜZƏLİŞ 2: Token oxuna bilmədisə və ya korlanıbsa, birbaşa çıxışa atır
       window.location.href = "amorabank-auth.html";
-    };
-  </script>
-</body>
+      return;
+    }
+  } else {
+    // Əgər heç token yoxdursa (gözlənilməz hal) təhlükəsizlik üçün yenə yönləndirir
+    window.location.href = "amorabank-auth.html";
+    return;
+  }
+}
+document.getElementById("refreshBtn").onclick = () => {
+  const active = document.querySelector(".page.active")?.dataset.page || "overview";
+  showPage(active);
+  toast(t("adm.refreshed"), true);
+};
+function setActiveFilter(btn) {
+  document.querySelectorAll(".filter-btn").forEach(x => {
+    x.className = "filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition text-ink/55";
+  });
+  btn.className = "filter-btn px-3 h-8 rounded-md text-[12px] font-500 transition bg-white shadow-sm text-ink";
+}
 
+document.querySelectorAll(".filter-btn").forEach(b => {
+  b.onclick = () => {
+    userFilter = b.dataset.filter;
+    setActiveFilter(b);
+    loadUsers(1);
+  };
+});
+
+// baslangicda "Hamisi" secili gorunsun
+setActiveFilter(document.querySelector('.filter-btn[data-filter=""]'));
+document.getElementById("userPrev").onclick = () => { if (userPage > 1) loadUsers(userPage - 1); };
+document.getElementById("userNext").onclick = () => { if (userPage < userTotalPages) loadUsers(userPage + 1); };
+window.onload = init;
+
+// Çıxış düyməsi məntiqi
+document.getElementById("logoutBtn").onclick = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  window.location.href = "amorabank-auth.html";
+};
+</script>
+</body>
 </html>

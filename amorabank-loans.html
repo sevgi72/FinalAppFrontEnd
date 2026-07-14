@@ -8,6 +8,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="i18n.js"></script>
+<script src="currency.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,13 +84,41 @@ tailwind.config = {
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
+      <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="settings" style="width:18px;height:18px"></i> <span data-i18n="nav.settings">Ayarlar</span>
+      </a>
     </nav>
 
-    <!-- Dil secimi -->
-    <div class="flex justify-center gap-1 mb-3">
-      <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
-      <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
-      <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+        <!-- Dil + Valyuta secimi (kompakt dropdown) -->
+    <div class="flex gap-2 justify-center mb-3">
+      <!-- Dil -->
+      <div class="relative flex-1">
+        <button id="langTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <i data-lucide="globe" style="width:14px;height:14px" class="text-ink/50"></i>
+          <span id="langTriggerLabel">AZ</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="langMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-lang="az" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan <span class="text-[10px] text-ink/40">AZ</span></button>
+          <button data-lang="en" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English <span class="text-[10px] text-ink/40">EN</span></button>
+          <button data-lang="ru" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский <span class="text-[10px] text-ink/40">RU</span></button>
+        </div>
+      </div>
+      <!-- Valyuta -->
+      <div class="relative flex-1">
+        <button id="curTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <span id="curTriggerLabel">₼ AZN</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="curMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-cur="AZN" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat <span class="text-[11px] text-ink/40">₼</span></button>
+          <button data-cur="USD" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar <span class="text-[11px] text-ink/40">$</span></button>
+          <button data-cur="EUR" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro <span class="text-[11px] text-ink/40">€</span></button>
+          <button data-cur="TRY" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə <span class="text-[11px] text-ink/40">₺</span></button>
+        </div>
+      </div>
     </div>
 
     <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
@@ -268,7 +297,9 @@ async function api(path, options = {}) {
   return data;
 }
 
-const AZN = (n) => Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const AZN = (n) => (typeof money === "function" ? money(n) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20bc");
+const AZNnum = (n) => (typeof moneyNum === "function" ? Number(moneyNum(n)).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const curSym = () => (typeof symbol === "function" ? symbol() : "\u20bc");
 const formatDate = (iso) => iso ? new Date(iso).toLocaleDateString("az-AZ", { day: "numeric", month: "short", year: "numeric" }) : '—';
 
 
@@ -299,7 +330,7 @@ async function loadAccounts() {
 
   const sel = document.getElementById("loanAccount");
   sel.innerHTML = accounts.length
-    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? t("ln.savingsShort") : t("ln.checkingShort")} • ${AZN(a.balance)} ₼</option>`).join("")
+    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? t("ln.savingsShort") : t("ln.checkingShort")} • ${AZN(a.balance)}</option>`).join("")
     : `<option value="">${t("ln.noAccountOption")}</option>`;
 }
 
@@ -367,7 +398,7 @@ function renderLoans(loans) {
           <p class="text-xs font-500 text-ink-2">${p.paymentNumber}. ${t("ln.payment")}</p>
           <p class="text-[10px] text-ink/45">${formatDate(p.dueDate)}${p.isPaid && p.paidAt ? " • " + t("ln.paidMark") : ""}</p>
         </div>
-        <p class="font-mono text-xs font-600 ${p.isPaid ? "text-teal-700" : "text-ink-2"}">${AZN(p.amount)} ₼</p>
+        <p class="font-mono text-xs font-600 ${p.isPaid ? "text-teal-700" : "text-ink-2"}">${AZN(p.amount)}</p>
       </div>
     `).join("");
 
@@ -377,7 +408,7 @@ function renderLoans(loans) {
         <div class="flex items-start justify-between mb-4">
           <div>
             <p class="text-xs text-ink/45 mb-0.5">${t("ln.principalLabel")}</p>
-            <p class="font-mono font-700 text-ink text-2xl">${AZN(loan.principal)} ₼</p>
+            <p class="font-mono font-700 text-ink text-2xl">${AZN(loan.principal)}</p>
           </div>
           <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-600 ${st.cls}">
             <i data-lucide="${st.icon}" style="width:13px;height:13px"></i> ${st.az}
@@ -395,15 +426,15 @@ function renderLoans(loans) {
           </div>
           <div class="rounded-xl bg-mist p-3">
             <p class="text-[10px] text-ink/45 uppercase tracking-wide">${t("ln.monthlyLabel")}</p>
-            <p class="font-mono font-600 text-ink-2 text-sm mt-0.5">${AZN(loan.monthlyPayment)} ₼</p>
+            <p class="font-mono font-600 text-ink-2 text-sm mt-0.5">${AZN(loan.monthlyPayment)}</p>
           </div>
         </div>
 
         ${showProgress ? `
         <div class="mb-1">
           <div class="flex justify-between text-xs mb-1.5">
-            <span class="text-ink/55">${t("ln.paidLabel")} ${AZN(paid)} ₼</span>
-            <span class="text-ink/55">${t("ln.remainingLabel")} ${AZN(loan.remainingBalance)} ₼</span>
+            <span class="text-ink/55">${t("ln.paidLabel")} ${AZN(paid)}</span>
+            <span class="text-ink/55">${t("ln.remainingLabel")} ${AZN(loan.remainingBalance)}</span>
           </div>
           <div class="w-full h-2 bg-mist rounded-full overflow-hidden">
             <div class="h-full bg-neon rounded-full transition-all duration-500" style="width:${progress}%"></div>
@@ -447,8 +478,8 @@ function estimate() {
   // annuitet formulasi: M = P*r / (1 - (1+r)^-n)
   const monthly = P * r / (1 - Math.pow(1 + r, -n));
   const total = monthly * n;
-  document.getElementById("estMonthly").textContent = AZN(monthly) + " ₼";
-  document.getElementById("estTotal").textContent = AZN(total) + " ₼";
+  document.getElementById("estMonthly").textContent = AZN(monthly);
+  document.getElementById("estTotal").textContent = AZN(total);
 }
 
 
@@ -523,6 +554,9 @@ document.getElementById("logoutBtn").onclick = async () => {
    8. ILKIN YUKLENME
    ══════════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", async () => {
+  // Valyuta mezennelerini cek (data cekilmeden EVVEL — ki money() hazir olsun)
+  if (typeof initCurrency === "function") await initCurrency();
+
   lucide.createIcons();
   setTerm(12);
   estimate();

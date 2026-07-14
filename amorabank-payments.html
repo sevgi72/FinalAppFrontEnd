@@ -8,6 +8,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="i18n.js"></script>
+<script src="currency.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,13 +76,41 @@ tailwind.config = {
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
+      <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="settings" style="width:18px;height:18px"></i> <span data-i18n="nav.settings">Ayarlar</span>
+      </a>
     </nav>
 
-    <!-- Dil secimi -->
-    <div class="flex justify-center gap-1 mb-3">
-      <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
-      <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
-      <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+        <!-- Dil + Valyuta secimi (kompakt dropdown) -->
+    <div class="flex gap-2 justify-center mb-3">
+      <!-- Dil -->
+      <div class="relative flex-1">
+        <button id="langTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <i data-lucide="globe" style="width:14px;height:14px" class="text-ink/50"></i>
+          <span id="langTriggerLabel">AZ</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="langMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-lang="az" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan <span class="text-[10px] text-ink/40">AZ</span></button>
+          <button data-lang="en" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English <span class="text-[10px] text-ink/40">EN</span></button>
+          <button data-lang="ru" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский <span class="text-[10px] text-ink/40">RU</span></button>
+        </div>
+      </div>
+      <!-- Valyuta -->
+      <div class="relative flex-1">
+        <button id="curTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <span id="curTriggerLabel">₼ AZN</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="curMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-cur="AZN" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat <span class="text-[11px] text-ink/40">₼</span></button>
+          <button data-cur="USD" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar <span class="text-[11px] text-ink/40">$</span></button>
+          <button data-cur="EUR" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro <span class="text-[11px] text-ink/40">€</span></button>
+          <button data-cur="TRY" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə <span class="text-[11px] text-ink/40">₺</span></button>
+        </div>
+      </div>
     </div>
 
     <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
@@ -339,7 +368,9 @@ async function api(path, options = {}) {
   return data;
 }
 
-const AZN = (n) => Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const AZN = (n) => (typeof money === "function" ? money(n) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20bc");
+const AZNnum = (n) => (typeof moneyNum === "function" ? Number(moneyNum(n)).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const curSym = () => (typeof symbol === "function" ? symbol() : "\u20bc");
 const formatDate = (iso) => iso ? new Date(iso).toLocaleDateString("az-AZ", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : '—';
 
 
@@ -384,7 +415,7 @@ async function loadAccounts() {
   catch (e) { console.error("Hesablar:", e.message); accounts = []; }
 
   const opts = accounts.length
-    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? t("pay.savingsShort") : t("pay.checkingShort")} • ${AZN(a.balance)} ₼</option>`).join("")
+    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? t("pay.savingsShort") : t("pay.checkingShort")} • ${AZN(a.balance)}</option>`).join("")
     : `<option value="">${t("pay.noAccountOption")}</option>`;
   ["payAccount", "schAccount"].forEach(id => { document.getElementById(id).innerHTML = opts; });
 }
@@ -461,7 +492,7 @@ async function loadHistory() {
         <p class="text-[11px] text-ink/45 mt-0.5">${p.subscriberCode || ""} • ${formatDate(p.createdAt)}</p>
       </div>
       <div class="text-right shrink-0">
-        <p class="font-mono font-600 text-sm text-ink-2">−${AZN(p.amount)} ₼</p>
+        <p class="font-mono font-600 text-sm text-ink-2">−${AZN(p.amount)}</p>
         <button onclick="downloadReceipt('${p.id}')" class="text-[11px] text-neon hover:underline">${t("pay.pdfReceipt")}</button>
       </div>
     </li>`;
@@ -517,7 +548,7 @@ async function loadScheduled() {
       </div>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-500 text-ink-2 truncate">${s.providerName}</p>
-        <p class="text-[11px] text-ink/45">${s.subscriberCode} • ${t("pay.everyMonthDay")} ${s.dayOfMonth}${t("pay.dayOrdinal")} • ${AZN(s.amount)} ₼</p>
+        <p class="text-[11px] text-ink/45">${s.subscriberCode} • ${t("pay.everyMonthDay")} ${s.dayOfMonth}${t("pay.dayOrdinal")} • ${AZN(s.amount)}</p>
       </div>
       <button onclick="toggleScheduled('${s.id}', ${!s.isActive})" title="${s.isActive ? t('pay.stop') : t('pay.activate')}"
               class="w-9 h-9 grid place-items-center rounded-lg border border-line hover:border-ink/20 transition ${s.isActive ? "text-teal-700" : "text-ink/40"}">
@@ -547,7 +578,7 @@ document.getElementById("debtBtn").addEventListener("click", async () => {
   try {
     const d = await api("/api/Utility/debt", { method: "POST", body: JSON.stringify({ providerId, subscriberCode }) });
     res.className = "mt-2 text-sm px-3 py-2 rounded-lg bg-neon/10 text-teal-800";
-    res.textContent = `${t("pay.debt")} ${AZN(d.debtAmount)} ₼`;
+    res.textContent = `${t("pay.debt")} ${AZN(d.debtAmount)}`;
     // borcu avtomatik mebleg xanasina yaz
     if (d.debtAmount > 0) document.getElementById("payAmount").value = d.debtAmount;
   } catch (e) {
@@ -572,7 +603,7 @@ document.getElementById("payForm").addEventListener("submit", async (e) => {
   btn.disabled = true;
   try {
     await api("/api/Utility/pay", { method: "POST", body: JSON.stringify(body) });
-    showMsg(`${AZN(body.amount)} ₼ ${t("pay.paid")}`, true);
+    showMsg(`${AZN(body.amount)} ${t("pay.paid")}`, true);
     document.getElementById("payForm").reset();
     document.getElementById("debtResult").classList.add("hidden");
     await loadAccounts();
@@ -698,6 +729,9 @@ document.getElementById("logoutBtn").onclick = async () => {
    6. ILKIN YUKLENME
    ══════════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", async () => {
+  // Valyuta mezennelerini cek (data cekilmeden EVVEL — ki money() hazir olsun)
+  if (typeof initCurrency === "function") await initCurrency();
+
   lucide.createIcons();
   setTab("pay");
   await loadProfile();

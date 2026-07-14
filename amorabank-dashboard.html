@@ -11,6 +11,7 @@
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
   <script src="i18n.js"></script>
+  <script src="currency.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -140,6 +141,9 @@
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
+      <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="settings" style="width:18px;height:18px"></i> <span data-i18n="nav.settings">Ayarlar</span>
+      </a>
     </nav>
 
       <div class="mt-6 p-4 rounded-2xl bg-gradient-to-br from-ink to-ink-3 border border-white/5">
@@ -149,6 +153,38 @@
         <button id="supportChatBtn" data-i18n="dash.startChat" class="mt-3 w-full py-2 rounded-lg bg-neon text-ink-2 text-xs font-600 hover:brightness-110 transition">
           Söhbətə başla
         </button>
+      </div>
+
+      <!-- Dil + Valyuta secimi (kompakt dropdown) -->
+      <div class="flex gap-2 justify-center mt-4">
+        <!-- Dil -->
+        <div class="relative flex-1">
+          <button id="langTrigger" type="button"
+                  class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-white/8 hover:bg-white/12 text-xs font-500 text-white/85 transition">
+            <i data-lucide="globe" style="width:14px;height:14px" class="text-white/50"></i>
+            <span id="langTriggerLabel">AZ</span>
+            <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-white/40"></i>
+          </button>
+          <div id="langMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-black/20 p-1 z-50">
+            <button data-lang="az" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan <span class="text-[10px] text-ink/40">AZ</span></button>
+            <button data-lang="en" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English <span class="text-[10px] text-ink/40">EN</span></button>
+            <button data-lang="ru" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский <span class="text-[10px] text-ink/40">RU</span></button>
+          </div>
+        </div>
+        <!-- Valyuta -->
+        <div class="relative flex-1">
+          <button id="curTrigger" type="button"
+                  class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-white/8 hover:bg-white/12 text-xs font-500 text-white/85 transition">
+            <span id="curTriggerLabel">₼ AZN</span>
+            <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-white/40"></i>
+          </button>
+          <div id="curMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-black/20 p-1 z-50">
+            <button data-cur="AZN" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat <span class="text-[11px] text-ink/40">₼</span></button>
+            <button data-cur="USD" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar <span class="text-[11px] text-ink/40">$</span></button>
+            <button data-cur="EUR" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro <span class="text-[11px] text-ink/40">€</span></button>
+            <button data-cur="TRY" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə <span class="text-[11px] text-ink/40">₺</span></button>
+          </div>
+        </div>
       </div>
 
       <button id="logoutBtn"
@@ -197,6 +233,18 @@
               <div class="flex items-center justify-between px-4 py-3 border-b border-line">
                 <h3 class="font-display font-600 text-ink text-sm" data-i18n="dash.notifications">Bildirişlər</h3>
                 <button id="markAllReadBtn" data-i18n="dash.markAllRead" class="text-[11px] font-500 text-neon hover:underline">Hamısını oxu</button>
+              </div>
+              <!-- Tablar: Yeni / Arxiv -->
+              <div class="flex gap-1 px-3 pt-2.5 pb-1 border-b border-line">
+                <button id="notifTabNew" data-notif-tab="new"
+                        class="notif-tab flex-1 h-8 rounded-lg text-[12px] font-500 transition">
+                  <span data-i18n="dash.notifNew">Yeni</span>
+                  <span id="notifTabNewCount" class="ml-1 text-[10px] opacity-70"></span>
+                </button>
+                <button id="notifTabArchive" data-notif-tab="archive"
+                        class="notif-tab flex-1 h-8 rounded-lg text-[12px] font-500 transition">
+                  <span data-i18n="dash.notifArchive">Arxiv</span>
+                </button>
               </div>
               <ul id="notifList" class="max-h-80 overflow-y-auto divide-y divide-line">
                 <li class="px-4 py-6 text-center text-sm text-ink/35">Yüklənir…</li>
@@ -367,13 +415,6 @@
               <p class="text-sm text-ink/35 text-center py-4" data-i18n="dash.goalLoading">Məqsəd yüklənir…</p>
             </div>
           </section>
-
-          <!-- Dil secimi -->
-          <div class="flex justify-center gap-1">
-            <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
-            <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
-            <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
-          </div>
         </div>
 
       </div>
@@ -476,7 +517,12 @@
     let activeCardIndex = 0;  // hansi kart on plandadir
     let privacyMode = false;  // balans gizlidir?
 
-    const AZN = (n) => Number(n).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // AZN() artiq display valyutasina cevirir + simvol qoyur (currency.js).
+    // Data hemise AZN-dir; bu yalniz gosterisdir.
+    const AZN = (n) => (typeof money === "function" ? money(n) : Number(n).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20bc");
+    // yalniz reqem lazim olanda (simvolsuz)
+    const AZNnum = (n) => (typeof moneyNum === "function" ? Number(moneyNum(n)).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : Number(n).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const curSym = () => (typeof symbol === "function" ? symbol() : "\u20bc");
 
     // Köməkçi formatlama funksiyaları (əskik olmasın deyə bura qeyd etdim)
     const formatIban = (iban) => iban ? iban.replace(/(.{4})/g, '$1 ').trim() : '—';
@@ -573,10 +619,10 @@
     async function loadCashback() {
       try {
         const c = await api("/api/Cashback/status");
-        document.getElementById("cashbackBalance").textContent = AZN(c.cashbackBalance) + " ₼";
+        document.getElementById("cashbackBalance").textContent = AZN(c.cashbackBalance);
       } catch (e) {
         console.error("Keşbek statusu yüklənmədi:", e.message);
-        document.getElementById("cashbackBalance").textContent = "12.40 ₼";
+        document.getElementById("cashbackBalance").textContent = money(12.40);
       }
     }
 
@@ -584,10 +630,10 @@
     async function loadRoundUp() {
       try {
         const r = await api("/api/RoundUp/status");
-        document.getElementById("roundupTotal").textContent = AZN(r.totalSavedThisMonth) + " ₼";
+        document.getElementById("roundupTotal").textContent = AZN(r.totalSavedThisMonth);
       } catch (e) {
         console.error("Round-up statusu yüklənmədi:", e.message);
-        document.getElementById("roundupTotal").textContent = "6.50 ₼";
+        document.getElementById("roundupTotal").textContent = money(6.50);
       }
     }
 
@@ -634,7 +680,7 @@
       btn.disabled = true; btn.textContent = t("dash.sending");
       try {
         await api("/api/Transaction/transfer", { method: "POST", body: JSON.stringify(body) });
-        showTransferMsg(`${AZN(body.amount)} ₼ ${t("dash.transferSent")}`, true);
+        showTransferMsg(`${AZN(body.amount)} ${t("dash.transferSent")}`, true);
         document.getElementById("transferForm").reset();
         await loadAccounts();                       // balansi yenile
       } catch (err) {
@@ -692,7 +738,7 @@
           <div>
             <p class="text-white/45 text-[11px] mb-1">${t("dash.balance")}</p>
             <p class="font-mono font-700 text-white text-3xl balance-value">
-              ${AZN(a.balance)} <span class="text-lg text-white/60">₼</span>
+              ${AZNnum(a.balance)} <span class="text-lg text-white/60">${curSym()}</span>
             </p>
           </div>
         </div>
@@ -736,7 +782,7 @@
       const select = document.getElementById("fromAccount");
       if (!select) return;
       select.innerHTML = accounts.map(a =>
-        `<option value="${a.id}">${a.type === 'Savings' ? t("dash.savingsShort") : t("dash.checkingShort")} - ${AZN(a.balance)} ₼</option>`
+        `<option value="${a.id}">${a.type === 'Savings' ? t("dash.savingsShort") : t("dash.checkingShort")} - ${AZN(a.balance)}</option>`
       ).join("");
     }
 
@@ -775,7 +821,7 @@
 
         <p class="font-mono font-600 text-sm shrink-0 balance-value
                   ${isIn ? "text-teal-700" : "text-ink-2"}">
-          ${isIn ? "+" : "−"}${AZN(t2.amount)} ₼
+          ${isIn ? "+" : "−"}${AZN(t2.amount)}
         </p>
       </li>`;
       }).join("");
@@ -790,7 +836,7 @@
 
       document.getElementById("spendMonthLabel").textContent =
         new Date(data.year, data.month - 1).toLocaleDateString("az-AZ", { month: "long", year: "numeric" });
-      document.getElementById("spendTotal").textContent = AZN(data.totalSpent) + " ₼";
+      document.getElementById("spendTotal").textContent = AZN(data.totalSpent);
 
       document.getElementById("ringSegments").innerHTML = data.categories.map((c, i) => {
         const len = (c.percentage / 100) * C;
@@ -805,7 +851,7 @@
     <li class="flex items-center gap-2.5">
       <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${colors[i % colors.length]}"></span>
       <span class="text-xs text-ink-2 flex-1 truncate">${c.category}</span>
-      <span class="font-mono text-xs text-ink/60 balance-value">${AZN(c.amount)} ₼</span>
+      <span class="font-mono text-xs text-ink/60 balance-value">${AZN(c.amount)}</span>
     </li>
   `).join("");
     }
@@ -816,7 +862,7 @@
       box.innerHTML = `
     <div class="flex justify-between text-xs mb-1.5">
       <span class="font-500 text-ink-2">${g.name}</span>
-      <span class="font-mono text-ink/50">${AZN(g.currentAmount)} / ${AZN(g.targetAmount)} ₼</span>
+      <span class="font-mono text-ink/50">${AZNnum(g.currentAmount)} / ${AZN(g.targetAmount)}</span>
     </div>
     <div class="w-full h-2 bg-mist rounded-full overflow-hidden">
       <div class="h-full bg-lilac rounded-full transition-all duration-500" style="width: ${g.percentage}%"></div>
@@ -843,6 +889,9 @@
 
       // İkonları aktivləşdir
       lucide.createIcons();
+
+      // Valyuta mezennelerini cek (data cekilmeden EVVEL — ki money() hazir olsun)
+      if (typeof initCurrency === "function") await initCurrency();
 
       // Məlumatları backend-dən çək
       await loadProfile();
@@ -1036,34 +1085,46 @@
       }
 
       // bildirisleri yukle ve goster
-      async function loadNotifications() {
+      // hansi tab aktivdir: "new" (oxunmamis) ve ya "archive" (oxunmus)
+      let notifTab = "new";
+      let allNotifs = [];  // butun bildirisler (bir defe cekilir, tablar arasinda filtr olunur)
+
+      function renderNotifTabs() {
+        document.querySelectorAll(".notif-tab").forEach(btn => {
+          const on = btn.dataset.notifTab === notifTab;
+          btn.className = "notif-tab flex-1 h-8 rounded-lg text-[12px] font-500 transition " +
+            (on ? "bg-ink text-white" : "text-ink/50 hover:bg-mist");
+        });
+        // "Yeni" tabinda oxunmamis sayi
+        const newCount = allNotifs.filter(n => !n.isRead).length;
+        const cEl = document.getElementById("notifTabNewCount");
+        if (cEl) cEl.textContent = newCount ? `(${newCount})` : "";
+      }
+
+      function renderNotifList() {
         const list = document.getElementById("notifList");
-        list.innerHTML = `<li class="px-4 py-6 text-center text-sm text-ink/35">Yüklənir…</li>`;
-        let items;
-        try {
-          items = await api("/api/Notification/my");
-        } catch (e) {
-          list.innerHTML = `<li class="px-4 py-6 text-center text-sm text-red-500">${e.message}</li>`;
-          return;
-        }
-        items = Array.isArray(items) ? items : (items.items ?? []);
+        // aktiv taba gore filtr
+        const items = allNotifs.filter(n => notifTab === "new" ? !n.isRead : n.isRead);
 
         if (!items.length) {
-          list.innerHTML = `<li class="px-4 py-8 text-center">
-            <p class="text-sm text-ink/40">${t("dash.noNotif")}</p>
-          </li>`;
+          const msg = notifTab === "new" ? t("dash.noNewNotif") : t("dash.noArchiveNotif");
+          list.innerHTML = `<li class="px-4 py-8 text-center"><p class="text-sm text-ink/40">${msg}</p></li>`;
           return;
         }
 
         list.innerHTML = items.map(n => `
-          <li class="flex gap-3 px-4 py-3 hover:bg-mist/60 transition ${n.isRead ? "" : "bg-neon/[0.04]"}">
+          <li class="notif-item flex gap-3 px-4 py-3 hover:bg-mist/60 transition ${n.isRead ? "" : "bg-neon/[0.04]"}" data-notif-id="${n.id}">
             <div class="w-9 h-9 rounded-lg grid place-items-center shrink-0 ${n.isRead ? "bg-ink/6 text-ink/50" : "bg-neon/12 text-teal-700"}">
               <i data-lucide="${notifIcon(n.type)}" style="width:16px;height:16px"></i>
             </div>
             <div class="min-w-0 flex-1">
               <div class="flex items-start gap-2">
                 <p class="text-sm font-500 text-ink-2 flex-1">${n.title}</p>
-                ${n.isRead ? "" : `<span class="w-2 h-2 rounded-full bg-neon shrink-0 mt-1.5"></span>`}
+                ${n.isRead ? "" : `
+                <button data-mark-read="${n.id}" title="${t("dash.markRead")}"
+                        class="shrink-0 w-6 h-6 grid place-items-center rounded-md text-teal-700 hover:bg-neon/15 transition">
+                  <i data-lucide="check" style="width:15px;height:15px"></i>
+                </button>`}
               </div>
               <p class="text-xs text-ink/55 mt-0.5 leading-relaxed">${n.message}</p>
               <p class="text-[10px] text-ink/40 mt-1">${formatDate(n.createdAt)}</p>
@@ -1072,6 +1133,31 @@
         `).join("");
         lucide.createIcons();
       }
+
+      async function loadNotifications() {
+        const list = document.getElementById("notifList");
+        list.innerHTML = `<li class="px-4 py-6 text-center text-sm text-ink/35">${t("dash.loading") || "Yüklənir…"}</li>`;
+        let items;
+        try {
+          items = await api("/api/Notification/my");
+        } catch (e) {
+          list.innerHTML = `<li class="px-4 py-6 text-center text-sm text-red-500">${e.message}</li>`;
+          return;
+        }
+        allNotifs = Array.isArray(items) ? items : (items.items ?? []);
+        renderNotifTabs();
+        renderNotifList();
+      }
+
+      // tab deyisme
+      document.querySelectorAll(".notif-tab").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          notifTab = btn.dataset.notifTab;
+          renderNotifTabs();
+          renderNotifList();
+        });
+      });
 
       // zeng ikonu - dropdown ac/bagla
       document.getElementById("notifBtn").onclick = (e) => {
@@ -1088,18 +1174,42 @@
       // dropdown-un icine klik - baglanmasin
       notifDropdown.onclick = (e) => e.stopPropagation();
 
+      // tek bildirisi oxunmus isarele (tik duymesi) — arxive kecir
+      document.getElementById("notifList").addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-mark-read]");
+        if (!btn) return;
+        e.stopPropagation();
+        const id = btn.dataset.markRead;
+        try {
+          await api(`/api/Notification/${id}/read`, { method: "POST" });
+          // yaddaşda oxundu isarele (silmirik — arxivde qalir)
+          const n = allNotifs.find(x => x.id === id);
+          if (n) n.isRead = true;
+          // tablari ve siyahini yenile: "Yeni"den cixir, "Arxiv"e kecir
+          renderNotifTabs();
+          renderNotifList();
+          // oxunmamis sayi yenile
+          await loadNotifCount();
+        } catch (err) {
+          showTransferMsg(t("dash.notifReadFail") + " " + err.message, false);
+        }
+      });
+
       // kenara klik - dropdown baglan
       document.addEventListener("click", () => {
         notifDropdown.classList.add("hidden");
       });
 
-      // "Hamisini oxu" - hamisini oxunmus isarele
+      // "Hamisini oxu" - hamisini oxunmus isarele (hamisi arxive kecir)
       document.getElementById("markAllReadBtn").onclick = async (e) => {
         e.stopPropagation();
         try {
           await api("/api/Notification/read-all", { method: "POST" });
           document.getElementById("notifBadge").classList.add("hidden");
-          await loadNotifications();   // siyahini yenile (hamisi oxunmus gorunsun)
+          allNotifs.forEach(n => n.isRead = true);
+          renderNotifTabs();
+          renderNotifList();
+          await loadNotifCount();
         } catch (err) {
           showTransferMsg(t("dash.notifReadFail") + " " + err.message, false);
         }

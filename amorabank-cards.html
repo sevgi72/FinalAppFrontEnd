@@ -8,6 +8,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="i18n.js"></script>
+<script src="currency.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,11 +88,36 @@ tailwind.config = {
       </a>
     </nav>
 
-    <!-- Dil secimi -->
-    <div class="flex justify-center gap-1 mb-3">
-      <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
-      <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
-      <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+        <!-- Dil + Valyuta secimi (kompakt dropdown) -->
+    <div class="flex gap-2 justify-center mb-3">
+      <!-- Dil -->
+      <div class="relative flex-1">
+        <button id="langTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <i data-lucide="globe" style="width:14px;height:14px" class="text-ink/50"></i>
+          <span id="langTriggerLabel">AZ</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="langMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-lang="az" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan <span class="text-[10px] text-ink/40">AZ</span></button>
+          <button data-lang="en" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English <span class="text-[10px] text-ink/40">EN</span></button>
+          <button data-lang="ru" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский <span class="text-[10px] text-ink/40">RU</span></button>
+        </div>
+      </div>
+      <!-- Valyuta -->
+      <div class="relative flex-1">
+        <button id="curTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <span id="curTriggerLabel">₼ AZN</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="curMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-cur="AZN" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat <span class="text-[11px] text-ink/40">₼</span></button>
+          <button data-cur="USD" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar <span class="text-[11px] text-ink/40">$</span></button>
+          <button data-cur="EUR" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro <span class="text-[11px] text-ink/40">€</span></button>
+          <button data-cur="TRY" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə <span class="text-[11px] text-ink/40">₺</span></button>
+        </div>
+      </div>
     </div>
 
     <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
@@ -144,6 +170,38 @@ tailwind.config = {
 
       <p id="pageMsg" class="hidden mb-5 text-sm px-4 py-3 rounded-xl max-w-2xl"></p>
 
+      <!-- Statistika -->
+      <div id="cardStats" class="hidden grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+        <div class="bg-white rounded-2xl border border-line p-4">
+          <div class="flex items-center gap-2 mb-1">
+            <i data-lucide="credit-card" style="width:15px;height:15px" class="text-ink/40"></i>
+            <p class="text-[11px] text-ink/45" data-i18n="cards.statTotal">Ümumi kart</p>
+          </div>
+          <p class="font-mono font-700 text-2xl text-ink" id="statTotal">—</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-line p-4">
+          <div class="flex items-center gap-2 mb-1">
+            <i data-lucide="check-circle-2" style="width:15px;height:15px" class="text-teal-600"></i>
+            <p class="text-[11px] text-ink/45" data-i18n="cards.statActive">Aktiv</p>
+          </div>
+          <p class="font-mono font-700 text-2xl text-teal-700" id="statActive">—</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-line p-4">
+          <div class="flex items-center gap-2 mb-1">
+            <i data-lucide="lock" style="width:15px;height:15px" class="text-red-500"></i>
+            <p class="text-[11px] text-ink/45" data-i18n="cards.statBlocked">Bloklu</p>
+          </div>
+          <p class="font-mono font-700 text-2xl text-red-600" id="statBlocked">—</p>
+        </div>
+        <div class="bg-gradient-to-br from-ink to-ink-3 rounded-2xl p-4 text-white">
+          <div class="flex items-center gap-2 mb-1">
+            <i data-lucide="wallet" style="width:15px;height:15px" class="text-white/50"></i>
+            <p class="text-[11px] text-white/50" data-i18n="cards.statBalance">Ümumi balans</p>
+          </div>
+          <p class="font-mono font-700 text-xl" id="statBalance">—</p>
+        </div>
+      </div>
+
       <!-- Kartlar setki -->
       <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         <div class="col-span-full py-16 text-center text-ink/35 text-sm" data-i18n="cards.loading">Kartlar yüklənir…</div>
@@ -175,6 +233,63 @@ tailwind.config = {
       </div>
       <button type="submit" class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
         <i data-lucide="plus" style="width:16px;height:16px"></i> <span data-i18n="cards.createBtn">Kartı yarat</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<!-- ════════════ KART PARAMETRLERI MODALI ════════════ -->
+<div id="settingsModal" class="hidden fixed inset-0 z-50 grid place-items-center p-4 bg-ink-3/40 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl border border-line w-full max-w-md p-6 relative">
+    <button id="closeSettings" class="absolute right-4 top-4 w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
+      <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
+    </button>
+
+    <div class="w-12 h-12 rounded-2xl bg-lilac/12 grid place-items-center mb-4">
+      <i data-lucide="settings-2" style="width:22px;height:22px" class="text-lilac"></i>
+    </div>
+
+    <h3 class="font-display font-600 text-ink text-lg" data-i18n="cards.settingsTitle">Kart parametrləri</h3>
+    <p class="text-sm text-ink/50 mt-1 mb-5" data-i18n="cards.settingsSubtitle">Kartın adını, limitini və onlayn ödənişləri idarə et.</p>
+
+    <form id="settingsForm" class="space-y-4">
+      <input type="hidden" id="settingsCardId">
+
+      <!-- Kart adi -->
+      <div>
+        <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="cards.cardName">Kart adı</label>
+        <input id="settingsCardName" type="text" maxlength="40" placeholder="Əsas kartım" data-i18n-placeholder="cards.cardNamePlaceholder"
+               class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition">
+      </div>
+
+      <!-- Ayliq limit -->
+      <div>
+        <label class="block text-xs font-500 text-ink/60 mb-1.5">
+          <span data-i18n="cards.monthlyLimit">Aylıq limit</span>
+          <span class="text-ink/35" data-i18n="cards.limitHint">(0 = limitsiz)</span>
+        </label>
+        <div class="relative">
+          <input id="settingsLimit" type="number" min="0" step="10" placeholder="0"
+                 class="w-full h-12 pl-3.5 pr-12 rounded-xl border border-line bg-mist text-sm text-ink-2 font-mono focus:border-neon focus:bg-white outline-none transition">
+          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-ink/40">₼</span>
+        </div>
+      </div>
+
+      <!-- Onlayn odenisler toggle -->
+      <div class="flex items-center justify-between p-3.5 rounded-xl bg-mist">
+        <div>
+          <p class="text-sm font-500 text-ink-2" data-i18n="cards.onlinePayments">Onlayn ödənişlər</p>
+          <p class="text-[11px] text-ink/45" data-i18n="cards.onlineHint">İnternet alışlarına icazə</p>
+        </div>
+        <button type="button" id="settingsOnline" role="switch" aria-checked="true"
+                class="relative w-11 h-6 rounded-full bg-neon transition-colors">
+          <span id="settingsOnlineDot" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform translate-x-5"></span>
+        </button>
+      </div>
+
+      <button type="submit" class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
+        <i data-lucide="check" style="width:16px;height:16px"></i> <span data-i18n="cards.saveSettings">Yadda saxla</span>
       </button>
     </form>
   </div>
@@ -236,7 +351,9 @@ async function api(path, options = {}) {
 }
 
 const formatIban = (s) => s ? s.replace(/(.{4})/g, '$1 ').trim() : '—';
-const AZN = (n) => Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const AZN = (n) => (typeof money === "function" ? money(n) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20bc");
+const AZNnum = (n) => (typeof moneyNum === "function" ? Number(moneyNum(n)).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const curSym = () => (typeof symbol === "function" ? symbol() : "\u20bc");
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -330,6 +447,108 @@ function expiryLabel(card) {
   return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getFullYear()).slice(-2)}`;
 }
 
+// kartin bagli oldugu hesabin balansi
+function cardBalance(card) {
+  const acc = accounts.find(a => a.id === card.accountId);
+  return acc ? acc.balance : 0;
+}
+
+// yaradilma tarixi (qisa)
+function cardCreatedLabel(card) {
+  const c = card.createdAt || card.created;
+  if (!c) return "—";
+  const d = new Date(c);
+  if (isNaN(d)) return "—";
+  return d.toLocaleDateString("az-AZ", { day: "numeric", month: "short", year: "numeric" });
+}
+
+// tam nomre (backend FullNumber gonderir; yoxdursa maskali)
+function fullNumber(card) {
+  return card.fullNumber || card.maskedNumber || maskNumber(card);
+}
+
+// hansi kartlar acilib (goz duymesi) — id-lerin toplusu
+const revealedCards = new Set();
+// hansi kartlarin tarixi aciqdir
+const revealedExpiry = new Set();
+
+// kart novu (ilk reqemden): 4=Visa, 5=Mastercard, diger=Amora
+function cardBrand(card) {
+  const raw = String(card.fullNumber || card.maskedNumber || card.cardNumber || "").replace(/\D/g, "");
+  const first = raw[0];
+  if (first === "4") return "Visa";
+  if (first === "5") return "Mastercard";
+  return "Amora";
+}
+
+// kart rengi (localStorage-da saxlanir, backend deyil)
+const CARD_THEMES = {
+  default: { name: "Amora", from: "#2c2966", via: "#1b1940", to: "#14122e" },
+  teal:    { name: "Neon",  from: "#0f766e", via: "#115e59", to: "#134e4a" },
+  purple:  { name: "Lilac", from: "#6d28d9", via: "#5b21b6", to: "#4c1d95" },
+  sunset:  { name: "Sunset",from: "#be123c", via: "#9f1239", to: "#881337" },
+  slate:   { name: "Slate", from: "#334155", via: "#1e293b", to: "#0f172a" },
+};
+function getCardTheme(cardId) {
+  return localStorage.getItem("cardTheme:" + cardId) || "default";
+}
+function setCardTheme(cardId, theme) {
+  localStorage.setItem("cardTheme:" + cardId, theme);
+  renderCards();
+}
+
+// tarixi ac/gizlet
+function toggleExpiry(cardId) {
+  if (revealedExpiry.has(cardId)) revealedExpiry.delete(cardId);
+  else revealedExpiry.add(cardId);
+  renderCards();
+}
+
+// nomreni panoya kopyala
+async function copyNumber(cardId) {
+  const card = cards.find(c => c.id === cardId);
+  if (!card) return;
+  const num = String(fullNumber(card)).replace(/\s/g, "");
+  try {
+    await navigator.clipboard.writeText(num);
+    showMsg(t("cards.copied"), true);
+  } catch {
+    showMsg(t("cards.copyFail"), false);
+  }
+}
+
+// nomreni ac/gizlet
+function toggleReveal(cardId) {
+  if (revealedCards.has(cardId)) revealedCards.delete(cardId);
+  else revealedCards.add(cardId);
+  renderCards();
+}
+
+// yuxaridaki statistikani hesabla ve goster
+function renderCardStats() {
+  const box = document.getElementById("cardStats");
+  if (!cards.length) { box.classList.add("hidden"); return; }
+  box.classList.remove("hidden");
+
+  const total = cards.length;
+  const active = cards.filter(c => cardStatus(c) !== "blocked").length;
+  const blocked = total - active;
+  // umumi balans: kartlarin bagli oldugu unikal hesablarin balansi
+  const seenAccounts = new Set();
+  let totalBalance = 0;
+  cards.forEach(c => {
+    if (!seenAccounts.has(c.accountId)) {
+      seenAccounts.add(c.accountId);
+      totalBalance += cardBalance(c);
+    }
+  });
+
+  document.getElementById("statTotal").textContent = total;
+  document.getElementById("statActive").textContent = active;
+  document.getElementById("statBlocked").textContent = blocked;
+  document.getElementById("statBalance").textContent = AZN(totalBalance);
+}
+
 function renderCards() {
   const grid = document.getElementById("cardsGrid");
 
@@ -353,11 +572,16 @@ function renderCards() {
 
   grid.innerHTML = cards.map(card => {
     const blocked = cardStatus(card) === "blocked";
+    const revealed = revealedCards.has(card.id);
+    const expShown = revealedExpiry.has(card.id);
+    const limit = Number(card.monthlyLimit ?? 0);
+    const theme = CARD_THEMES[getCardTheme(card.id)] || CARD_THEMES.default;
+    const brand = cardBrand(card);
     return `
     <div class="space-y-3">
       <!-- Kart gorunusu -->
       <div class="relative rounded-2xl overflow-hidden shadow-xl shadow-ink/10 ${blocked ? "card-blocked" : ""}">
-        <div class="relative bg-gradient-to-br from-ink via-ink-2 to-ink-3 p-5 h-[200px]">
+        <div class="relative p-5 h-[210px]" style="background: linear-gradient(135deg, ${theme.from} 0%, ${theme.via} 55%, ${theme.to} 100%)">
           <div class="aurora-blob absolute -top-16 -right-10 w-52 h-52 rounded-full blur-3xl opacity-40"
                style="background: radial-gradient(circle, #00e5d4 0%, transparent 65%)"></div>
           <div class="aurora-blob absolute -bottom-16 -left-6 w-44 h-44 rounded-full blur-3xl opacity-30"
@@ -365,28 +589,83 @@ function renderCards() {
 
           <div class="relative flex flex-col h-full justify-between">
             <div class="flex items-start justify-between">
-              <div class="chip w-10 h-7 rounded-md"></div>
-              <span class="px-2 py-0.5 rounded-md text-[10px] font-600 ${blocked ? "bg-red-500/20 text-red-300" : "bg-neon/20 text-neon"}">
-                ${blocked ? t("cards.statusBlocked") : t("cards.statusActive")}
-              </span>
+              <div class="flex items-center gap-2">
+                <div class="chip w-10 h-7 rounded-md"></div>
+                <!-- Amora logo -->
+                <div class="flex items-center gap-1">
+                  <div class="w-5 h-5 rounded-md bg-gradient-to-br from-neon to-lilac grid place-items-center">
+                    <i data-lucide="gem" style="width:11px;height:11px" class="text-ink-2"></i>
+                  </div>
+                  <span class="font-display font-700 text-white/90 text-[11px]">Amorabank</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                ${!card.onlinePaymentsEnabled ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-600 bg-white/10 text-white/60 flex items-center gap-1"><i data-lucide="globe-lock" style="width:10px;height:10px"></i> ${t("cards.onlineOff")}</span>` : ""}
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-600 ${blocked ? "bg-red-500/20 text-red-300" : "bg-neon/20 text-neon"}">
+                  ${blocked ? t("cards.statusBlocked") : t("cards.statusActive")}
+                </span>
+              </div>
             </div>
 
-            <div>
-              <p class="font-mono text-white text-lg tracking-[0.2em]">${maskNumber(card)}</p>
+            <div class="flex items-center gap-2">
+              <p class="font-mono text-white text-lg tracking-[0.18em] transition-all ${revealed ? "" : "blur-[6px] select-none"}">${revealed ? fullNumber(card) : maskNumber(card)}</p>
+              <button onclick="toggleReveal('${card.id}')" class="shrink-0 w-7 h-7 grid place-items-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 transition" title="${t("cards.toggleNumber")}">
+                <i data-lucide="${revealed ? "eye-off" : "eye"}" style="width:14px;height:14px"></i>
+              </button>
+              <button onclick="copyNumber('${card.id}')" class="shrink-0 w-7 h-7 grid place-items-center rounded-lg bg-white/10 hover:bg-white/20 text-white/70 transition" title="${t("cards.copy")}">
+                <i data-lucide="copy" style="width:13px;height:13px"></i>
+              </button>
             </div>
 
             <div class="flex items-end justify-between">
               <div>
-                <p class="text-white/40 text-[9px] uppercase tracking-wider">${t("cards.accountLabel")}</p>
-                <p class="text-white/80 text-xs">${accountTypeLabel(card)}</p>
+                <p class="text-white/40 text-[9px] uppercase tracking-wider">${card.cardName ? t("cards.cardNameLabel") : t("cards.accountLabel")}</p>
+                <p class="text-white/80 text-xs">${card.cardName ? card.cardName : accountTypeLabel(card)}</p>
               </div>
               <div class="text-right">
                 <p class="text-white/40 text-[9px] uppercase tracking-wider">${t("cards.expiry")}</p>
-                <p class="text-white/80 text-xs font-mono">${expiryLabel(card)}</p>
+                <div class="flex items-center gap-1 justify-end">
+                  <p class="text-white/80 text-xs font-mono transition-all ${expShown ? "" : "blur-[5px] select-none"}">${expShown ? expiryLabel(card) : "••/••"}</p>
+                  <button onclick="toggleExpiry('${card.id}')" class="w-5 h-5 grid place-items-center rounded bg-white/10 hover:bg-white/20 text-white/70 transition" title="${t("cards.toggleExpiry")}">
+                    <i data-lucide="${expShown ? "eye-off" : "eye"}" style="width:11px;height:11px"></i>
+                  </button>
+                </div>
               </div>
-              <span class="font-display font-700 text-white/90 text-sm italic">amora</span>
+              <!-- Kart novu -->
+              <div class="text-right">
+                ${brand === "Visa"
+                  ? `<span class="font-display font-700 italic text-white text-base tracking-tight">VISA</span>`
+                  : brand === "Mastercard"
+                  ? `<span class="flex items-center"><span class="w-4 h-4 rounded-full bg-red-500/80"></span><span class="w-4 h-4 rounded-full bg-amber-400/80 -ml-1.5"></span></span>`
+                  : `<span class="font-display font-700 text-white/90 text-sm italic">amora</span>`}
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Reng secici -->
+      <div class="flex items-center gap-1.5 px-1">
+        <span class="text-[10px] text-ink/40 mr-1">${t("cards.color")}:</span>
+        ${Object.entries(CARD_THEMES).map(([key, th]) => `
+          <button onclick="setCardTheme('${card.id}', '${key}')" title="${th.name}"
+                  class="w-5 h-5 rounded-full border-2 transition ${getCardTheme(card.id) === key ? "border-ink scale-110" : "border-white"}"
+                  style="background: linear-gradient(135deg, ${th.from}, ${th.to})"></button>`).join("")}
+      </div>
+
+      <!-- Kart melumat lovhesi -->
+      <div class="bg-white rounded-xl border border-line px-4 py-3 grid grid-cols-3 gap-2 text-center">
+        <div>
+          <p class="text-[9px] uppercase tracking-wider text-ink/40">${t("cards.statBalance")}</p>
+          <p class="text-[13px] font-mono font-700 text-ink mt-0.5">${AZN(cardBalance(card))}</p>
+        </div>
+        <div class="border-x border-line">
+          <p class="text-[9px] uppercase tracking-wider text-ink/40">${t("cards.monthlyLimit")}</p>
+          <p class="text-[13px] font-mono font-600 text-ink-2 mt-0.5">${limit > 0 ? AZN(limit) : t("cards.unlimited")}</p>
+        </div>
+        <div>
+          <p class="text-[9px] uppercase tracking-wider text-ink/40">${t("cards.created")}</p>
+          <p class="text-[12px] font-500 text-ink-2 mt-0.5">${cardCreatedLabel(card)}</p>
         </div>
       </div>
 
@@ -400,11 +679,15 @@ function renderCards() {
                <i data-lucide="lock" style="width:15px;height:15px"></i> ${t("cards.block")}
              </button>`
         }
+        <button onclick="openSettings('${card.id}')" class="h-10 px-3.5 rounded-xl bg-white border border-line text-sm font-500 text-ink/70 hover:border-lilac hover:text-lilac transition flex items-center justify-center gap-1.5">
+          <i data-lucide="settings-2" style="width:15px;height:15px"></i> <span class="hidden sm:inline">${t("cards.settings")}</span>
+        </button>
       </div>
     </div>`;
   }).join("");
 
   lucide.createIcons();
+  renderCardStats();
 }
 
 
@@ -426,6 +709,76 @@ async function unblockCard(id) {
     await loadCards();
   } catch (e) { showMsg(e.message, false); }
 }
+
+
+/* ══════════════════════════════════════════════════════════════
+   5b. KART PARAMETRLERI (ad / limit / onlayn odenis)
+   ══════════════════════════════════════════════════════════════ */
+let settingsOnlineState = true;  // toggle veziyyeti
+
+// toggle gorunusunu yenile
+function renderOnlineToggle() {
+  const btn = document.getElementById("settingsOnline");
+  const dot = document.getElementById("settingsOnlineDot");
+  btn.setAttribute("aria-checked", settingsOnlineState ? "true" : "false");
+  btn.className = "relative w-11 h-6 rounded-full transition-colors " + (settingsOnlineState ? "bg-neon" : "bg-ink/20");
+  dot.className = "absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform " + (settingsOnlineState ? "translate-x-5" : "");
+}
+
+// modali ac + karti tap + saheleri doldur
+function openSettings(cardId) {
+  const card = cards.find(c => c.id === cardId);
+  if (!card) return;
+
+  document.getElementById("settingsCardId").value = cardId;
+  document.getElementById("settingsCardName").value = card.cardName || "";
+  document.getElementById("settingsLimit").value = card.monthlyLimit ?? 0;
+  settingsOnlineState = card.onlinePaymentsEnabled !== false;  // default acik
+  renderOnlineToggle();
+
+  document.getElementById("settingsModal").classList.remove("hidden");
+}
+function closeSettings() { document.getElementById("settingsModal").classList.add("hidden"); }
+
+document.getElementById("closeSettings").onclick = closeSettings;
+document.getElementById("settingsModal").onclick = (e) => { if (e.target.id === "settingsModal") closeSettings(); };
+
+// toggle klik
+document.getElementById("settingsOnline").onclick = () => {
+  settingsOnlineState = !settingsOnlineState;
+  renderOnlineToggle();
+};
+
+// saxla
+document.getElementById("settingsForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const cardId = document.getElementById("settingsCardId").value;
+  const cardName = document.getElementById("settingsCardName").value.trim();
+  const limitRaw = document.getElementById("settingsLimit").value;
+  const monthlyLimit = limitRaw === "" ? 0 : Number(limitRaw);
+
+  if (monthlyLimit < 0 || isNaN(monthlyLimit)) return showMsg(t("cards.invalidLimit"), false);
+
+  const btn = e.target.querySelector("button[type=submit]");
+  btn.disabled = true;
+  try {
+    await api(`/api/Card/${cardId}/settings`, {
+      method: "PUT",
+      body: JSON.stringify({
+        cardName: cardName,           // bos ise backend null edir
+        monthlyLimit: monthlyLimit,
+        onlinePaymentsEnabled: settingsOnlineState,
+      }),
+    });
+    closeSettings();
+    showMsg(t("cards.settingsSaved"), true);
+    await loadCards();
+  } catch (err) {
+    showMsg(err.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 document.getElementById("createForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -481,6 +834,9 @@ document.getElementById("logoutBtn").onclick = async () => {
    7. ILKIN YUKLENME
    ══════════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", async () => {
+  // Valyuta mezennelerini cek (data cekilmeden EVVEL — ki money() hazir olsun)
+  if (typeof initCurrency === "function") await initCurrency();
+
   lucide.createIcons();
   await loadProfile();
   await loadAccounts();   // kart render-i hesab tipini gostermek ucun accounts-a ehtiyac duyur

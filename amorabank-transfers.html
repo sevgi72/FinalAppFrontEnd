@@ -8,6 +8,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="i18n.js"></script>
+<script src="currency.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -96,13 +97,41 @@ tailwind.config = {
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
+      <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="settings" style="width:18px;height:18px"></i> <span data-i18n="nav.settings">Ayarlar</span>
+      </a>
     </nav>
 
-    <!-- Dil secimi -->
-    <div class="flex justify-center gap-1 mb-3">
-      <button data-lang="az" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">AZ</button>
-      <button data-lang="en" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">EN</button>
-      <button data-lang="ru" class="lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition">RU</button>
+        <!-- Dil + Valyuta secimi (kompakt dropdown) -->
+    <div class="flex gap-2 justify-center mb-3">
+      <!-- Dil -->
+      <div class="relative flex-1">
+        <button id="langTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <i data-lucide="globe" style="width:14px;height:14px" class="text-ink/50"></i>
+          <span id="langTriggerLabel">AZ</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="langMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-lang="az" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan <span class="text-[10px] text-ink/40">AZ</span></button>
+          <button data-lang="en" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English <span class="text-[10px] text-ink/40">EN</span></button>
+          <button data-lang="ru" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский <span class="text-[10px] text-ink/40">RU</span></button>
+        </div>
+      </div>
+      <!-- Valyuta -->
+      <div class="relative flex-1">
+        <button id="curTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <span id="curTriggerLabel">₼ AZN</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="curMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-cur="AZN" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat <span class="text-[11px] text-ink/40">₼</span></button>
+          <button data-cur="USD" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar <span class="text-[11px] text-ink/40">$</span></button>
+          <button data-cur="EUR" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro <span class="text-[11px] text-ink/40">€</span></button>
+          <button data-cur="TRY" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə <span class="text-[11px] text-ink/40">₺</span></button>
+        </div>
+      </div>
     </div>
 
     <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
@@ -180,6 +209,12 @@ tailwind.config = {
             </div>
 
             <form id="externalForm" class="space-y-4">
+              <!-- Sevimli alicilar -->
+              <div id="favoritesBar" class="hidden">
+                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="tr.favorites">Sevimli alıcılar</label>
+                <div id="favoritesList" class="flex flex-wrap gap-2"></div>
+              </div>
+
               <div>
                 <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="tr.fromAccount">Hesabdan</label>
                 <select id="extFrom" class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
@@ -313,7 +348,7 @@ tailwind.config = {
             <p class="text-white/50 text-[11px] uppercase tracking-wider mb-3" data-i18n="tr.selectedAccount">Seçilmiş hesab</p>
             <select id="historyAccount" class="w-full h-11 px-3 rounded-xl bg-white/10 border border-white/15 text-white text-sm outline-none focus:border-neon transition [&>option]:text-ink-2"></select>
             <p class="mt-4 text-white/45 text-[11px]" data-i18n="tr.balance">Balans</p>
-            <p id="selectedBalance" class="font-mono font-700 text-white text-2xl">— ₼</p>
+            <p id="selectedBalance" class="font-mono font-700 text-white text-2xl">—</p>
           </div>
         </section>
 
@@ -346,7 +381,7 @@ tailwind.config = {
     </div>
 
     <h3 class="font-display font-600 text-ink text-lg text-center" data-i18n="tr.receiptDone">Köçürmə tamamlandı</h3>
-    <p id="receiptAmount" class="font-mono font-700 text-ink text-2xl text-center mt-2">— ₼</p>
+    <p id="receiptAmount" class="font-mono font-700 text-ink text-2xl text-center mt-2">—</p>
 
     <div id="receiptDetails" class="mt-5 space-y-2.5 text-sm"></div>
 
@@ -406,7 +441,9 @@ async function api(path, options = {}) {
   return data;
 }
 
-const AZN = (n) => Number(n).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const AZN = (n) => (typeof money === "function" ? money(n) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20bc");
+const AZNnum = (n) => (typeof moneyNum === "function" ? Number(moneyNum(n)).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const curSym = () => (typeof symbol === "function" ? symbol() : "\u20bc");
 const formatIban = (s) => s ? s.replace(/(.{4})/g, '$1 ').trim() : '—';
 const formatDate = (iso) => iso ? new Date(iso).toLocaleDateString("az-AZ", {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"}) : '—';
 
@@ -449,7 +486,7 @@ async function loadAccounts() {
 
 function accountLabel(a) {
   const typ = a.type === "Savings" ? t("tr.savingsShort") : t("tr.checkingShort");
-  return `${typ} • ${formatIban(a.accountNumber)} • ${AZN(a.balance)} ₼`;
+  return `${typ} • ${formatIban(a.accountNumber)} • ${AZN(a.balance)}`;
 }
 
 function fillAccountSelects() {
@@ -467,7 +504,7 @@ function fillAccountSelects() {
 function updateSelectedBalance() {
   const sel = document.getElementById("historyAccount");
   const acc = accounts.find(a => a.id === sel.value);
-  document.getElementById("selectedBalance").textContent = acc ? AZN(acc.balance) + " ₼" : "— ₼";
+  document.getElementById("selectedBalance").textContent = acc ? AZN(acc.balance) : "—";
 }
 
 async function loadHistory(accountId) {
@@ -512,7 +549,7 @@ function renderHistory(items, accountId) {
           <p class="text-[11px] text-ink/45 mt-0.5">${formatDate(tx.createdAt)}</p>
         </div>
         <p class="font-mono font-600 text-sm shrink-0 ${isIn ? "text-teal-700" : "text-ink-2"}">
-          ${isIn ? "+" : "−"}${AZN(tx.amount)} ₼
+          ${isIn ? "+" : "−"}${AZN(tx.amount)}
         </p>
       </li>`;
   }).join("");
@@ -546,13 +583,84 @@ document.getElementById("externalForm").addEventListener("submit", async (e) => 
   try {
     const res = await api("/api/Transaction/transfer", { method: "POST", body: JSON.stringify(body) });
     handleSuccess(res, body.amount, t("tr.externalLabel"));
+    // alicini sevimlilere saxla (IBAN + qeyd)
+    saveFavorite(body.toAccountNumber, document.getElementById("extDesc").value.trim());
     e.target.reset();
+    renderFavorites();
   } catch (err) {
     showMsg(err.message, false);
   } finally {
     setBtn(btn, false);
   }
 });
+
+
+/* ══════════════════════════════════════════════════════════════
+   SEVIMLI ALICILAR (localStorage-da saxlanir)
+   ══════════════════════════════════════════════════════════════ */
+const FAV_KEY = "amorabank_favorites";
+
+function getFavorites() {
+  try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveFavorite(iban, label) {
+  if (!iban) return;
+  const clean = iban.replace(/\s/g, "");
+  let favs = getFavorites();
+  // varsa tekrar elave etme (en yuxari cixart)
+  favs = favs.filter(f => f.iban !== clean);
+  favs.unshift({ iban: clean, label: label || "", ts: Date.now() });
+  favs = favs.slice(0, 6);   // maksimum 6
+  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+}
+
+function removeFavorite(iban) {
+  const favs = getFavorites().filter(f => f.iban !== iban);
+  localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+  renderFavorites();
+}
+
+// IBAN-i qisalt: son 4 reqem
+function shortIban(iban) {
+  const s = String(iban).replace(/\s/g, "");
+  return "…" + s.slice(-4);
+}
+
+function renderFavorites() {
+  const bar = document.getElementById("favoritesBar");
+  const list = document.getElementById("favoritesList");
+  const favs = getFavorites();
+
+  if (!favs.length) { bar.classList.add("hidden"); return; }
+  bar.classList.remove("hidden");
+
+  list.innerHTML = favs.map(f => `
+    <div class="group relative flex items-center gap-1.5 pl-2.5 pr-1.5 py-1.5 rounded-lg border border-line bg-mist hover:border-neon transition">
+      <button type="button" onclick="pickFavorite('${f.iban}')" class="flex items-center gap-1.5 text-left">
+        <span class="w-6 h-6 rounded-full bg-ink/8 text-ink grid place-items-center text-[10px] font-600">${(f.label || "?").charAt(0).toUpperCase()}</span>
+        <span class="text-xs">
+          <span class="font-500 text-ink-2">${f.label || t("tr.recipient")}</span>
+          <span class="text-ink/40 font-mono ml-1">${shortIban(f.iban)}</span>
+        </span>
+      </button>
+      <button type="button" onclick="removeFavorite('${f.iban}')" title="${t("tr.removeFav")}" class="w-5 h-5 grid place-items-center rounded text-ink/30 hover:text-red-500 hover:bg-red-50 transition">
+        <i data-lucide="x" style="width:12px;height:12px"></i>
+      </button>
+    </div>`).join("");
+  lucide.createIcons();
+}
+
+// sevimliye basanda IBAN + qeydi doldur
+function pickFavorite(iban) {
+  const fav = getFavorites().find(f => f.iban === iban);
+  if (!fav) return;
+  // IBAN-i formatli goster (4-lu qruplar)
+  document.getElementById("extTo").value = fav.iban.replace(/(.{4})/g, "$1 ").trim();
+  if (fav.label) document.getElementById("extDesc").value = fav.label;
+  document.getElementById("extAmount").focus();
+}
 
 // --- OZ ARAMDA (self-transfer) ---
 document.getElementById("selfForm").addEventListener("submit", async (e) => {
@@ -594,7 +702,7 @@ document.getElementById("balanceForm").addEventListener("submit", async (e) => {
   setBtn(btn, true);
   try {
     const res = await api(path, { method: "POST", body: JSON.stringify(body) });
-    showMsg(`${AZN(body.amount)} ₼ ${word}.`, true);
+    showMsg(`${AZN(body.amount)} ${word}.`, true);
     handleSuccess(res, body.amount, balanceMode === "deposit" ? t("tr.depositLabel") : t("tr.withdrawLabel"), true);
     e.target.reset();
   } catch (err) {
@@ -613,7 +721,7 @@ async function handleSuccess(res, amount, typeLabel, skipReceipt = false) {
     lastTxId = txId;
     openReceipt(amount, typeLabel, txId);
   } else {
-    showMsg(`${AZN(amount)} ₼ — ${t("tr.opSuccess")}`, true);
+    showMsg(`${AZN(amount)} — ${t("tr.opSuccess")}`, true);
   }
 }
 
@@ -623,7 +731,7 @@ async function handleSuccess(res, amount, typeLabel, skipReceipt = false) {
    ══════════════════════════════════════════════════════════════ */
 function openReceipt(amount, typeLabel, txId) {
   lastTxId = txId;
-  document.getElementById("receiptAmount").textContent = AZN(amount) + " ₼";
+  document.getElementById("receiptAmount").textContent = AZN(amount);
   document.getElementById("receiptDetails").innerHTML = `
     <div class="flex justify-between"><span class="text-ink/50">${t("tr.receiptType")}</span><span class="font-500 text-ink-2">${typeLabel}</span></div>
     <div class="flex justify-between"><span class="text-ink/50">${t("tr.receiptDate")}</span><span class="font-500 text-ink-2">${formatDate(new Date().toISOString())}</span></div>
@@ -636,7 +744,7 @@ async function openReceiptById(txId) {
   try {
     const r = await api(`/api/Transaction/${txId}/receipt`);
     lastTxId = txId;
-    document.getElementById("receiptAmount").textContent = AZN(r.amount ?? 0) + " ₼";
+    document.getElementById("receiptAmount").textContent = AZN(r.amount ?? 0);
     document.getElementById("receiptDetails").innerHTML = `
       <div class="flex justify-between"><span class="text-ink/50">${t("tr.receiptType")}</span><span class="font-500 text-ink-2">${r.type || t("tr.txDefault")}</span></div>
       <div class="flex justify-between"><span class="text-ink/50">${t("tr.receiptNote")}</span><span class="font-500 text-ink-2">${r.description || "—"}</span></div>
@@ -744,9 +852,13 @@ document.getElementById("logoutBtn").onclick = async () => {
    7. ILKIN YUKLENME
    ══════════════════════════════════════════════════════════════ */
 document.addEventListener("DOMContentLoaded", async () => {
+  // Valyuta mezennelerini cek (data cekilmeden EVVEL — ki money() hazir olsun)
+  if (typeof initCurrency === "function") await initCurrency();
+
   lucide.createIcons();
   setTab("external");
   setBalanceMode("deposit");
+  renderFavorites();
   await loadProfile();
   await loadAccounts();
 });
