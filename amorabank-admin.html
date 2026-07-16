@@ -8,6 +8,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="i18n.js"></script>
 <script src="currency.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -193,6 +194,30 @@ tailwind.config = {
             <p class="text-[11px] text-white/50" data-i18n="adm.systemFunds">Sistemdəki vəsait</p>
             <p class="font-mono font-700 text-2xl mt-1" id="stBalance">—</p>
             <p class="text-[11px] text-white/40 mt-1"><span id="stAccounts">—</span> <span data-i18n="adm.accounts">hesab</span></p>
+          </div>
+        </div>
+
+        <!-- ═══ QRAFIKLER ═══ -->
+        <div class="grid lg:grid-cols-3 gap-4 mb-4">
+          <!-- Musteri paylanmasi (donut) -->
+          <div class="bg-white rounded-xl border border-line p-4">
+            <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.chUsers">Müştəri paylanması</h2>
+            <p class="text-[11px] text-ink/40 mt-0.5 mb-3" data-i18n="adm.chUsersHint">Aktiv və bloklanmış</p>
+            <div class="h-[200px]"><canvas id="chartUsers"></canvas></div>
+          </div>
+
+          <!-- Emeliyyat hecmi (bar) -->
+          <div class="bg-white rounded-xl border border-line p-4">
+            <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.chVolume">Əməliyyat həcmi</h2>
+            <p class="text-[11px] text-ink/40 mt-0.5 mb-3" data-i18n="adm.chVolumeHint">Bugün və bu ay</p>
+            <div class="h-[200px]"><canvas id="chartVolume"></canvas></div>
+          </div>
+
+          <!-- Provayderler (bar) -->
+          <div class="bg-white rounded-xl border border-line p-4">
+            <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.chProviders">Provayder üzrə ödəniş</h2>
+            <p class="text-[11px] text-ink/40 mt-0.5 mb-3" data-i18n="adm.chProvidersHint">Ümumi məbləğ</p>
+            <div class="h-[200px]"><canvas id="chartProviders"></canvas></div>
           </div>
         </div>
 
@@ -599,6 +624,106 @@ async function loadStats() {
       <td class="px-4 py-2.5 text-right font-mono text-[12px]">${p.paymentCount}</td>
       <td class="px-4 py-2.5 text-right font-mono text-[12px] text-ink">${AZN(p.totalAmount)}</td>
     </tr>`).join("") || emptyRow(3);
+
+  renderCharts(s);
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   5b. QRAFIKLER (Chart.js) — mövcud stats datasindan
+   ══════════════════════════════════════════════════════════════ */
+
+// cizilmis qrafikleri saxlayiriq ki, yeniden cizende kohneni sokek
+const charts = {};
+
+// brend rengleri
+const C = { ink: "#2c2966", neon: "#00e5d4", lilac: "#7c6ff0", danger: "#ef4444", line: "#e6e8f2" };
+
+function destroyChart(key) {
+  if (charts[key]) { charts[key].destroy(); delete charts[key]; }
+}
+
+function renderCharts(s) {
+  if (typeof Chart === "undefined") return;   // kitabxana yuklenmeyibse
+
+  Chart.defaults.font.family = "Inter, sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = "#8b8ba7";
+
+  // ── 1. Musteri paylanmasi (donut) ──
+  destroyChart("users");
+  const active = Math.max((s.totalUsers || 0) - (s.blockedUsers || 0), 0);
+  charts.users = new Chart(document.getElementById("chartUsers"), {
+    type: "doughnut",
+    data: {
+      labels: [t("adm.chActive"), t("adm.blocked")],
+      datasets: [{
+        data: [active, s.blockedUsers || 0],
+        backgroundColor: [C.neon, C.danger],
+        borderWidth: 0,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: "62%",
+      plugins: { legend: { position: "bottom", labels: { boxWidth: 10, padding: 12 } } },
+    },
+  });
+
+  // ── 2. Emeliyyat hecmi: bugun vs bu ay (bar) ──
+  destroyChart("volume");
+  charts.volume = new Chart(document.getElementById("chartVolume"), {
+    type: "bar",
+    data: {
+      labels: [t("adm.chToday"), t("adm.chMonth")],
+      datasets: [{
+        label: t("adm.thVolume"),
+        data: [s.todayTransactionVolume || 0, s.monthTransactionVolume || 0],
+        backgroundColor: [C.lilac, C.ink],
+        borderRadius: 6,
+        maxBarThickness: 52,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (ctx) => AZN(ctx.parsed.y) } },
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: C.line }, ticks: { callback: (v) => AZNnum(v) } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+
+  // ── 3. Provayder uzre odenis (horizontal bar) ──
+  destroyChart("providers");
+  const prov = (s.utilityByProvider || []).slice(0, 6);
+  charts.providers = new Chart(document.getElementById("chartProviders"), {
+    type: "bar",
+    data: {
+      labels: prov.map(p => p.providerName),
+      datasets: [{
+        label: t("adm.thAmount"),
+        data: prov.map(p => p.totalAmount || 0),
+        backgroundColor: C.neon,
+        borderRadius: 5,
+        maxBarThickness: 22,
+      }],
+    },
+    options: {
+      indexAxis: "y",
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (ctx) => AZN(ctx.parsed.x) } },
+      },
+      scales: {
+        x: { beginAtZero: true, grid: { color: C.line }, ticks: { callback: (v) => AZNnum(v) } },
+        y: { grid: { display: false } },
+      },
+    },
+  });
 }
 
 const emptyRow = (cols) => `<tr><td colspan="${cols}" class="px-4 py-8 text-center text-ink/30 text-[12px]">${t("adm.noData")}</td></tr>`;

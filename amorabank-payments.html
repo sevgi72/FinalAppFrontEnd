@@ -70,6 +70,9 @@ tailwind.config = {
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
+      <a href="amorabank-statement.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="file-text" style="width:18px;height:18px"></i> <span data-i18n="nav.statement">Çıxarış</span>
+      </a>
       <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
@@ -216,7 +219,13 @@ tailwind.config = {
               </div>
 
               <div>
-                <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="pay.amount">Məbləğ (₼)</label>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="block text-xs font-500 text-ink/60" data-i18n="pay.amount">Məbləğ (₼)</label>
+                  <button type="button" id="fillDebtBtn"
+                          class="hidden text-[11px] font-500 text-teal-700 hover:underline">
+                    <span data-i18n="pay.fillDebt">Borcu yaz</span>
+                  </button>
+                </div>
                 <input id="payAmount" type="number" step="0.01" min="0.01" placeholder="0.00"
                        class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-lg font-mono font-600 text-ink focus:border-neon focus:bg-white outline-none transition">
               </div>
@@ -567,6 +576,9 @@ async function loadScheduled() {
    ══════════════════════════════════════════════════════════════ */
 
 // borc yoxla
+// son yoxlanan borc (Borcu yaz duymesi ucun)
+let lastDebt = 0;
+
 document.getElementById("debtBtn").addEventListener("click", async () => {
   const providerId = document.getElementById("payProvider").value;
   const subscriberCode = document.getElementById("paySubscriber").value.trim();
@@ -579,12 +591,31 @@ document.getElementById("debtBtn").addEventListener("click", async () => {
     const d = await api("/api/Utility/debt", { method: "POST", body: JSON.stringify({ providerId, subscriberCode }) });
     res.className = "mt-2 text-sm px-3 py-2 rounded-lg bg-neon/10 text-teal-800";
     res.textContent = `${t("pay.debt")} ${AZN(d.debtAmount)}`;
-    // borcu avtomatik mebleg xanasina yaz
-    if (d.debtAmount > 0) document.getElementById("payAmount").value = d.debtAmount;
+
+    // Borcu YALNIZ mebleg xanasi bosdursa avtomatik doldur —
+    // istifadeci oz meblegini yazibsa, onu silme.
+    const amountEl = document.getElementById("payAmount");
+    if (d.debtAmount > 0) {
+      if (!amountEl.value || Number(amountEl.value) === 0) {
+        amountEl.value = d.debtAmount;
+      } else if (Number(amountEl.value) !== Number(d.debtAmount)) {
+        // istifadeci fərqli mebleg yazib — xeberdarliq goster, amma silme
+        res.textContent += ` · ${t("pay.yourAmountKept")}`;
+      }
+    }
+    // borcu "Borcu ode" duymesi ucun yadda saxla
+    lastDebt = d.debtAmount;
+    const fillBtn = document.getElementById("fillDebtBtn");
+    if (fillBtn) fillBtn.classList.toggle("hidden", !(d.debtAmount > 0));
   } catch (e) {
     res.className = "mt-2 text-sm px-3 py-2 rounded-lg bg-red-50 text-red-700";
     res.textContent = e.message;
   }
+});
+
+// "Borcu yaz" — istifadeci ozu isteyende borcu mebleg xanasina kocurur
+document.getElementById("fillDebtBtn").addEventListener("click", () => {
+  if (lastDebt > 0) document.getElementById("payAmount").value = lastDebt;
 });
 
 // ode

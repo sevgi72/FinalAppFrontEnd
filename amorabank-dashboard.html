@@ -135,6 +135,9 @@
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
+      <a href="amorabank-statement.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="file-text" style="width:18px;height:18px"></i> <span data-i18n="nav.statement">Çıxarış</span>
+      </a>
       <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
@@ -806,6 +809,8 @@
         const typeLabel = t("dash.txType_" + t2.type) !== ("dash.txType_" + t2.type)
           ? t("dash.txType_" + t2.type) : t2.type;
         const title = t2.description || typeLabel;
+        // balans snapshot — emeliyyatdan sonra bu hesabin balansi
+        const snap = isIn ? t2.toBalanceSnapshot : t2.fromBalanceSnapshot;
 
         return `
       <li class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-mist/60 transition">
@@ -816,13 +821,15 @@
 
         <div class="min-w-0 flex-1">
           <p class="text-sm font-500 text-ink-2 truncate">${title}</p>
-          <p class="text-[11px] text-ink/45 mt-0.5">${formatDate(t2.createdAt)}</p>
+          <p class="text-[11px] text-ink/45 mt-0.5">${formatDate(t2.createdAt)} · ${typeLabel}</p>
         </div>
 
-        <p class="font-mono font-600 text-sm shrink-0 balance-value
-                  ${isIn ? "text-teal-700" : "text-ink-2"}">
-          ${isIn ? "+" : "−"}${AZN(t2.amount)}
-        </p>
+        <div class="shrink-0 text-right">
+          <p class="font-mono font-600 text-sm balance-value ${isIn ? "text-teal-700" : "text-ink-2"}">
+            ${isIn ? "+" : "−"}${AZN(t2.amount)}
+          </p>
+          ${snap != null ? `<p class="text-[10px] text-ink/40 font-mono mt-0.5">${t("tr.balanceAfter")}: ${AZN(snap)}</p>` : ""}
+        </div>
       </li>`;
       }).join("");
 
@@ -1241,6 +1248,7 @@
       window.location.href = "amorabank-auth.html";
     };
   </script>
+<script src="ai-chat.js"></script>
 </body>
 
 </html>

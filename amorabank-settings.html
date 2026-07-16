@@ -67,6 +67,9 @@ tailwind.config = {
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
+      <a href="amorabank-statement.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="file-text" style="width:18px;height:18px"></i> <span data-i18n="nav.statement">Çıxarış</span>
+      </a>
       <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
@@ -270,6 +273,24 @@ tailwind.config = {
               <i data-lucide="check" style="width:15px;height:15px"></i> <span data-i18n="set.updatePassword">Parolu yenilə</span>
             </button>
           </form>
+        </div>
+      </section>
+
+
+      <!-- ═══ BALANS XEBERDARLIGI (F7) ═══ -->
+      <section class="bg-white rounded-2xl border border-line p-6 mb-5">
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/12 grid place-items-center">
+            <i data-lucide="bell-ring" style="width:17px;height:17px" class="text-amber-600"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-600 text-ink" data-i18n="set.alertTitle">Balans xəbərdarlığı</h3>
+            <p class="text-xs text-ink/45" data-i18n="set.alertHint">Balans həddin altına düşəndə bildiriş alın</p>
+          </div>
+        </div>
+
+        <div id="alertList" class="space-y-3">
+          <p class="text-sm text-ink/35 text-center py-4" data-i18n="set.loading">Yüklənir…</p>
         </div>
       </section>
 
@@ -513,6 +534,92 @@ document.getElementById("passwordForm").addEventListener("submit", async (e) => 
 
 
 /* ══════════════════════════════════════════════════════════════
+   5b. BALANS XEBERDARLIGI (F7) — POST /api/BalanceAlert/threshold
+   ══════════════════════════════════════════════════════════════ */
+let accounts = [];
+
+async function loadAlerts() {
+  const box = document.getElementById("alertList");
+  try {
+    accounts = await api("/api/Account/my");
+  } catch (e) {
+    box.innerHTML = `<p class="text-sm text-red-600 text-center py-4">${e.message}</p>`;
+    return;
+  }
+  renderAlerts();
+}
+
+function accLabel(a) {
+  const typ = a.type === "Savings" ? t("st.savings") : t("st.checking");
+  const iban = a.accountNumber ? "…" + String(a.accountNumber).slice(-4) : "";
+  return `${typ} ${iban}`;
+}
+
+function renderAlerts() {
+  const box = document.getElementById("alertList");
+  if (!accounts.length) {
+    box.innerHTML = `<p class="text-sm text-ink/35 text-center py-4">${t("set.noAccounts")}</p>`;
+    return;
+  }
+
+  box.innerHTML = accounts.map(a => {
+    const th = a.lowBalanceThreshold;
+    const on = th != null && Number(th) > 0;
+    return `
+      <div class="flex items-center gap-3 p-3.5 rounded-xl bg-mist" data-alert-row="${a.id}">
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-500 text-ink-2">${accLabel(a)}</p>
+          <p class="text-[11px] text-ink/45 font-mono">${t("set.balanceNow")}: ${AZN(a.balance)}</p>
+        </div>
+        <div class="relative w-28 shrink-0">
+          <input type="number" min="0" step="10" value="${on ? th : ""}" placeholder="0"
+                 data-alert-input="${a.id}"
+                 class="w-full h-10 pl-3 pr-7 rounded-lg border border-line bg-white text-sm font-mono text-ink-2 focus:border-neon outline-none transition">
+          <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink/40">₼</span>
+        </div>
+        <button data-alert-save="${a.id}"
+                class="h-10 px-3.5 rounded-lg bg-ink text-white text-xs font-600 hover:bg-ink-2 active:scale-[.98] transition shrink-0">
+          ${t("set.saveShort")}
+        </button>
+      </div>
+      <p class="text-[11px] ${on ? "text-teal-700" : "text-ink/35"} px-1 -mt-1">
+        ${on ? t("set.alertOn").replace("{v}", AZN(th)) : t("set.alertOff")}
+      </p>`;
+  }).join("");
+}
+
+// saxla (delegation)
+document.getElementById("alertList").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-alert-save]");
+  if (!btn) return;
+  const id = btn.dataset.alertSave;
+  const input = document.querySelector(`[data-alert-input="${id}"]`);
+  const raw = input.value.trim();
+  const val = raw === "" ? null : Number(raw);
+
+  if (val !== null && (isNaN(val) || val < 0)) return showMsg(t("set.invalidThreshold"), false);
+
+  btn.disabled = true;
+  try {
+    // threshold bos/0 ise null gonderilir → xeberdarliq legv olunur
+    const qs = new URLSearchParams({ accountId: id });
+    if (val !== null && val > 0) qs.set("threshold", val);
+    await api(`/api/BalanceAlert/threshold?${qs}`, { method: "POST" });
+
+    // yaddasda yenile
+    const acc = accounts.find(a => a.id === id);
+    if (acc) acc.lowBalanceThreshold = (val && val > 0) ? val : null;
+    renderAlerts();
+    showMsg(t("set.alertSaved"), true);
+  } catch (err) {
+    showMsg(err.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+
+/* ══════════════════════════════════════════════════════════════
    6. TENZIMLEME DUYMELERI (dil/valyuta — sehife daxili)
    ══════════════════════════════════════════════════════════════ */
 function renderPrefButtons() {
@@ -566,6 +673,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   lucide.createIcons();
   renderPrefButtons();
   await loadProfile();
+  await loadAlerts();
 });
 </script>
 </body>

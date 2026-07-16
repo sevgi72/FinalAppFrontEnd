@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amorabank - AI Söhbət</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body class="text-slate-800">
+
+    <div class="min-h-screen flex">
+        <!-- SOL MENYU (Sidebar) -->
+        <aside class="w-64 bg-slate-900 text-slate-400 p-6 flex flex-col justify-between shrink-0 hidden md:flex">
+            <div>
+                <!-- Logo -->
+                <div class="flex items-center gap-3 mb-8">
+                    <div
+                        class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+                        A</div>
+                    <span class="text-white font-bold text-lg tracking-wide">Amorabank</span>
+                </div>
+
+                <!-- Menyu keçidləri -->
+                <nav class="space-y-1.5">
+                    <a href="amorabank-dashboard.html"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+                        <i data-lucide="layout-dashboard" class="w-4.5 h-4.5"></i>
+                        <span>Panel</span>
+                    </a>
+                    <a href="amorabank-savings.html"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+                        <i data-lucide="piggy-bank" class="w-4.5 h-4.5"></i>
+                        <span>Yığım məqsədləri</span>
+                    </a>
+                    <a href="amorabank-cards.html"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+                        <i data-lucide="credit-card" class="w-4.5 h-4.5"></i>
+                        <span>Kartlar</span>
+                    </a>
+                    <a href="amorabank-payments.html"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+                        <i data-lucide="wallet" class="w-4.5 h-4.5"></i>
+                        <span>Ödənişlər</span>
+                    </a>
+                    <!-- Aktiv AI Bölməsi -->
+                    <a href="#"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-indigo-600/10 text-indigo-400 font-medium transition text-sm border-l-2 border-indigo-500">
+                        <i data-lucide="sparkles" class="w-4.5 h-4.5 text-indigo-400"></i>
+                        <span>AI Söhbət</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Menyu alt hissə -->
+            <div>
+                <a href="amorabank-settings.html"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+                    <i data-lucide="settings" class="w-4.5 h-4.5"></i>
+                    <span>Ayarlar</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ƏSAS MƏZMUN -->
+        <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+            <!-- Üst Naviqasiya Barı -->
+            <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900">Amorabot AI</h1>
+                    <p class="text-xs text-slate-500">Süni intellekt əsaslı maliyyə məsləhətçiniz</p>
+                </div>
+                <!-- İstifadəçi Profili -->
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
+                        S
+                    </div>
+                </div>
+            </header>
+
+            <!-- Chat və Hədəflər Paneli (İki sütunlu struktur) -->
+            <div class="flex-1 flex overflow-hidden bg-slate-50">
+                <!-- Sol Tərəf: Chat interfeysi -->
+                <div class="flex-1 flex flex-col h-full bg-white border-r border-slate-200">
+                    <!-- Söhbət tarixi -->
+                    <div id="chatContainer" class="flex-1 overflow-y-auto p-6 space-y-4">
+                        <!-- Botun ilkin mesajı -->
+                        <div class="flex gap-3 max-w-[85%]">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs shrink-0">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            </div>
+                            <div
+                                class="bg-slate-100 rounded-2xl p-4 text-sm text-slate-700 leading-relaxed rounded-tl-none shadow-sm">
+                                Salam! Mən sizin <strong>Amorabot AI</strong> köməkçinizəm. 👋 <br><br>
+                                Cari yığım hədəflərinizi analiz edə bilər, onlara necə daha sürətli çatacağınız barədə
+                                büdcə planı tərtib edə bilərəm. Mənə istənilən sualı verə bilərsiniz!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mesaj daxiletmə sahəsi -->
+                    <form id="chatForm" class="p-4 border-t border-slate-200 bg-white flex gap-3 items-center shrink-0">
+                        <input id="chatInput" type="text" autocomplete="off"
+                            placeholder="Hədəflərimə necə çatım? Məsələn: Pc almaq üçün plan qur..." required
+                            class="flex-1 h-12 px-4 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-100 outline-none transition">
+                        <button type="submit" id="sendBtn"
+                            class="w-12 h-12 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 transition flex items-center justify-center shrink-0 shadow-sm">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Sağ Tərəf: Cari Məqsədlərin Sinxronizasiyası paneli -->
+                <div class="w-80 p-6 overflow-y-auto hidden lg:block space-y-6">
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+                        <div class="flex items-center gap-2 mb-4 text-slate-900 font-bold text-sm">
+                            <i data-lucide="database" class="w-4 h-4 text-indigo-500"></i>
+                            <span>AI-a ötürülən hədəflər</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-4">
+                            Aşağıdakı aktiv hədəfləriniz avtomatik olaraq hər bir sualınızla birlikdə AI-a göndərilir:
+                        </p>
+
+                        <!-- Cari hədəflərin siyahısı (şəkildən oxunan məlumatlar əsasında dinamik qoşulub) -->
+                        <div class="space-y-3">
+                            <!-- Goal 1 -->
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="font-semibold text-xs text-slate-800">Pc</span>
+                                    <span
+                                        class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-medium">0%</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 flex justify-between">
+                                    <span>Yığılıb: 0.00 ₼</span>
+                                    <span>Hədəf: 3,400.00 ₼</span>
+                                </div>
+                                <div class="w-full bg-slate-200 h-1 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-indigo-500 h-full w-[0%]"></div>
+                                </div>
+                            </div>
+
+                            <!-- Goal 2 -->
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/60">
+                                <div class="flex justify-between items-start mb-2">
+                                    <span class="font-semibold text-xs text-slate-800">Telefon ucun</span>
+                                    <span
+                                        class="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-medium">3%</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 flex justify-between">
+                                    <span>Yığılıb: 3.00 ₼</span>
+                                    <span>Hədəf: 100.00 ₼</span>
+                                </div>
+                                <div class="w-full bg-slate-200 h-1 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-indigo-500 h-full w-[3%]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gemini Status Card -->
+                    <div
+                        class="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl"></div>
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                            <span class="text-xs font-semibold text-slate-300">Model: Gemini 1.5 Flash</span>
+                        </div>
+                        <h4 class="font-bold text-sm mb-1">Təhlükəsiz Backend</h4>
+                        <p class="text-[11px] text-slate-300 leading-relaxed">
+                            Bütün sorğularınız daxili backend serveriniz vasitəsilə şifrələnmiş şəkildə ötürülür. API
+                            açarı tam gizlidir.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        // Lucide ikonlarını aktivləşdir
+        lucide.createIcons();
+
+        // Məqsədlər obyekti (Amorabank-savings tətbiqindən simulyasiya edilmiş data)
+        const currentGoals = [
+            { name: "Pc", targetAmount: 3400.00, savedAmount: 0.00, deadline: "365 gün qalıb" },
+            { name: "Telefon ucun", targetAmount: 100.00, savedAmount: 3.00, deadline: "Son tarix yoxdur" }
+        ];
+
+        const chatForm = document.getElementById("chatForm");
+        const chatInput = document.getElementById("chatInput");
+        const chatContainer = document.getElementById("chatContainer");
+        const sendBtn = document.getElementById("sendBtn");
+
+        chatForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const messageText = chatInput.value.trim();
+            if (!messageText) return;
+
+            // 1. İstifadəçi mesajını ekrana yaz
+            appendMessage("user", messageText);
+            chatInput.value = "";
+
+            // 2. Loader əlavə et
+            const loaderId = appendMessage("ai", `
+                <div class="flex gap-1 py-1">
+                    <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce"></span>
+                    <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce [animation-delay:0.2s]"></span>
+                    <span class="w-2 h-2 rounded-full bg-slate-400 animate-bounce [animation-delay:0.4s]"></span>
+                </div>
+            `);
+
+            // Səhifəni aşağı çək
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            sendBtn.disabled = true;
+
+            try {
+                // Sizin backend-inizə (localhost:5150) və ya birbaşa simulyasiya edilmiş cavaba müraciət:
+                // Real istifadə üçün '/api/AI/chat' endpointini çağıra bilərsiniz.
+                const response = await fetch("/api/AI/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: messageText,
+                        currentGoals: currentGoals
+                    })
+                });
+
+                document.getElementById(loaderId)?.remove();
+
+                if (response.ok) {
+                    const data = await response.json();
+                    appendMessage("ai", data.reply || "Bağlantı uğurludur, lakin boş cavab qayıtdı.");
+                } else {
+                    // Əgər lokal backend hələ işə salınmayıbsa, ağıllı yerli simulyasiya cavabı verək (təqdimat üçün)
+                    const fallbackResponse = getFallbackAiResponse(messageText);
+                    appendMessage("ai", fallbackResponse);
+                }
+            } catch (error) {
+                // Backend qoşulmayıbsa, yenə də istifadəçinin görməsi üçün simulyasiya rejimində cavab verək:
+                document.getElementById(loaderId)?.remove();
+                const fallbackResponse = getFallbackAiResponse(messageText);
+                appendMessage("ai", fallbackResponse);
+            } finally {
+                sendBtn.disabled = false;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        });
+
+        function appendMessage(sender, text) {
+            const msgId = "msg-" + Date.now();
+            let messageHtml = "";
+
+            if (sender === "user") {
+                messageHtml = `
+                    <div class="flex gap-3 max-w-[85%] ml-auto justify-end">
+                        <div class="bg-indigo-600 text-white rounded-2xl p-4 text-sm shadow-sm leading-relaxed rounded-tr-none">
+                            ${text}
+                        </div>
+                    </div>`;
+            } else {
+                messageHtml = `
+                    <div id="${msgId}" class="flex gap-3 max-w-[85%]">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs shrink-0 font-bold">
+                            AI
+                        </div>
+                        <div class="bg-slate-100 rounded-2xl p-4 text-sm text-slate-700 leading-relaxed rounded-tl-none shadow-sm">
+                            ${text}
+                        </div>
+                    </div>`;
+            }
+
+            chatContainer.insertAdjacentHTML("beforeend", messageHtml);
+            return msgId;
+        }
+
+        // Yerli test üçün ağıllı maliyyə simulyasiyası:
+        function getFallbackAiResponse(query) {
+            const q = query.toLowerCase();
+            if (q.includes("pc") || q.includes("kompyuter") || q.includes("komp")) {
+                return `💻 <strong>"Pc" hədəfiniz üçün tövsiyə:</strong><br><br>` +
+                    `Sizin <strong>3,400 AZN</strong> hədəfiniz var və hazırda bu məqsədlə yığımınız <strong>0 AZN</strong>-dir. 365 gün (1 il) vaxtınız qalıb.<br><br>` +
+                    `• <strong>Aylıq plan:</strong> Hər ay təxminən <strong>283.30 AZN</strong> kənara qoymalısınız.<br>` +
+                    `• <strong>Həftəlik plan:</strong> Hər həftə təxminən <strong>65.40 AZN</strong> qənaət etməlisiniz.<br><br>` +
+                    `💡 <em>Məsləhət:</em> İlk addım olaraq "Telefon ucun" olan yığımınızdan (3 AZN) fərqli olaraq, PC üçün kiçik də olsa aylıq avtomatik köçürmə (məsələn, hər ay maaşdan 10% birbaşa "Pc" hədəfinə) aktivləşdirin!`;
+            } else if (q.includes("telefon") || q.includes("tel")) {
+                return `📱 <strong>"Telefon ucun" hədəfiniz üçün tövsiyə:</strong><br><br>` +
+                    `Hədəfiniz <strong>100 AZN</strong>-dir və artıq <strong>3 AZN (3%)</strong> yığmısınız.<br><br>` +
+                    `Bu kiçik hədəfə çox tez çatmaq olar. Məsələn, növbəti 2 ay ərzində hər ay cəmi <strong>48.50 AZN</strong> yığmaqla hədəfə tam çata bilərsiniz. Gündəlik kiçik kofe və ya abunə xərclərinizi azaltsanız, bu məbləği asanlıqla toplayacaqsınız! 🎉`;
+            } else {
+                return `💰 <strong>Ümumi Maliyyə Tövsiyəsi:</strong><br><br>` +
+                    `Hazırda sistemdə cəmi 2 aktiv məqsədiniz var: <strong>"Pc" (3,400 AZN)</strong> və <strong>"Telefon ucun" (100 AZN)</strong>. Ümumi hədəfiniz <strong>3,500 AZN</strong>-dir.<br><br>` +
+                    `Hər hansı konkret yığım və ya büdcə sualınız varsa, yazın, sizə ətraflı hesablama aparım!`;
+            }
+        }
+    </script>
+</body>
+
+</html>

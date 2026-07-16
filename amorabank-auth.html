@@ -518,7 +518,7 @@
         }
 
         // Google Client ID — Google Cloud Console-dan
-        const GOOGLE_CLIENT_ID = "1029980468304-vrgdslu331r097hi9h807osut454fo8m.apps.googleusercontent.com";
+        const GOOGLE_CLIENT_ID = "1029980468304-fklr32rfs0ubo4afhtkjsfjbjtvrk25d.apps.googleusercontent.com";
 
         // Cari email (addimlar arasi dasinir)
         let pendingEmail = "";
@@ -886,7 +886,7 @@
         let googleReady = false;
 
         function initGoogle() {
-            if (GOOGLE_CLIENT_ID.startsWith("SIZIN_")) return;
+            if (GOOGLE_CLIENT_ID.startsWith("SIZIN_")) return;   // saxta ID-dirse basla-ma
             if (!window.google?.accounts?.id) { setTimeout(initGoogle, 300); return; }
 
             google.accounts.id.initialize({
