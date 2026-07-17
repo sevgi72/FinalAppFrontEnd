@@ -1122,7 +1122,10 @@ async function loadConversations() {
 
   list.innerHTML = convs.map(c => `
     <li data-conv="${c.userId}" data-conv-name="${(c.userName||'').replace(/"/g,'&quot;')}" class="px-4 py-3 cursor-pointer hover:bg-mist transition flex items-center gap-2.5">
-      <div class="w-8 h-8 rounded-full bg-ink/8 text-ink grid place-items-center font-600 text-[11px]">${initials(c.userName)}</div>
+      <div class="relative shrink-0">
+        <div class="w-8 h-8 rounded-full bg-ink/8 text-ink grid place-items-center font-600 text-[11px]">${initials(c.userName)}</div>
+        <span data-presence class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white bg-ink/20"></span>
+      </div>
       <div class="min-w-0 flex-1">
         <p class="text-[12px] font-500 truncate">${c.userName || t("adm.user")}</p>
         <p class="text-[11px] text-ink/45 truncate">${c.lastMessage || ""}</p>
@@ -1132,6 +1135,33 @@ async function loadConversations() {
 
   // SignalR baglantisini bir defe qur
   await ensureAdminChat();
+
+  // siyahi yeniden cizildi — onlayn nisanlarini bergerar et
+  refreshPresenceDots();
+}
+
+
+/* ── ONLAYN VEZIYYET (presence) ── */
+let onlineUserIds = new Set();
+
+// siyahidaki her sohbetin yasil/boz noqtesini yenile
+function refreshPresenceDots() {
+  document.querySelectorAll('#convList li[data-conv]').forEach(li => {
+    const dot = li.querySelector("[data-presence]");
+    if (!dot) return;
+    const on = onlineUserIds.has(li.dataset.conv);
+    dot.className = "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-white "
+      + (on ? "bg-emerald-500" : "bg-ink/20");
+    dot.title = on ? t("adm.online") : t("adm.offline");
+  });
+
+  // acilmis sohbetin basligindaki veziyyet
+  if (activeConvUserId) {
+    const el = document.getElementById("convEmail");
+    const on = onlineUserIds.has(activeConvUserId);
+    el.textContent = on ? t("adm.online") : t("adm.offline");
+    el.className = "text-[11px] " + (on ? "text-emerald-600" : "text-ink/40");
+  }
 }
 
 async function ensureAdminChat() {
@@ -1147,16 +1177,37 @@ async function ensureAdminChat() {
     // siyahini tezele (yeni mesaj gelib)
     if (document.querySelector('.page[data-page="support"]').classList.contains("active")) loadConversations();
   });
-  try { await adminChatConn.start(); } catch (e) { console.error("Admin chat:", e); }
+
+  // qosulanda hub cari onlayn musteri siyahisini gonderir
+  adminChatConn.on("OnlineUsers", (ids) => {
+    onlineUserIds = new Set(ids || []);
+    refreshPresenceDots();
+  });
+
+  // bir musteri qosulanda/ayrilanda
+  adminChatConn.on("UserPresence", (userId, online) => {
+    if (online) onlineUserIds.add(userId); else onlineUserIds.delete(userId);
+    refreshPresenceDots();
+  });
+
+  try {
+    await adminChatConn.start();
+    // Siyahini birbasa sorusuruq — OnConnectedAsync hadisesi itmis ola biler
+    try {
+      const ids = await adminChatConn.invoke("GetOnlineUsers");
+      onlineUserIds = new Set(ids || []);
+      refreshPresenceDots();
+    } catch (e) { console.warn("Presence sorgusu:", e.message); }
+  } catch (e) { console.error("Admin chat:", e); }
 }
 
 async function openConversation(userId, userName) {
   activeConvUserId = userId;
   document.getElementById("convName").textContent = userName || t("adm.user");
-  document.getElementById("convEmail").textContent = "";
   document.getElementById("convAvatar").textContent = initials(userName);
   document.getElementById("chatInput").disabled = false;
   document.getElementById("chatSend").disabled = false;
+  refreshPresenceDots();   // basliqda onlayn/oflayn yazsin
 
   const area = document.getElementById("msgArea");
   area.innerHTML = `<p class="text-center text-ink/30 text-[12px] py-8">${t("adm.loading")}</p>`;

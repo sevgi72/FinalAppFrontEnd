@@ -440,6 +440,10 @@
     </button>
   </div>
 
+  <!-- destek oflayn olanda xeberdarliq -->
+  <p id="chatOfflineHint" class="hidden px-4 py-2 bg-amber-50 border-b border-amber-100 text-[11px] text-amber-800"
+     data-i18n="dash.offlineHint">Dəstək hazırda oflayndır. Mesajınız saxlanılacaq və cavablandırılacaq.</p>
+
   <!-- mesajlar -->
   <div id="chatMessages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-mist">
     <div class="text-center text-ink/35 text-sm py-8">Yüklənir…</div>
@@ -962,6 +966,7 @@
       // ── CANLI CHAT (SignalR) ──
       let chatConnection = null;
       let chatStarted = false;
+      let supportOnline = false;   // destek (admin) hazirda onlayndir?
 
       const chatPanel = document.getElementById("chatPanel");
       const chatMessages = document.getElementById("chatMessages");
@@ -1028,13 +1033,34 @@
           // istesek burda "catdirildi" nisani elave ede bilerik
         });
 
+        // DESTEK ONLAYN/OFLAYN — hub qosulanda ve veziyyet deyisende gonderir
+        chatConnection.on("SupportPresence", (online) => {
+          supportOnline = !!online;
+          setChatStatus(supportOnline ? t("dash.supportOnline") : t("dash.supportOffline"), supportOnline);
+          const hint = document.getElementById("chatOfflineHint");
+          if (hint) hint.classList.toggle("hidden", supportOnline);
+        });
+
         chatConnection.onreconnecting(() => setChatStatus(t("dash.reconnecting"), false));
-        chatConnection.onreconnected(() => setChatStatus(t("dash.online"), true));
+        chatConnection.onreconnected(() => setChatStatus(t("dash.checking"), false));   // presence hadisesi tezlikle gelecek
         chatConnection.onclose(() => setChatStatus(t("dash.disconnected"), false));
 
         try {
           await chatConnection.start();
-          setChatStatus(t("dash.online"), true);
+          setChatStatus(t("dash.checking"), false);
+
+          // Veziyyeti birbasa sorusuruq — OnConnectedAsync-den gelen hadise
+          // bezen baglanti tam qurulmamis gonderilir ve itir.
+          try {
+            const online = await chatConnection.invoke("IsSupportOnline");
+            supportOnline = !!online;
+            setChatStatus(supportOnline ? t("dash.supportOnline") : t("dash.supportOffline"), supportOnline);
+            const hint = document.getElementById("chatOfflineHint");
+            if (hint) hint.classList.toggle("hidden", supportOnline);
+          } catch (e) {
+            console.warn("Presence sorgusu:", e.message);
+            setChatStatus(t("dash.online"), true);   // hub metodu yoxdursa — sade rejim
+          }
         } catch (e) {
           setChatStatus(t("dash.connectFailed"), false);
           console.error("Chat baglantisi:", e);
