@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amorabank — Admin girişi</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#2c2966', 'ink-2': '#1b1940', 'ink-3': '#14122e',
+            neon: '#00e5d4', lilac: '#7c6ff0', mist: '#f4f5fa', line: '#e6e8f2',
+          },
+          fontFamily: {
+            display: ['Sora', 'sans-serif'], body: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .view { display: none; }
+    .view.active { display: block; animation: fade .3s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+
+    .otp-box:not(:placeholder-shown) { border-color: #00e5d4; background: #00e5d40d; }
+    :focus-visible { outline: 2px solid #00e5d4; outline-offset: 2px; border-radius: 6px; }
+
+    /* incə şəbəkə fonu — admin sahəsini vizual olaraq ayırır */
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+  </style>
+</head>
+
+<body class="font-body antialiased bg-ink-3 min-h-screen grid place-items-center p-5">
+
+  <div class="grid-bg fixed inset-0 pointer-events-none"></div>
+
+  <div class="relative w-full max-w-[400px]">
+
+    <!-- Loqo -->
+    <div class="flex items-center justify-center gap-2.5 mb-7">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+        <i data-lucide="gem" style="width:19px;height:19px" class="text-ink-2"></i>
+      </div>
+      <div>
+        <span class="font-display font-700 text-xl text-white tracking-tight">Amorabank</span>
+        <span class="ml-1.5 px-2 py-0.5 rounded-md bg-lilac/20 text-lilac text-[10px] font-700 uppercase tracking-wider align-middle">Admin</span>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-line p-7 shadow-2xl shadow-black/30">
+
+      <p id="alertBox" class="hidden mb-5 text-sm px-3.5 py-2.5 rounded-xl leading-snug"></p>
+
+      <!-- ══ GIRIS ══ -->
+      <section class="view active" data-view="login">
+        <div class="w-11 h-11 rounded-xl bg-ink/6 grid place-items-center mb-4">
+          <i data-lucide="shield-check" style="width:21px;height:21px" class="text-ink"></i>
+        </div>
+
+        <h1 class="font-display font-600 text-xl text-ink">İdarəetmə paneli</h1>
+        <p class="text-sm text-ink/50 mt-1.5 mb-6">Bu sahə yalnız səlahiyyətli işçilər üçündür.</p>
+
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-500 text-ink/60 mb-1.5">İşçi emaili</label>
+            <div class="relative">
+              <i data-lucide="mail" style="width:16px;height:16px"
+                class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+              <input name="email" type="email" required autocomplete="username" placeholder="admin@amorabank.az"
+                class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-500 text-ink/60 mb-1.5">Parol</label>
+            <div class="relative">
+              <i data-lucide="lock" style="width:16px;height:16px"
+                class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+              <input name="password" id="pwd" type="password" required autocomplete="current-password" placeholder="••••••••"
+                class="w-full h-12 pl-10 pr-11 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+              <button type="button" id="togglePwd"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-ink/35 hover:text-ink/60 transition">
+                <i data-lucide="eye" style="width:17px;height:17px"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit"
+            class="btn-primary w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+            Daxil ol
+          </button>
+        </form>
+      </section>
+
+      <!-- ══ OTP (2FA) ══ -->
+      <section class="view" data-view="otp">
+        <button type="button" id="backToLogin"
+          class="flex items-center gap-1.5 text-xs text-ink/45 hover:text-ink mb-5 transition">
+          <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Geri
+        </button>
+
+        <div class="w-11 h-11 rounded-xl bg-lilac/12 grid place-items-center mb-4">
+          <i data-lucide="key-round" style="width:21px;height:21px" class="text-lilac"></i>
+        </div>
+
+        <h1 class="font-display font-600 text-xl text-ink">Təsdiq kodu</h1>
+        <p class="text-sm text-ink/50 mt-1.5 mb-6">
+          Kod <span class="font-500 text-ink-2" id="otpEmail">—</span> ünvanına göndərildi.
+        </p>
+
+        <form id="otpForm">
+          <div class="flex gap-2 justify-between" id="otpGroup"></div>
+          <button type="submit"
+            class="btn-primary w-full h-12 mt-6 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+            Təsdiqlə və daxil ol
+          </button>
+        </form>
+      </section>
+
+    </div>
+
+    <p class="text-center text-[11px] text-white/25 mt-6">
+      Müştərisiniz? <a href="amorabank-auth.html" class="text-white/50 hover:text-neon transition">Müştəri girişi</a>
+    </p>
+  </div>
+
+  <script>
+    /* ══════════════════════════════════════════════════════════════
+       KONFIQURASIYA
+       ══════════════════════════════════════════════════════════════ */
+    const API_BASE = "http://localhost:5150";
+    const ROLE_CLAIM = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+    const getToken = () => localStorage.getItem("token");
+
+    let pendingEmail = "";
+
+    // token-den rolu oxu
+    function readRole(token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload[ROLE_CLAIM] || "Customer";
+      } catch (e) { return "Customer"; }
+    }
+
+    const isStaff = (role) => role === "Admin" || role === "SuperAdmin";
+
+    // artiq admin sessiyasi varsa — birbasa panele
+    if (getToken() && isStaff(readRole(getToken()))) {
+      window.location.href = "amorabank-admin.html";
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       API
+       ══════════════════════════════════════════════════════════════ */
+    async function api(path, body) {
+      const res = await fetch(API_BASE + path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept-Language": "az" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data.errors) {
+          const first = Object.values(data.errors)[0];
+          throw new Error(Array.isArray(first) ? first[0] : String(first));
+        }
+        if (res.status === 429) throw new Error("Çox sayda cəhd. Bir dəqiqə gözləyin.");
+        throw new Error(data.error || data.message || "Xəta baş verdi.");
+      }
+      return data;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       UI
+       ══════════════════════════════════════════════════════════════ */
+    function showView(name) {
+      document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.dataset.view === name));
+      hideAlert();
+      if (name === "otp") {
+        document.getElementById("otpEmail").textContent = pendingEmail || "—";
+        const boxes = document.querySelectorAll(".otp-box");
+        boxes.forEach(b => b.value = "");
+        setTimeout(() => boxes[0]?.focus(), 60);
+      }
+    }
+
+    function showAlert(text, ok = false) {
+      const box = document.getElementById("alertBox");
+      box.textContent = text;
+      box.className = "mb-5 text-sm px-3.5 py-2.5 rounded-xl leading-snug "
+        + (ok ? "bg-neon/10 text-teal-800" : "bg-red-50 text-red-700");
+      box.classList.remove("hidden");
+    }
+    const hideAlert = () => document.getElementById("alertBox").classList.add("hidden");
+
+    function setLoading(form, loading) {
+      const btn = form.querySelector(".btn-primary");
+      if (!btn) return;
+      btn.disabled = loading;
+      btn.dataset.label ??= btn.textContent.trim();
+      btn.textContent = loading ? "Gözləyin…" : btn.dataset.label;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       OTP XANALARI
+       ══════════════════════════════════════════════════════════════ */
+    const otpGroup = document.getElementById("otpGroup");
+    otpGroup.innerHTML = Array.from({ length: 6 }, () => `
+      <input type="text" inputmode="numeric" maxlength="1" placeholder=" "
+             class="otp-box w-full h-13 py-3.5 rounded-xl border border-line bg-mist text-center
+                    font-mono font-700 text-lg text-ink outline-none focus:border-neon transition">
+    `).join("");
+
+    const otpBoxes = [...otpGroup.querySelectorAll(".otp-box")];
+    otpBoxes.forEach((box, i) => {
+      box.oninput = () => {
+        box.value = box.value.replace(/\D/g, "");
+        if (box.value && i < 5) otpBoxes[i + 1].focus();
+      };
+      box.onkeydown = (e) => {
+        if (e.key === "Backspace" && !box.value && i > 0) otpBoxes[i - 1].focus();
+      };
+      box.onpaste = (e) => {
+        e.preventDefault();
+        const digits = (e.clipboardData.getData("text") || "").replace(/\D/g, "").slice(0, 6);
+        digits.split("").forEach((d, k) => otpBoxes[k] && (otpBoxes[k].value = d));
+        otpBoxes[Math.min(digits.length, 5)]?.focus();
+      };
+    });
+
+
+    /* ══════════════════════════════════════════════════════════════
+       GIRIS AXINI
+       ══════════════════════════════════════════════════════════════ */
+
+    // Ugurlu autentifikasiyadan sonra ROLU yoxlayiriq.
+    // QEYD: bu, yalniz UX ucundur — esl qoruma backend-dedir
+    // (her admin endpoint-i [Authorize(Roles=...)] ile qorunur).
+    function finishLogin(data) {
+      const role = readRole(data.token);
+
+      if (!isStaff(role)) {
+        // musteri hesabi ile admin panelinden giris etmek olmaz
+        showAlert("Bu hesab idarəetmə panelinə aid deyil. Müştəri girişindən istifadə edin.");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      showAlert(`Xoş gəldiniz, ${data.fullName || ""}. Yönləndirilirsiniz…`, true);
+      setTimeout(() => { window.location.href = "amorabank-admin.html"; }, 700);
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const email = fd.get("email").trim();
+      const password = fd.get("password");
+
+      setLoading(e.target, true);
+      try {
+        const data = await api("/api/Auth/login", { email, password });
+
+        if (data.requiresTwoFactor) {
+          pendingEmail = email;
+          showView("otp");
+          showAlert("Təsdiq kodu emailinizə göndərildi.", true);
+          return;
+        }
+        finishLogin(data);
+      } catch (err) {
+        showAlert(err.message);
+      } finally {
+        setLoading(e.target, false);
+      }
+    });
+
+    document.getElementById("otpForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const code = otpBoxes.map(b => b.value).join("");
+      if (code.length !== 6) return showAlert("6 rəqəmli kodu tam yazın.");
+
+      setLoading(e.target, true);
+      try {
+        const data = await api("/api/Auth/verify-otp", { email: pendingEmail, code });
+        finishLogin(data);
+      } catch (err) {
+        showAlert(err.message);
+      } finally {
+        setLoading(e.target, false);
+      }
+    });
+
+    document.getElementById("backToLogin").onclick = () => showView("login");
+
+    document.getElementById("togglePwd").onclick = () => {
+      const input = document.getElementById("pwd");
+      const hidden = input.type === "password";
+      input.type = hidden ? "text" : "password";
+      document.getElementById("togglePwd").innerHTML =
+        `<i data-lucide="${hidden ? "eye-off" : "eye"}" style="width:17px;height:17px"></i>`;
+      lucide.createIcons();
+    };
+
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

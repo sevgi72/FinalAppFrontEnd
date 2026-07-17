@@ -300,28 +300,15 @@
               <h2 class="font-display font-600 text-ink" data-i18n="dash.quickTransfer">Sürətli köçürmə</h2>
             </div>
 
-            <div class="flex gap-3 mb-5 overflow-x-auto pb-1">
-              <button class="shrink-0 flex flex-col items-center gap-1.5 w-16 group">
+            <!-- Sevimli alicilar — kocurmeler sehifesi ile EYNI anbardan (localStorage) -->
+            <div id="quickFavs" class="flex gap-3 mb-5 overflow-x-auto pb-1">
+              <button id="quickAddBtn" class="shrink-0 flex flex-col items-center gap-1.5 w-16 group">
                 <div
                   class="w-12 h-12 rounded-full border-2 border-dashed border-line group-hover:border-neon grid place-items-center transition">
                   <i data-lucide="plus" style="width:18px;height:18px"
                     class="text-ink/40 group-hover:text-neon transition"></i>
                 </div>
                 <span class="text-[11px] text-ink/50" data-i18n="dash.new">Yeni</span>
-              </button>
-              <button class="shrink-0 flex flex-col items-center gap-1.5 w-16" data-quick-name="Könül İ.">
-                <div class="w-12 h-12 rounded-full bg-lilac/15 text-lilac grid place-items-center font-600 text-sm">Kİ
-                </div>
-                <span class="text-[11px] text-ink/60 truncate w-full text-center">Könül</span>
-              </button>
-              <button class="shrink-0 flex flex-col items-center gap-1.5 w-16" data-quick-name="Leyla M.">
-                <div class="w-12 h-12 rounded-full bg-neon/15 text-teal-700 grid place-items-center font-600 text-sm">LM
-                </div>
-                <span class="text-[11px] text-ink/60 truncate w-full text-center">Leyla</span>
-              </button>
-              <button class="shrink-0 flex flex-col items-center gap-1.5 w-16" data-quick-name="Aysel R.">
-                <div class="w-12 h-12 rounded-full bg-ink/10 text-ink grid place-items-center font-600 text-sm">AR</div>
-                <span class="text-[11px] text-ink/60 truncate w-full text-center">Aysel</span>
               </button>
             </div>
 
@@ -688,6 +675,11 @@
       try {
         await api("/api/Transaction/transfer", { method: "POST", body: JSON.stringify(body) });
         showTransferMsg(`${AZN(body.amount)} ${t("dash.transferSent")}`, true);
+
+        // ugurlu kocurmeden sonra alicini sevimlilere yaz
+        saveFavorite(body.toAccountNumber, favLabelFor(body.toAccountNumber));
+        renderQuickFavs();
+
         document.getElementById("transferForm").reset();
         await loadAccounts();                       // balansi yenile
       } catch (err) {
@@ -697,6 +689,110 @@
         btn.disabled = false; btn.textContent = t("dash.send");
       }
     }
+
+
+    /* ══════════════════════════════════════════════════════════════
+       SEVIMLI ALICILAR
+       Kocurmeler sehifesi ile EYNI anbari paylasir (localStorage).
+       Server-de saxlanmir: alicinin IBAN-i sexsi melumatdir, cihazda qalir.
+       ══════════════════════════════════════════════════════════════ */
+    const FAV_KEY = "amorabank_favorites";
+
+    function getFavorites() {
+      try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; }
+      catch { return []; }
+    }
+
+    function saveFavorite(iban, label) {
+      if (!iban) return;
+      const clean = String(iban).replace(/\s/g, "");
+      let favs = getFavorites();
+      favs = favs.filter(f => f.iban !== clean);        // tekrari sil
+      favs.unshift({ iban: clean, label: label || "", ts: Date.now() });
+      localStorage.setItem(FAV_KEY, JSON.stringify(favs.slice(0, 6)));
+    }
+
+    function removeFavorite(iban) {
+      localStorage.setItem(FAV_KEY, JSON.stringify(getFavorites().filter(f => f.iban !== iban)));
+      renderQuickFavs();
+    }
+
+    // movcud adi qoru (yeniden kocurende ad itmesin)
+    function favLabelFor(iban) {
+      const clean = String(iban).replace(/\s/g, "");
+      return getFavorites().find(f => f.iban === clean)?.label || "";
+    }
+
+    const favInitials = (s) => (s || "?").trim().split(/\s+/).slice(0, 2)
+      .map(w => w[0]).join("").toUpperCase() || "?";
+
+    // her sevimliye sabit reng (ada gore) — her yuklenmede eyni qalsin
+    const FAV_TONES = [
+      "bg-lilac/15 text-lilac",
+      "bg-neon/15 text-teal-700",
+      "bg-ink/10 text-ink",
+      "bg-amber-500/15 text-amber-700",
+    ];
+    function favTone(iban) {
+      let h = 0;
+      for (const ch of String(iban)) h = (h + ch.charCodeAt(0)) % 997;
+      return FAV_TONES[h % FAV_TONES.length];
+    }
+
+    function renderQuickFavs() {
+      const bar = document.getElementById("quickFavs");
+      const addBtn = document.getElementById("quickAddBtn");
+
+      // "+" duymesini saxla, qalanini yenide ciz
+      bar.querySelectorAll("[data-fav]").forEach(el => el.remove());
+
+      getFavorites().forEach(f => {
+        const name = f.label || t("dash.recipient");
+        const el = document.createElement("div");
+        el.dataset.fav = f.iban;
+        el.className = "shrink-0 relative group w-16";
+        el.innerHTML = `
+          <button type="button" data-fav-pick="${f.iban}" class="flex flex-col items-center gap-1.5 w-full">
+            <div class="w-12 h-12 rounded-full grid place-items-center font-600 text-sm ${favTone(f.iban)}">${favInitials(name)}</div>
+            <span class="text-[11px] text-ink/60 truncate w-full text-center">${name}</span>
+          </button>
+          <button type="button" data-fav-del="${f.iban}" title="${t("dash.favRemove")}"
+                  class="absolute -top-1 right-0 w-5 h-5 rounded-full bg-white border border-line grid place-items-center
+                         text-ink/30 hover:text-red-500 hover:border-red-200 opacity-0 group-hover:opacity-100 transition">
+            <i data-lucide="x" style="width:11px;height:11px"></i>
+          </button>`;
+        bar.appendChild(el);
+      });
+
+      lucide.createIcons();
+    }
+
+    // sevimliye bas → IBAN forma dusur | x → sil
+    document.getElementById("quickFavs").addEventListener("click", (e) => {
+      const del = e.target.closest("[data-fav-del]");
+      if (del) return removeFavorite(del.dataset.favDel);
+
+      const pick = e.target.closest("[data-fav-pick]");
+      if (!pick) return;
+      document.getElementById("toAccountNumber").value = pick.dataset.favPick;
+      document.getElementById("transferAmount").focus();
+    });
+
+    // "+" — yeni sevimli elave et
+    document.getElementById("quickAddBtn").addEventListener("click", () => {
+      const iban = prompt(t("dash.favAskIban"));
+      if (!iban) return;
+
+      const clean = iban.replace(/\s/g, "").toUpperCase();
+      // sade format yoxlamasi: AZ + 18 simvol
+      if (!/^AZ[A-Z0-9]{16,26}$/.test(clean))
+        return showTransferMsg(t("dash.favBadIban"), false);
+
+      const name = (prompt(t("dash.favAskName")) || "").trim();
+      saveFavorite(clean, name);
+      renderQuickFavs();
+      showTransferMsg(t("dash.favAdded"), true);
+    });
 
     function showTransferMsg(text, ok) {
       const msg = document.getElementById("transferMsg");
@@ -926,14 +1022,8 @@
         lucide.createIcons();
       };
 
-      // Tez-tez köçürülənlərə kliklədikdə inputu doldur
-      document.querySelectorAll("[data-quick-name]").forEach(btn => {
-        btn.onclick = () => {
-          // Nümunə olaraq Leyla və ya Könül seçiləndə dummy IBAN yazırıq
-          document.getElementById("toAccountNumber").value = "AZ99 1000 2000 3000 4000";
-          document.getElementById("transferAmount").focus();
-        };
-      });
+      // Sevimli alicilari ciz (klik hadiseleri yuxarida delegasiya ile qurulub)
+      renderQuickFavs();
 
       // Forma göndərilməsi
       document.getElementById("transferForm").onsubmit = submitTransfer;

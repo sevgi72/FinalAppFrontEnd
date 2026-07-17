@@ -481,7 +481,7 @@ const getToken = () => localStorage.getItem("token");
 
 // Əgər token yoxdursa, birbaşa giriş (auth) səhifəsinə yönləndirilir
 if (!getToken()) {
-  window.location.href = "amorabank-auth.html";
+  window.location.href = "amorabank-admin-auth.html";
 }
 
 // Cari rol: token-den oxunur. SuperAdmin ise elave hüquqlar acilir.
@@ -1193,12 +1193,24 @@ async function ensureAdminChat() {
   try {
     await adminChatConn.start();
     // Siyahini birbasa sorusuruq — OnConnectedAsync hadisesi itmis ola biler
-    try {
-      const ids = await adminChatConn.invoke("GetOnlineUsers");
-      onlineUserIds = new Set(ids || []);
-      refreshPresenceDots();
-    } catch (e) { console.warn("Presence sorgusu:", e.message); }
+    await syncPresence();
+
+    // Tehlukesizlik sebekesi: hadise itse de siyahi 15 saniyeden bir ozu duzelir.
+    // (SignalR bezen baglantinin qirilmasini 30 saniyeye kimi bilmir)
+    if (presenceTimer) clearInterval(presenceTimer);
+    presenceTimer = setInterval(syncPresence, 15000);
   } catch (e) { console.error("Admin chat:", e); }
+}
+
+// hub-dan cari onlayn siyahisini cek
+let presenceTimer = null;
+async function syncPresence() {
+  if (!adminChatConn || adminChatConn.state !== "Connected") return;
+  try {
+    const ids = await adminChatConn.invoke("GetOnlineUsers");
+    onlineUserIds = new Set(ids || []);
+    refreshPresenceDots();
+  } catch (e) { console.warn("Presence sorgusu:", e.message); }
 }
 
 async function openConversation(userId, userName) {
@@ -1278,12 +1290,12 @@ async function init() {
       loadStats();
     } else {
       // DÜZƏLİŞ 2: Token oxuna bilmədisə və ya korlanıbsa, birbaşa çıxışa atır
-      window.location.href = "amorabank-auth.html";
+      window.location.href = "amorabank-admin-auth.html";
       return;
     }
   } else {
     // Əgər heç token yoxdursa (gözlənilməz hal) təhlükəsizlik üçün yenə yönləndirir
-    window.location.href = "amorabank-auth.html";
+    window.location.href = "amorabank-admin-auth.html";
     return;
   }
 }
@@ -1317,7 +1329,7 @@ window.onload = init;
 document.getElementById("logoutBtn").onclick = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("refreshToken");
-  window.location.href = "amorabank-auth.html";
+  window.location.href = "amorabank-admin-auth.html";
 };
 </script>
 </body>

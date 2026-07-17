@@ -295,6 +295,99 @@ tailwind.config = {
       </section>
 
 
+      <!-- ═══ ROUND-UP YIGIM ═══ -->
+      <section class="bg-white rounded-2xl border border-line p-6">
+        <div class="flex items-start gap-2.5 mb-5">
+          <div class="w-9 h-9 rounded-xl bg-lilac/12 grid place-items-center shrink-0">
+            <i data-lucide="coins" style="width:17px;height:17px" class="text-lilac"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-display font-600 text-ink" data-i18n="set.ruTitle">Round-up yığım</h3>
+            <p class="text-xs text-ink/45" data-i18n="set.ruHint">Hər xərcin qəpiyi avtomatik yığım hesabına keçir</p>
+          </div>
+
+          <!-- ac/bagla -->
+          <button id="ruToggle" role="switch" aria-checked="false"
+            class="relative w-11 h-6 rounded-full bg-ink/15 transition shrink-0 mt-0.5">
+            <span id="ruKnob"
+              class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"></span>
+          </button>
+        </div>
+
+        <!-- izah: nece isleyir -->
+        <div class="flex items-start gap-2 p-3 rounded-xl bg-mist mb-5">
+          <i data-lucide="info" style="width:14px;height:14px" class="text-ink/35 mt-0.5 shrink-0"></i>
+          <p class="text-[11px] text-ink/55 leading-relaxed" data-i18n="set.ruExample">
+            Məsələn: 4.30 ₼ ödəyəndə 5.00 ₼-ə yuvarlaqlaşır, 0.70 ₼ yığıma keçir. Balans çatmasa, əməliyyat toxunulmaz qalır.
+          </p>
+        </div>
+
+        <!-- ayarlar (yalniz aktiv olanda gorunur) -->
+        <div id="ruSettings" class="space-y-4 hidden">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="set.ruSource">Xərc hesabı</label>
+              <select id="ruSource"
+                class="w-full h-11 px-3 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition"></select>
+            </div>
+            <div>
+              <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="set.ruTarget">Yığım hesabı</label>
+              <select id="ruTarget"
+                class="w-full h-11 px-3 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition"></select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="set.ruRoundTo">Yuvarlaqlaşdırma</label>
+            <div class="flex gap-2">
+              <button data-round="1"
+                class="ru-round flex-1 h-11 rounded-xl border border-line bg-mist text-sm font-500 text-ink-2 hover:border-ink/20 transition">1 ₼</button>
+              <button data-round="5"
+                class="ru-round flex-1 h-11 rounded-xl border border-line bg-mist text-sm font-500 text-ink-2 hover:border-ink/20 transition">5 ₼</button>
+            </div>
+          </div>
+
+          <button id="ruSave"
+            class="w-full h-11 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
+            <i data-lucide="check" style="width:15px;height:15px"></i>
+            <span data-i18n="set.ruSave">Yadda saxla</span>
+          </button>
+        </div>
+
+        <!-- statistika -->
+        <div id="ruStats" class="hidden mt-5 pt-5 border-t border-line">
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <p class="text-[11px] text-ink/45 uppercase tracking-wide" data-i18n="set.ruThisMonth">Bu ay</p>
+              <p id="ruMonth" class="font-mono font-700 text-lg text-ink mt-0.5 balance-value">—</p>
+            </div>
+            <div>
+              <p class="text-[11px] text-ink/45 uppercase tracking-wide" data-i18n="set.ruAllTime">Ümumi yığım</p>
+              <p id="ruTotal" class="font-mono font-700 text-lg text-lilac mt-0.5 balance-value">—</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 p-3.5 rounded-xl bg-mist">
+            <div class="min-w-0 flex-1">
+              <p class="text-[11px] text-ink/45" data-i18n="set.ruVaultBalance">Yığım hesabındakı balans</p>
+              <p id="ruVault" class="text-sm font-mono font-600 text-ink-2 balance-value">—</p>
+            </div>
+            <div class="relative w-24 shrink-0">
+              <input id="ruAmount" type="number" min="0.01" step="1" placeholder="0"
+                class="w-full h-10 pl-3 pr-7 rounded-lg border border-line bg-white text-sm font-mono text-ink-2 focus:border-neon outline-none transition">
+              <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-ink/40">₼</span>
+            </div>
+            <button id="ruWithdraw"
+              class="h-10 px-3.5 rounded-lg bg-ink text-white text-xs font-600 hover:bg-ink-2 active:scale-[.98] disabled:opacity-50 transition shrink-0 flex items-center gap-1.5">
+              <i data-lucide="arrow-right-left" style="width:13px;height:13px"></i>
+              <span data-i18n="set.ruWithdraw">Köçür</span>
+            </button>
+          </div>
+          <p id="ruWithdrawHint" class="text-[11px] text-ink/40 px-1 mt-2"></p>
+        </div>
+      </section>
+
+
       <!-- ═══ TENZIMLEMELER ═══ -->
       <section class="bg-white rounded-2xl border border-line p-6">
         <div class="flex items-center gap-2.5 mb-5">
@@ -620,6 +713,205 @@ document.getElementById("alertList").addEventListener("click", async (e) => {
 
 
 /* ══════════════════════════════════════════════════════════════
+   5c. ROUND-UP YIGIM — /api/RoundUp/{enable,disable,status}
+   ══════════════════════════════════════════════════════════════ */
+let ruStatus = null;      // serverden gelen cari veziyyet
+let ruRoundTo = 1;        // secilmis yuvarlaqlasdirma (1 ve ya 5)
+let ruEnabled = false;    // toggle veziyyeti
+
+// hesab dropdown-larini doldur
+function ruFillAccounts() {
+  const opts = accounts.map(a =>
+    `<option value="${a.id}">${accLabel(a)} — ${AZN(a.balance)}</option>`).join("");
+  document.getElementById("ruSource").innerHTML = opts;
+  document.getElementById("ruTarget").innerHTML = opts;
+}
+
+// toggle-in gorunusu
+function ruPaintToggle() {
+  const btn = document.getElementById("ruToggle");
+  const knob = document.getElementById("ruKnob");
+  btn.setAttribute("aria-checked", String(ruEnabled));
+  btn.className = "relative w-11 h-6 rounded-full transition shrink-0 mt-0.5 "
+    + (ruEnabled ? "bg-neon" : "bg-ink/15");
+  knob.style.transform = ruEnabled ? "translateX(20px)" : "";
+  document.getElementById("ruSettings").classList.toggle("hidden", !ruEnabled);
+}
+
+// 1 ₼ / 5 ₼ duymelerinin gorunusu
+function ruPaintRound() {
+  document.querySelectorAll(".ru-round").forEach(b => {
+    const on = Number(b.dataset.round) === ruRoundTo;
+    b.className = "ru-round flex-1 h-11 rounded-xl border text-sm font-500 transition "
+      + (on ? "border-neon bg-neon/10 text-ink-2" : "border-line bg-mist text-ink-2 hover:border-ink/20");
+  });
+}
+
+// statistika + yigim hesabinin REAL balansi
+function ruPaintStats() {
+  const box = document.getElementById("ruStats");
+  if (!ruStatus || !ruStatus.targetAccountId) { box.classList.add("hidden"); return; }
+
+  box.classList.remove("hidden");
+  document.getElementById("ruMonth").textContent = AZN(ruStatus.totalSavedThisMonth || 0);
+  document.getElementById("ruTotal").textContent = AZN(ruStatus.totalSavedAllTime || 0);
+
+  // QEYD: bu, round-up cemi DEYIL — yigim hesabinin cari balansidir.
+  // Round-up ayrica "qutu" yaratmir, pul real hesaba kecir.
+  const vault = accounts.find(a => a.id === ruStatus.targetAccountId);
+  const dest = accounts.find(a => a.id !== ruStatus.targetAccountId);
+
+  document.getElementById("ruVault").textContent = vault ? AZN(vault.balance) : "—";
+
+  const canWithdraw = vault && dest && Number(vault.balance) > 0;
+  document.getElementById("ruWithdraw").disabled = !canWithdraw;
+  document.getElementById("ruAmount").disabled = !canWithdraw;
+  document.getElementById("ruAmount").max = vault ? String(vault.balance) : "0";
+
+  document.getElementById("ruWithdrawHint").textContent =
+    dest ? t("set.ruWithdrawTo").replace("{account}", accLabel(dest)) : t("set.ruNeedTwo");
+}
+
+async function loadRoundUp() {
+  try {
+    ruStatus = await api("/api/RoundUp/status");
+  } catch (e) {
+    console.error("Round-up statusu:", e.message);
+    ruStatus = { isEnabled: false };
+  }
+
+  ruEnabled = !!ruStatus.isEnabled;
+  ruRoundTo = ruStatus.roundTo === 5 ? 5 : 1;
+
+  ruFillAccounts();
+
+  // ayar varsa hesablari secili goster
+  if (ruStatus.sourceAccountId) document.getElementById("ruSource").value = ruStatus.sourceAccountId;
+  if (ruStatus.targetAccountId) document.getElementById("ruTarget").value = ruStatus.targetAccountId;
+  ruAvoidSame("ruSource");
+
+  ruPaintToggle();
+  ruPaintRound();
+  ruPaintStats();
+}
+
+// menbe ve hedef eyni ola bilmez (backend qadagan edir) — avtomatik duzelt
+function ruAvoidSame(changed) {
+  const src = document.getElementById("ruSource");
+  const tgt = document.getElementById("ruTarget");
+  if (src.value !== tgt.value || accounts.length < 2) return;
+
+  const other = accounts.find(a => a.id !== src.value);
+  if (!other) return;
+
+  if (changed === "ruSource") tgt.value = other.id;
+  else src.value = other.id;
+}
+
+// ── TOGGLE: ac / bagla ──
+document.getElementById("ruToggle").addEventListener("click", async () => {
+  if (!ruEnabled) {
+    // ACMAQ: iki ayri hesab lazimdir (menbe + yigim)
+    if (accounts.length < 2) return showMsg(t("set.ruNeedTwo"), false);
+
+    // evvelki ayar varsa — birbasa aktivlesdir
+    if (ruStatus?.sourceAccountId && ruStatus?.targetAccountId) {
+      await ruSaveSettings();
+      return;
+    }
+
+    // ilk defedir — paneli ac, istifadeci hesablari secsin
+    ruEnabled = true;
+    ruPaintToggle();
+    showMsg(t("set.ruPickAccounts"), true);
+    return;
+  }
+
+  // SONDURMEK — ayar silinmir, yalniz deaktiv olur
+  // (yeniden acanda hesab secimleri yerinde qalir)
+  try {
+    await api("/api/RoundUp/disable", { method: "POST" });
+    showMsg(t("set.ruDisabled"), true);
+    await loadRoundUp();
+  } catch (err) {
+    showMsg(err.message, false);
+  }
+});
+
+// ── 1 ₼ / 5 ₼ ──
+document.querySelectorAll(".ru-round").forEach(b => {
+  b.addEventListener("click", () => {
+    ruRoundTo = Number(b.dataset.round);
+    ruPaintRound();
+  });
+});
+
+document.getElementById("ruSource").addEventListener("change", () => ruAvoidSame("ruSource"));
+document.getElementById("ruTarget").addEventListener("change", () => ruAvoidSame("ruTarget"));
+
+// ── SAXLA (= aktivlesdir) ──
+async function ruSaveSettings() {
+  const btn = document.getElementById("ruSave");
+  const source = document.getElementById("ruSource").value;
+  const target = document.getElementById("ruTarget").value;
+
+  if (!source || !target) return showMsg(t("set.ruPickAccounts"), false);
+  if (source === target) return showMsg(t("set.ruSameAccount"), false);
+
+  btn.disabled = true;
+  try {
+    await api("/api/RoundUp/enable", {
+      method: "POST",
+      body: JSON.stringify({ sourceAccountId: source, targetAccountId: target, roundTo: ruRoundTo }),
+    });
+    showMsg(t("set.ruEnabled"), true);
+    await loadRoundUp();
+  } catch (err) {
+    showMsg(err.message, false);
+    ruEnabled = !!ruStatus?.isEnabled;   // ugursuz oldusa toggle-i geri qaytar
+    ruPaintToggle();
+  } finally {
+    btn.disabled = false;
+  }
+}
+document.getElementById("ruSave").addEventListener("click", ruSaveSettings);
+
+// ── YIGIMI DIGER HESABA KOCUR ──
+// Round-up ayrica "qutu" yaratmir — pul artiq real hesabdadir.
+// Ona gore YENI backend lazim deyil: movcud self-transfer isledirik.
+document.getElementById("ruWithdraw").addEventListener("click", async () => {
+  const vault = accounts.find(a => a.id === ruStatus?.targetAccountId);
+  const dest = accounts.find(a => a.id !== ruStatus?.targetAccountId);
+  if (!vault || !dest) return showMsg(t("set.ruNeedTwo"), false);
+
+  const input = document.getElementById("ruAmount");
+  const amount = Number(input.value);
+
+  if (!input.value.trim() || isNaN(amount) || amount <= 0)
+    return showMsg(t("set.ruInvalidAmount"), false);
+  if (amount > Number(vault.balance))
+    return showMsg(t("set.ruTooMuch"), false);
+
+  const btn = document.getElementById("ruWithdraw");
+  btn.disabled = true;
+  try {
+    await api("/api/Transaction/self-transfer", {
+      method: "POST",
+      body: JSON.stringify({ fromAccountId: vault.id, toAccountId: dest.id, amount }),
+    });
+    input.value = "";
+    showMsg(t("set.ruWithdrawDone").replace("{amount}", AZN(amount)), true);
+    await loadAlerts();     // balanslar deyisdi — yenile
+    await loadRoundUp();
+  } catch (err) {
+    showMsg(err.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+
+/* ══════════════════════════════════════════════════════════════
    6. TENZIMLEME DUYMELERI (dil/valyuta — sehife daxili)
    ══════════════════════════════════════════════════════════════ */
 function renderPrefButtons() {
@@ -674,7 +966,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderPrefButtons();
   await loadProfile();
   await loadAlerts();
+  await loadRoundUp();   // hesablar yuklendikden SONRA (dropdown-lar onlardan qurulur)
 });
 </script>
+<script src="ai-chat.js"></script>
 </body>
 </html>
