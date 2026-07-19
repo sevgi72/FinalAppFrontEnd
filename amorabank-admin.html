@@ -265,7 +265,11 @@ tailwind.config = {
           <div class="relative flex-1 min-w-[220px]">
             <i data-lucide="search" style="width:15px;height:15px" class="absolute left-3 top-1/2 -translate-y-1/2 text-ink/30"></i>
             <input id="userSearch" type="text" placeholder="Ad və ya email üzrə axtar…" data-i18n-placeholder="adm.searchUsers"
-                   class="w-full h-9 pl-9 pr-3 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition">
+                   class="w-full h-9 pl-9 pr-9 rounded-lg border border-line bg-mist text-[13px] focus:border-neon focus:bg-white outline-none transition">
+            <button id="userSearchClear" type="button"
+                    class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 grid place-items-center rounded-full hover:bg-ink/8 text-ink/40 transition">
+              <i data-lucide="x" style="width:13px;height:13px"></i>
+            </button>
           </div>
 
           <div class="flex gap-1 p-0.5 rounded-lg bg-mist border border-line">
@@ -747,11 +751,30 @@ async function loadUsers(page = 1) {
   let res;
   try { res = await api(`/api/Admin/users?${qs}`); }
   catch (e) {
-    res = { items:[
-      { id:"u1", fullName:"Sevgi Fərəcli",  email:"sevgi@amorabank.az",  roles:["Customer"],   isBlocked:false, emailConfirmed:true },
-      { id:"u2", fullName:"Könül İlyasova", email:"konul@amorabank.az",  roles:["Customer"],   isBlocked:true,  emailConfirmed:true },
-      { id:"u3", fullName:"Super Admin",    email:"superadmin@bank.az",  roles:["SuperAdmin"], isBlocked:false, emailConfirmed:true },
-    ], page:1, pageSize:10, totalCount:3, totalPages:1 };
+    // DEMO: backend yoxdursa, lokal siyahini axtaris+filtre gore suzuruk
+    // (real halda bu filtrlemeni server edir — bura yalniz demo ucundur)
+    let demo = [
+      { id:"u1", fullName:"Sevgi Fərəcli",   email:"sevgi@amorabank.az",   roles:["Customer"],   isBlocked:false, emailConfirmed:true },
+      { id:"u2", fullName:"Könül İlyasova",  email:"konul@amorabank.az",   roles:["Customer"],   isBlocked:true,  emailConfirmed:true },
+      { id:"u3", fullName:"Super Admin",     email:"superadmin@bank.az",   roles:["SuperAdmin"], isBlocked:false, emailConfirmed:true },
+      { id:"u4", fullName:"Leyla Məmmədova", email:"leyla@amorabank.az",   roles:["Customer"],   isBlocked:false, emailConfirmed:true },
+      { id:"u5", fullName:"Aysel Rəhimova",  email:"aysel@amorabank.az",   roles:["Customer"],   isBlocked:false, emailConfirmed:false },
+      { id:"u6", fullName:"Elvin Quliyev",   email:"elvin@amorabank.az",   roles:["Admin"],      isBlocked:false, emailConfirmed:true },
+      { id:"u7", fullName:"Nigar Həsənova",  email:"nigar@amorabank.az",   roles:["Customer"],   isBlocked:true,  emailConfirmed:true },
+    ];
+
+    // axtaris: ad ve ya email uzre (kicik-boyuk herf ferqi yox)
+    if (userSearchTerm) {
+      const q = userSearchTerm.toLowerCase();
+      demo = demo.filter(u =>
+        (u.fullName || "").toLowerCase().includes(q) ||
+        (u.email || "").toLowerCase().includes(q));
+    }
+    // filtr: aktiv / bloklu
+    if (userFilter === "true")  demo = demo.filter(u => u.isBlocked);
+    if (userFilter === "false") demo = demo.filter(u => !u.isBlocked);
+
+    res = { items: demo, page: 1, pageSize: 10, totalCount: demo.length, totalPages: 1 };
   }
 
   userTotalPages = res.totalPages || 1;
@@ -793,20 +816,42 @@ async function loadUsers(page = 1) {
           : `<button data-block="${u.id}" class="h-7 px-2.5 rounded-md bg-danger/8 text-danger text-[11px] font-600 hover:bg-danger/12 transition ml-1">${t("adm.block")}</button>`}
       </td>
     </tr>`;
-  }).join("") || emptyRow(5);
+  }).join("") || (userSearchTerm
+    ? `<tr><td colspan="5" class="px-4 py-10 text-center text-ink/40 text-[12px]">
+         <i data-lucide="search-x" style="width:20px;height:20px" class="inline-block mb-1.5 text-ink/25"></i><br>
+         «${userSearchTerm}» ${t("adm.noSearchResult")}
+       </td></tr>`
+    : emptyRow(5));
 
   lucide.createIcons();
 }
 
-// Axtaris (yazdiqca, 400ms gecikme ile) — Tamamlandı
+// Axtaris (yazdiqca, 350ms gecikme ile — serveri spam-lamir)
 let searchTimer;
-document.getElementById("userSearch").oninput = (e) => {
+const searchInput = document.getElementById("userSearch");
+const searchClear = document.getElementById("userSearchClear");
+
+searchInput.oninput = (e) => {
   clearTimeout(searchTimer);
   userSearchTerm = e.target.value.trim();
-  searchTimer = setTimeout(() => {
-    loadUsers(1);
-  }, 400);
+  // temizleme duymesi: yazi varsa goster
+  searchClear.classList.toggle("hidden", !e.target.value.length);
+  searchTimer = setTimeout(() => loadUsers(1), 350);
 };
+
+// ✕ — axtarisi temizle
+searchClear.onclick = () => {
+  searchInput.value = "";
+  userSearchTerm = "";
+  searchClear.classList.add("hidden");
+  searchInput.focus();
+  loadUsers(1);
+};
+
+// Enter — gozlemeden axtar
+searchInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") { clearTimeout(searchTimer); loadUsers(1); }
+});
 
 
 /* ══════════════════════════════════════════════════════════════

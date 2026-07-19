@@ -1,500 +1,596 @@
 <!DOCTYPE html>
 <html lang="az">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amorabank — Yığım</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amorabank — Yığım</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-  <script src="i18n.js"></script>
-  <script src="currency.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="i18n.js"></script>
+<script src="currency.js"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap"
-    rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            ink: '#2c2966', 'ink-2': '#1b1940', 'ink-3': '#14122e',
-            neon: '#00e5d4', lilac: '#7c6ff0', mist: '#f4f5fa', line: '#e6e8f2',
-          },
-          fontFamily: {
-            display: ['Sora', 'sans-serif'], body: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'],
-          },
-        }
-      }
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        ink: '#2c2966', 'ink-2': '#1b1940', 'ink-3': '#14122e',
+        neon: '#00e5d4', lilac: '#7c6ff0', mist: '#f4f5fa', line: '#e6e8f2',
+      },
+      fontFamily: {
+        display: ['Sora', 'sans-serif'], body: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'],
+      },
     }
-  </script>
+  }
+}
+</script>
 
-  <style>
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+<style>
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #cfd3e6; border-radius: 99px; }
+  :focus-visible { outline: 2px solid #00e5d4; outline-offset: 2px; border-radius: 6px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  .ring-progress { transition: stroke-dashoffset 0.6s cubic-bezier(.22,1,.36,1); }
+
+    /* ══════════ CESARETLI VIZUAL PAKET ══════════ */
+
+    /* Sehife foun — incə mesh gradient (rəng tonu deyismir, yalniz dərinlik) */
+    body {
+      background-color: #f4f5fa;
+      background-image:
+        radial-gradient(at 12% 8%, rgba(124, 111, 240, 0.06) 0px, transparent 45%),
+        radial-gradient(at 88% 4%, rgba(0, 229, 212, 0.05) 0px, transparent 42%),
+        radial-gradient(at 75% 92%, rgba(124, 111, 240, 0.05) 0px, transparent 45%);
+      background-attachment: fixed;
     }
 
-    ::-webkit-scrollbar-thumb {
-      background: #cfd3e6;
+    /* Kart uzerinde guilloché — real bank kartlarindaki incə cizgi naxisi */
+    .guilloche {
+      position: absolute;
+      inset: 0;
+      opacity: .5;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    /* EMV cip — qizili-gradient */
+    .emv-chip {
+      width: 38px;
+      height: 28px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #f6d98a 0%, #d4af52 42%, #f2e3a8 62%, #c99b3e 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
+    }
+    .emv-chip::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(90deg, transparent 30%, rgba(0, 0, 0, .18) 30%, rgba(0, 0, 0, .18) 32%, transparent 32%),
+        linear-gradient(90deg, transparent 64%, rgba(0, 0, 0, .18) 64%, rgba(0, 0, 0, .18) 66%, transparent 66%),
+        linear-gradient(0deg, transparent 44%, rgba(0, 0, 0, .18) 44%, rgba(0, 0, 0, .18) 47%, transparent 47%);
+    }
+
+    /* Kart uzerinde donen isiq zolagi (shimmer) */
+    @keyframes cardSheen {
+      0% { transform: translateX(-120%) rotate(8deg); }
+      100% { transform: translateX(320%) rotate(8deg); }
+    }
+    .card-sheen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .13), transparent);
+      animation: cardSheen 7s ease-in-out infinite;
+      animation-delay: 2s;
+      pointer-events: none;
+    }
+
+    /* Kartlarda yumusaq qalxma — hover derinliyi */
+    .lift {
+      transition: transform .35s cubic-bezier(.22, 1, .36, 1), box-shadow .35s;
+    }
+    .lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 40px -12px rgba(44, 41, 102, .28);
+    }
+
+    /* Ikon "capsulu" — gradient fon + yumusaq kolge (duz ikon deyil) */
+    .icon-cap {
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      box-shadow: 0 6px 16px -6px rgba(44, 41, 102, .35), inset 0 1px 0 rgba(255, 255, 255, .3);
+    }
+
+    /* Sayi/deyer gelende yumusaq "pop" */
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(6px) scale(.96); }
+      100% { opacity: 1; transform: none; }
+    }
+    .pop-in { animation: popIn .45s cubic-bezier(.22, 1, .36, 1) both; }
+
+    /* Skeleton (yuklenme) — hərəkətli parıltı */
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #eceef6 25%, #f6f7fb 50%, #eceef6 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+      border-radius: 8px;
+    }
+
+    /* Bolme basliqlarinda incə accent xetti */
+    .accent-bar {
+      display: inline-flex;
+      align-items: center;
+    }
+    .accent-bar::before {
+      content: "";
+      display: inline-block;
+      width: 3px;
+      height: 16px;
       border-radius: 99px;
+      background: linear-gradient(180deg, #00e5d4, #7c6ff0);
+      margin-right: 9px;
     }
 
-    :focus-visible {
-      outline: 2px solid #00e5d4;
-      outline-offset: 2px;
-      border-radius: 6px;
+    /* Sidebar aktiv element — gradient highlight + sol glow zolagi */
+    .nav-active {
+      position: relative;
+      color: #fff;
+      background: linear-gradient(90deg, rgba(0, 229, 212, .16), rgba(124, 111, 240, .10));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
     }
+    .nav-active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 60%;
+      border-radius: 99px;
+      background: linear-gradient(180deg, #00e5d4, #7c6ff0);
+      box-shadow: 0 0 12px rgba(0, 229, 212, .6);
+    }
+    .nav-active i { color: #00e5d4; }
 
     @media (prefers-reduced-motion: reduce) {
-      * {
-        transition: none !important;
-      }
-    }
-
-    .ring-progress {
-      transition: stroke-dashoffset 0.6s cubic-bezier(.22, 1, .36, 1);
+      .card-sheen, .skeleton, .pop-in { animation: none; }
     }
   </style>
-  <!-- SweetAlert2 CSS və JS (birlikdə) -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-mist font-body text-ink-2 antialiased">
 
-  <div class="flex min-h-screen">
+<div class="flex min-h-screen">
 
-    <!-- ════════════ SOL PANEL ════════════ -->
-    <aside class="hidden lg:flex w-64 shrink-0 flex-col bg-ink-2 text-white/70 px-5 py-6">
-      <div class="flex items-center gap-2.5 px-2 mb-9">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
-          <i data-lucide="gem" style="width:18px;height:18px" class="text-ink-2"></i>
-        </div>
-        <span class="font-display font-700 text-lg text-white tracking-tight">Amorabank</span>
+  <!-- ════════════ SOL PANEL ════════════ -->
+  <aside class="hidden lg:flex w-64 shrink-0 flex-col bg-ink-2 text-white/70 px-5 py-6">
+    <div class="flex items-center gap-2.5 px-2 mb-9">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+        <i data-lucide="gem" style="width:18px;height:18px" class="text-ink-2"></i>
       </div>
+      <span class="font-display font-700 text-lg text-white tracking-tight">Amorabank</span>
+    </div>
 
-      <nav class="flex-1 space-y-1">
-        <a href="amorabank-dashboard.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span
-            data-i18n="nav.dashboard">Panel</span>
-        </a>
-        <a href="amorabank-transfers.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span
-            data-i18n="nav.transfers">Köçürmələr</span>
-        </a>
-        <a href="amorabank-cards.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="credit-card" style="width:18px;height:18px"></i> <span data-i18n="nav.cards">Kartlar</span>
-        </a>
-        <a href="amorabank-payments.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
-        </a>
-        <a href="amorabank-savings.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
-        </a>
-        <a href="amorabank-statement.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="file-text" style="width:18px;height:18px"></i> <span data-i18n="nav.statement">Çıxarış</span>
-        </a>
-        <a href="amorabank-analytics.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span
-            data-i18n="nav.analytics">Analitika</span>
-        </a>
-        <a href="amorabank-loans.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
-        </a>
-        <a href="amorabank-settings.html"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-          <i data-lucide="settings" style="width:18px;height:18px"></i> <span data-i18n="nav.settings">Ayarlar</span>
-        </a>
-      </nav>
+    <nav class="flex-1 space-y-1">
+      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span data-i18n="nav.dashboard">Panel</span>
+      </a>
+      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span data-i18n="nav.transfers">Köçürmələr</span>
+      </a>
+      <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i> <span data-i18n="nav.cards">Kartlar</span>
+      </a>
+      <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
+      </a>
+      <a href="amorabank-cash.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="qr-code" style="width:18px;height:18px"></i> <span data-i18n="nav.cash">Kodla nağd</span>
+      </a>
+      <a href="amorabank-savings.html" class="nav-active flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-sm">
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
+      </a>
+      <a href="amorabank-deposits.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="trending-up" style="width:18px;height:18px"></i> <span data-i18n="nav.deposits">Əmanət</span>
+      </a>
+      <a href="amorabank-statement.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="file-text" style="width:18px;height:18px"></i> <span data-i18n="nav.statement">Çıxarış</span>
+      </a>
+      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
+      </a>
+      <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
+      </a>
+      <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="settings" style="width:18px;height:18px"></i> <span data-i18n="nav.settings">Ayarlar</span>
+      </a>
+    </nav>
 
-      <!-- Dil + Valyuta secimi (kompakt dropdown) -->
-      <div class="flex gap-2 justify-center mb-3">
-        <!-- Dil -->
-        <div class="relative flex-1">
-          <button id="langTrigger" type="button"
-            class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
-            <i data-lucide="globe" style="width:14px;height:14px" class="text-ink/50"></i>
-            <span id="langTriggerLabel">AZ</span>
-            <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
-          </button>
-          <div id="langMenu"
-            class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
-            <button data-lang="az"
-              class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan
-              <span class="text-[10px] text-ink/40">AZ</span></button>
-            <button data-lang="en"
-              class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English
-              <span class="text-[10px] text-ink/40">EN</span></button>
-            <button data-lang="ru"
-              class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский
-              <span class="text-[10px] text-ink/40">RU</span></button>
-          </div>
-        </div>
-        <!-- Valyuta -->
-        <div class="relative flex-1">
-          <button id="curTrigger" type="button"
-            class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
-            <span id="curTriggerLabel">₼ AZN</span>
-            <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
-          </button>
-          <div id="curMenu"
-            class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
-            <button data-cur="AZN"
-              class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat
-              <span class="text-[11px] text-ink/40">₼</span></button>
-            <button data-cur="USD"
-              class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar
-              <span class="text-[11px] text-ink/40">$</span></button>
-            <button data-cur="EUR"
-              class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro
-              <span class="text-[11px] text-ink/40">€</span></button>
-            <button data-cur="TRY"
-              class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə
-              <span class="text-[11px] text-ink/40">₺</span></button>
-          </div>
+        <!-- Dil + Valyuta secimi (kompakt dropdown) -->
+    <div class="flex gap-2 justify-center mb-3">
+      <!-- Dil -->
+      <div class="relative flex-1">
+        <button id="langTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <i data-lucide="globe" style="width:14px;height:14px" class="text-ink/50"></i>
+          <span id="langTriggerLabel">AZ</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="langMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-lang="az" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan <span class="text-[10px] text-ink/40">AZ</span></button>
+          <button data-lang="en" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English <span class="text-[10px] text-ink/40">EN</span></button>
+          <button data-lang="ru" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский <span class="text-[10px] text-ink/40">RU</span></button>
         </div>
       </div>
+      <!-- Valyuta -->
+      <div class="relative flex-1">
+        <button id="curTrigger" type="button"
+                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          <span id="curTriggerLabel">₼ AZN</span>
+          <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
+        </button>
+        <div id="curMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-cur="AZN" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat <span class="text-[11px] text-ink/40">₼</span></button>
+          <button data-cur="USD" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar <span class="text-[11px] text-ink/40">$</span></button>
+          <button data-cur="EUR" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro <span class="text-[11px] text-ink/40">€</span></button>
+          <button data-cur="TRY" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə <span class="text-[11px] text-ink/40">₺</span></button>
+        </div>
+      </div>
+    </div>
 
-      <button id="logoutBtn"
-        class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="log-out" style="width:18px;height:18px"></i> <span data-i18n="common.logout">Çıxış</span>
+    <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <i data-lucide="log-out" style="width:18px;height:18px"></i> <span data-i18n="common.logout">Çıxış</span>
+    </button>
+  </aside>
+
+
+  <main class="flex-1 min-w-0 pb-24 lg:pb-0">
+
+    <!-- ════════════ HEADER ════════════ -->
+    <header class="sticky top-0 z-20 bg-mist/80 backdrop-blur-lg border-b border-line">
+      <div class="flex items-center gap-3 px-5 lg:px-8 h-16">
+        <div class="lg:hidden flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
+            <i data-lucide="gem" style="width:15px;height:15px" class="text-ink-2"></i>
+          </div>
+          <span class="font-display font-700 text-ink">Amorabank</span>
+        </div>
+
+        <div class="hidden lg:block">
+          <h1 class="font-display font-600 text-ink text-lg leading-tight" data-i18n="sav.title">Yığım məqsədləri</h1>
+          <p class="text-xs text-ink/50" data-i18n="sav.subtitle">Hədəflərinə addım-addım çat</p>
+        </div>
+
+        <div class="flex-1"></div>
+
+        <button id="newGoalBtn" class="flex items-center gap-2 px-4 h-9 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.98] transition">
+          <i data-lucide="plus" style="width:16px;height:16px"></i>
+          <span class="hidden sm:inline" data-i18n="sav.newGoal">Yeni məqsəd</span>
+        </button>
+
+        <a href="amorabank-dashboard.html" class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
+          <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
+          <span class="hidden sm:inline" data-i18n="sav.panel">Panel</span>
+        </a>
+
+        <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
+          <div id="avatar" class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm">—</div>
+          <div class="hidden xl:block leading-tight">
+            <p class="text-sm font-500 text-ink-2" id="userFullName">…</p>
+            <p class="text-[11px] text-ink/45" id="userEmail">…</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+
+    <div class="px-5 lg:px-8 py-6">
+
+      <p id="pageMsg" class="hidden mb-5 text-sm px-4 py-3 rounded-xl max-w-2xl"></p>
+
+      <!-- Umumi xulase -->
+      <div id="summaryBar" class="hidden mb-6 bg-gradient-to-br from-ink via-ink-2 to-ink-3 rounded-2xl p-5 sm:p-6 text-white relative overflow-hidden">
+        <div class="grid grid-cols-3 gap-4 relative">
+          <div>
+            <p class="text-white/50 text-[11px] uppercase tracking-wider" data-i18n="sav.saved">Yığılıb</p>
+            <p id="sumSaved" class="font-mono font-700 text-2xl mt-1">—</p>
+          </div>
+          <div>
+            <p class="text-white/50 text-[11px] uppercase tracking-wider" data-i18n="sav.target">Hədəf</p>
+            <p id="sumTarget" class="font-mono font-700 text-2xl mt-1">—</p>
+          </div>
+          <div>
+            <p class="text-white/50 text-[11px] uppercase tracking-wider" data-i18n="sav.goalCount">Məqsəd sayı</p>
+            <p id="sumCount" class="font-mono font-700 text-2xl mt-1">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meqsedler setki -->
+      <div id="goalsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div class="col-span-full py-16 text-center text-ink/35 text-sm" data-i18n="sav.loading">Məqsədlər yüklənir…</div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+
+<!-- ════════════ YENI MEQSED MODALI ════════════ -->
+<div id="createModal" class="hidden fixed inset-0 z-50 grid place-items-center p-4 bg-ink-3/40 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl border border-line w-full max-w-md p-6 relative">
+    <button id="closeCreate" class="absolute right-4 top-4 w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
+      <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
+    </button>
+
+    <div class="w-12 h-12 rounded-2xl bg-lilac/12 grid place-items-center mb-4">
+      <i data-lucide="target" style="width:22px;height:22px" class="text-lilac"></i>
+    </div>
+
+    <h3 class="font-display font-600 text-ink text-lg" data-i18n="sav.createTitle">Yeni yığım məqsədi</h3>
+    <p class="text-sm text-ink/50 mt-1 mb-5" data-i18n="sav.createSubtitle">Nəyə görə yığırsan?</p>
+
+    <form id="createForm" class="space-y-4">
+      <div>
+        <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.goalName">Məqsədin adı</label>
+        <input id="goalName" type="text" maxlength="100" placeholder="Məs: Yeni noutbuk" data-i18n-placeholder="sav.goalNamePlaceholder" required
+               class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+      </div>
+      <div>
+        <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.targetAmount">Hədəf məbləğ (₼)</label>
+        <input id="goalTarget" type="number" step="0.01" min="1" placeholder="1000" required
+               class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
+      </div>
+      <div>
+        <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.sourceAccount">Mənbə hesab (pul buradan yığılacaq)</label>
+        <select id="goalAccount" class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
+      </div>
+      <div>
+        <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.deadline">Son tarix (istəyə bağlı)</label>
+        <input id="goalDeadline" type="date" class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+      </div>
+      <button type="submit" class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
+        <i data-lucide="plus" style="width:16px;height:16px"></i> <span data-i18n="sav.createBtn">Məqsəd yarat</span>
       </button>
-    </aside>
-
-
-    <main class="flex-1 min-w-0 pb-24 lg:pb-0">
-
-      <!-- ════════════ HEADER ════════════ -->
-      <header class="sticky top-0 z-20 bg-mist/80 backdrop-blur-lg border-b border-line">
-        <div class="flex items-center gap-3 px-5 lg:px-8 h-16">
-          <div class="lg:hidden flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
-              <i data-lucide="gem" style="width:15px;height:15px" class="text-ink-2"></i>
-            </div>
-            <span class="font-display font-700 text-ink">Amorabank</span>
-          </div>
-
-          <div class="hidden lg:block">
-            <h1 class="font-display font-600 text-ink text-lg leading-tight" data-i18n="sav.title">Yığım məqsədləri</h1>
-            <p class="text-xs text-ink/50" data-i18n="sav.subtitle">Hədəflərinə addım-addım çat</p>
-          </div>
-
-          <div class="flex-1"></div>
-
-          <button id="newGoalBtn"
-            class="flex items-center gap-2 px-4 h-9 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.98] transition">
-            <i data-lucide="plus" style="width:16px;height:16px"></i>
-            <span class="hidden sm:inline" data-i18n="sav.newGoal">Yeni məqsəd</span>
-          </button>
-
-          <a href="amorabank-dashboard.html"
-            class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
-            <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
-            <span class="hidden sm:inline" data-i18n="sav.panel">Panel</span>
-          </a>
-
-          <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
-            <div id="avatar" class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm">—
-            </div>
-            <div class="hidden xl:block leading-tight">
-              <p class="text-sm font-500 text-ink-2" id="userFullName">…</p>
-              <p class="text-[11px] text-ink/45" id="userEmail">…</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-
-      <div class="px-5 lg:px-8 py-6">
-
-        <p id="pageMsg" class="hidden mb-5 text-sm px-4 py-3 rounded-xl max-w-2xl"></p>
-
-        <!-- Umumi xulase -->
-        <div id="summaryBar"
-          class="hidden mb-6 bg-gradient-to-br from-ink via-ink-2 to-ink-3 rounded-2xl p-5 sm:p-6 text-white relative overflow-hidden">
-          <div class="grid grid-cols-3 gap-4 relative">
-            <div>
-              <p class="text-white/50 text-[11px] uppercase tracking-wider" data-i18n="sav.saved">Yığılıb</p>
-              <p id="sumSaved" class="font-mono font-700 text-2xl mt-1">—</p>
-            </div>
-            <div>
-              <p class="text-white/50 text-[11px] uppercase tracking-wider" data-i18n="sav.target">Hədəf</p>
-              <p id="sumTarget" class="font-mono font-700 text-2xl mt-1">—</p>
-            </div>
-            <div>
-              <p class="text-white/50 text-[11px] uppercase tracking-wider" data-i18n="sav.goalCount">Məqsəd sayı</p>
-              <p id="sumCount" class="font-mono font-700 text-2xl mt-1">—</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Meqsedler setki -->
-        <div id="goalsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          <div class="col-span-full py-16 text-center text-ink/35 text-sm" data-i18n="sav.loading">Məqsədlər yüklənir…
-          </div>
-        </div>
-
-      </div>
-    </main>
+    </form>
   </div>
+</div>
 
 
-  <!-- ════════════ YENI MEQSED MODALI ════════════ -->
-  <div id="createModal" class="hidden fixed inset-0 z-50 grid place-items-center p-4 bg-ink-3/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl border border-line w-full max-w-md p-6 relative">
-      <button id="closeCreate"
-        class="absolute right-4 top-4 w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
+<!-- ════════════ PUL EMELIYYATI MODALI (contribute/withdraw) ════════════ -->
+<div id="moveModal" class="hidden fixed inset-0 z-50 grid place-items-center p-4 bg-ink-3/40 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl border border-line w-full max-w-sm p-6 relative">
+    <button id="closeMove" class="absolute right-4 top-4 w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
+      <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
+    </button>
+
+    <div id="moveIcon" class="w-12 h-12 rounded-2xl bg-neon/12 grid place-items-center mb-4">
+      <i data-lucide="plus" style="width:22px;height:22px" class="text-teal-700"></i>
+    </div>
+
+    <h3 id="moveTitle" class="font-display font-600 text-ink text-lg">Məqsədə pul əlavə et</h3>
+    <p id="moveGoalName" class="text-sm text-ink/50 mt-1 mb-5">—</p>
+
+    <form id="moveForm" class="space-y-4">
+      <div>
+        <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.amount">Məbləğ (₼)</label>
+        <input id="moveAmount" type="number" step="0.01" min="0.01" placeholder="0.00" required
+               class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-lg font-mono font-600 text-ink focus:border-neon focus:bg-white outline-none transition">
+      </div>
+      <button type="submit" id="moveSubmit" class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+        Təsdiqlə
+      </button>
+    </form>
+  </div>
+</div>
+
+
+<!-- ════════════ MOBIL NAV ════════════ -->
+<nav class="app-bottomnav lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
+  <div class="flex justify-around">
+    <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.dashboard">Panel</span>
+    </a>
+    <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.transfers">Köçürmələr</span>
+    </a>
+    <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="credit-card" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
+    </a>
+    <a href="amorabank-savings.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-neon">
+      <i data-lucide="piggy-bank" style="width:20px;height:20px"></i>
+      <span class="text-[10px] font-500" data-i18n="nav.savings">Yığım</span>
+    </a>
+    <button id="moreNavBtn" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="grip" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.more">Daha çox</span>
+    </button>
+  </div>
+</nav>
+
+<!-- "Daha cox" menyusu (mobil) -->
+<div id="moreNavSheet" class="hidden lg:hidden fixed inset-0 z-40">
+  <div id="moreNavBackdrop" class="absolute inset-0 bg-ink-3/40 backdrop-blur-sm"></div>
+  <div class="absolute bottom-0 inset-x-0 bg-white rounded-t-3xl border-t border-line p-4 pb-6 max-h-[75vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-3 px-1">
+      <h3 class="font-display font-600 text-ink" data-i18n="nav.allSections">Bütün bölmələr</h3>
+      <button id="moreNavClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
         <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
       </button>
-
-      <div class="w-12 h-12 rounded-2xl bg-lilac/12 grid place-items-center mb-4">
-        <i data-lucide="target" style="width:22px;height:22px" class="text-lilac"></i>
-      </div>
-
-      <h3 class="font-display font-600 text-ink text-lg" data-i18n="sav.createTitle">Yeni yığım məqsədi</h3>
-      <p class="text-sm text-ink/50 mt-1 mb-5" data-i18n="sav.createSubtitle">Nəyə görə yığırsan?</p>
-
-      <form id="createForm" class="space-y-4">
-        <div>
-          <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.goalName">Məqsədin adı</label>
-          <input id="goalName" type="text" maxlength="100" placeholder="Məs: Yeni noutbuk"
-            data-i18n-placeholder="sav.goalNamePlaceholder" required
-            class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
-        </div>
-        <div>
-          <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.targetAmount">Hədəf məbləğ (₼)</label>
-          <input id="goalTarget" type="number" step="0.01" min="1" placeholder="1000" required
-            class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
-        </div>
-        <div>
-          <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.sourceAccount">Mənbə hesab (pul
-            buradan yığılacaq)</label>
-          <select id="goalAccount"
-            class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm text-ink-2 focus:border-neon focus:bg-white outline-none transition"></select>
-        </div>
-        <div>
-          <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.deadline">Son tarix (istəyə
-            bağlı)</label>
-          <input id="goalDeadline" type="date"
-            class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
-        </div>
-        <button type="submit"
-          class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
-          <i data-lucide="plus" style="width:16px;height:16px"></i> <span data-i18n="sav.createBtn">Məqsəd yarat</span>
-        </button>
-      </form>
+    </div>
+    <div class="grid grid-cols-1 gap-1">
+      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.dashboard">Panel</span>
+      </a>
+      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.transfers">Köçürmələr</span>
+      </a>
+      <a href="amorabank-cards.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.cards">Kartlar</span>
+      </a>
+      <a href="amorabank-payments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="receipt" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.payments">Ödənişlər</span>
+      </a>
+      <a href="amorabank-cash.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="qr-code" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.cash">Kodla nağd</span>
+      </a>
+      <a href="amorabank-savings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-mist text-ink transition">
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.savings">Yığım</span>
+      </a>
+      <a href="amorabank-deposits.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="trending-up" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.deposits">Əmanət</span>
+      </a>
+      <a href="amorabank-loans.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="landmark" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.loans">Kreditlər</span>
+      </a>
+      <a href="amorabank-statement.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="file-text" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.statement">Çıxarış</span>
+      </a>
+      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.analytics">Analitika</span>
+      </a>
+      <a href="amorabank-settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="settings" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.settings">Ayarlar</span>
+      </a>
     </div>
   </div>
-  <!-- ════════════ MEQSED REDAKTE MODALI ════════════ -->
-  <div id="editModal" class="hidden fixed inset-0 z-50 grid place-items-center p-4 bg-ink-3/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl border border-line w-full max-w-md p-6 relative">
-      <button id="closeEdit" type="button" onclick="closeEdit()"
-        class="absolute right-4 top-4 w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
-        <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
-      </button>
-
-      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 grid place-items-center mb-4">
-        <i data-lucide="pencil" style="width:22px;height:22px" class="text-amber-600"></i>
-      </div>
-
-      <h3 class="font-display font-600 text-ink text-lg">Məqsədi redaktə et</h3>
-      <p class="text-sm text-ink/50 mt-1 mb-5">Məqsəd məlumatlarını yeniləyin</p>
-
-      <form id="editForm" class="space-y-4">
-        <input id="editGoalId" type="hidden">
-        <div>
-          <label class="block text-xs font-500 text-ink/60 mb-1.5">Məqsədin adı</label>
-          <input id="editGoalName" type="text" maxlength="100" required
-            class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
-        </div>
-        <div>
-          <label class="block text-xs font-500 text-ink/60 mb-1.5">Hədəf məbləğ (₼)</label>
-          <input id="editGoalTarget" type="number" step="0.01" min="1" required
-            class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm font-mono focus:border-neon focus:bg-white outline-none transition">
-        </div>
-        <div>
-          <label class="block text-xs font-500 text-ink/60 mb-1.5">Son tarix (Təqvim)</label>
-          <input id="editGoalDeadline" type="date"
-            class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
-        </div>
-        <button type="submit" id="editSubmitBtn"
-          class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
-          <i data-lucide="check" style="width:16px;height:16px"></i> <span>Yadda saxla</span>
-        </button>
-      </form>
-    </div>
-  </div>
-  
-  <!-- ════════════ PUL EMELIYYATI MODALI (contribute/withdraw) ════════════ -->
-  <div id="moveModal" class="hidden fixed inset-0 z-50 grid place-items-center p-4 bg-ink-3/40 backdrop-blur-sm">
-    <div class="bg-white rounded-2xl border border-line w-full max-w-sm p-6 relative">
-      <button id="closeMove"
-        class="absolute right-4 top-4 w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
-        <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
-      </button>
-
-      <div id="moveIcon" class="w-12 h-12 rounded-2xl bg-neon/12 grid place-items-center mb-4">
-        <i data-lucide="plus" style="width:22px;height:22px" class="text-teal-700"></i>
-      </div>
-
-      <h3 id="moveTitle" class="font-display font-600 text-ink text-lg">Məqsədə pul əlavə et</h3>
-      <p id="moveGoalName" class="text-sm text-ink/50 mt-1 mb-5">—</p>
-
-      <form id="moveForm" class="space-y-4">
-        <div>
-          <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="sav.amount">Məbləğ (₼)</label>
-          <input id="moveAmount" type="number" step="0.01" min="0.01" placeholder="0.00" required
-            class="w-full h-12 px-3.5 rounded-xl border border-line bg-mist text-lg font-mono font-600 text-ink focus:border-neon focus:bg-white outline-none transition">
-        </div>
-        <button type="submit" id="moveSubmit"
-          class="w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
-          Təsdiqlə
-        </button>
-      </form>
-    </div>
-  </div>
+</div>
 
 
-  <!-- ════════════ MOBIL NAV ════════════ -->
-  <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
-    <div class="flex justify-around">
-      <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-        <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i><span class="text-[10px]"
-          data-i18n="nav.dashboard">Panel</span>
-      </a>
-      <a href="amorabank-payments.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-        <i data-lucide="receipt" style="width:20px;height:20px"></i><span class="text-[10px]"
-          data-i18n="nav.payments">Ödə</span>
-      </a>
-      <a href="amorabank-savings.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
-        <i data-lucide="piggy-bank" style="width:20px;height:20px"></i><span class="text-[10px] font-500"
-          data-i18n="nav.savings">Yığım</span>
-      </a>
-      <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-        <i data-lucide="credit-card" style="width:20px;height:20px"></i><span class="text-[10px]"
-          data-i18n="nav.cards">Kartlar</span>
-      </a>
-      
-    </div>
-  </nav>
+<script>
+/* ══════════════════════════════════════════════════════════════
+   1. KONFIQURASIYA
+   ══════════════════════════════════════════════════════════════ */
+const API_BASE = "http://localhost:5150";
+const getToken = () => localStorage.getItem("token");
+if (!getToken()) window.location.href = "amorabank-auth.html";
+
+async function api(path, options = {}) {
+  const res = await fetch(API_BASE + path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
+      ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
+      ...(options.headers || {}),
+    },
+  });
+  if (res.status === 401) {
+    localStorage.removeItem("token"); localStorage.removeItem("refreshToken");
+    window.location.href = "amorabank-auth.html";
+    throw new Error("Sessiya bitib.");
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || data.message || "Xəta baş verdi.");
+  return data;
+}
+
+const AZN = (n) => (typeof money === "function" ? money(n) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20bc");
+const AZNnum = (n) => (typeof moneyNum === "function" ? Number(moneyNum(n)).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const curSym = () => (typeof symbol === "function" ? symbol() : "\u20bc");
 
 
-  <script>
-    /* ══════════════════════════════════════════════════════════════
-       1. KONFIQURASIYA
-       ══════════════════════════════════════════════════════════════ */
-    const API_BASE = "http://localhost:5150";
-    const getToken = () => localStorage.getItem("token");
-    if (!getToken()) window.location.href = "amorabank-auth.html";
-
-    async function api(path, options = {}) {
-      const res = await fetch(API_BASE + path, {
-        ...options,
-        headers: {
-          "Content-Type": "application/json",
-          "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
-          ...(getToken() ? { "Authorization": "Bearer " + getToken() } : {}),
-          ...(options.headers || {}),
-        },
-      });
-      if (res.status === 401) {
-        localStorage.removeItem("token"); localStorage.removeItem("refreshToken");
-        window.location.href = "amorabank-auth.html";
-        throw new Error("Sessiya bitib.");
-      }
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || data.message || "Xəta baş verdi.");
-      return data;
-    }
-
-    const AZN = (n) => (typeof money === "function" ? money(n) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " \u20bc");
-    const AZNnum = (n) => (typeof moneyNum === "function" ? Number(moneyNum(n)).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : Number(n ?? 0).toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    const curSym = () => (typeof symbol === "function" ? symbol() : "\u20bc");
+/* ══════════════════════════════════════════════════════════════
+   2. VEZIYYET
+   ══════════════════════════════════════════════════════════════ */
+let accounts = [];
+let goals = [];
+let moveMode = "contribute";   // contribute | withdraw
+let moveGoalId = null;
 
 
-    /* ══════════════════════════════════════════════════════════════
-       2. VEZIYYET
-       ══════════════════════════════════════════════════════════════ */
-    let accounts = [];
-    let goals = [];
-    let moveMode = "contribute";   // contribute | withdraw
-    let moveGoalId = null;
+/* ══════════════════════════════════════════════════════════════
+   3. YUKLEME
+   ══════════════════════════════════════════════════════════════ */
+async function loadProfile() {
+  try {
+    const me = await api("/api/Auth/me");
+    const name = me.fullName || me.email || "İstifadəçi";
+    document.getElementById("userFullName").textContent = name;
+    document.getElementById("userEmail").textContent = me.email ?? "";
+    document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
+  } catch (e) { console.error("Profil:", e.message); }
+}
+
+async function loadAccounts() {
+  try { accounts = await api("/api/Account/my"); }
+  catch (e) { console.error("Hesablar:", e.message); accounts = []; }
+  const sel = document.getElementById("goalAccount");
+  sel.innerHTML = accounts.length
+    ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? t("sav.savingsShort") : t("sav.checkingShort")} • ${AZN(a.balance)}</option>`).join("")
+    : `<option value="">${t("sav.noAccountOption")}</option>`;
+}
+
+async function loadGoals() {
+  const grid = document.getElementById("goalsGrid");
+  grid.innerHTML = `<div class="col-span-full py-16 text-center text-ink/35 text-sm">${t("sav.loading")}</div>`;
+  try {
+    const res = await api("/api/SavingsGoal/my");
+    goals = Array.isArray(res) ? res : (res.items ?? []);
+  } catch (e) {
+    grid.innerHTML = `<div class="col-span-full py-16 text-center text-red-500 text-sm">${e.message}</div>`;
+    return;
+  }
+  renderGoals();
+  renderSummary();
+}
 
 
-    /* ══════════════════════════════════════════════════════════════
-       3. YUKLEME
-       ══════════════════════════════════════════════════════════════ */
-    async function loadProfile() {
-      try {
-        const me = await api("/api/Auth/me");
-        const name = me.fullName || me.email || "İstifadəçi";
-        document.getElementById("userFullName").textContent = name;
-        document.getElementById("userEmail").textContent = me.email ?? "";
-        document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
-      } catch (e) { console.error("Profil:", e.message); }
-    }
+/* ══════════════════════════════════════════════════════════════
+   4. RENDER
+   ══════════════════════════════════════════════════════════════ */
+function renderSummary() {
+  const bar = document.getElementById("summaryBar");
+  if (!goals.length) { bar.classList.add("hidden"); return; }
+  const saved = goals.reduce((s, g) => s + Number(g.currentAmount || 0), 0);
+  const target = goals.reduce((s, g) => s + Number(g.targetAmount || 0), 0);
+  document.getElementById("sumSaved").textContent = AZN(saved);
+  document.getElementById("sumTarget").textContent = AZN(target);
+  document.getElementById("sumCount").textContent = goals.length;
+  bar.classList.remove("hidden");
+}
 
-    async function loadAccounts() {
-      try { accounts = await api("/api/Account/my"); }
-      catch (e) { console.error("Hesablar:", e.message); accounts = []; }
-      const sel = document.getElementById("goalAccount");
-      sel.innerHTML = accounts.length
-        ? accounts.map(a => `<option value="${a.id}">${a.type === 'Savings' ? t("sav.savingsShort") : t("sav.checkingShort")} • ${AZN(a.balance)}</option>`).join("")
-        : `<option value="">${t("sav.noAccountOption")}</option>`;
-    }
+function daysLeft(deadline) {
+  if (!deadline) return null;
+  const d = new Date(deadline), now = new Date();
+  const diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
+  return diff;
+}
 
-    async function loadGoals() {
-      const grid = document.getElementById("goalsGrid");
-      grid.innerHTML = `<div class="col-span-full py-16 text-center text-ink/35 text-sm">${t("sav.loading")}</div>`;
-      try {
-        const res = await api("/api/SavingsGoal/my");
-        goals = Array.isArray(res) ? res : (res.items ?? []);
-      } catch (e) {
-        grid.innerHTML = `<div class="col-span-full py-16 text-center text-red-500 text-sm">${e.message}</div>`;
-        return;
-      }
-      renderGoals();
-      renderSummary();
-    }
-
-
-    /* ══════════════════════════════════════════════════════════════
-       4. RENDER
-       ══════════════════════════════════════════════════════════════ */
-    function renderSummary() {
-      const bar = document.getElementById("summaryBar");
-      if (!goals.length) { bar.classList.add("hidden"); return; }
-      const saved = goals.reduce((s, g) => s + Number(g.currentAmount || 0), 0);
-      const target = goals.reduce((s, g) => s + Number(g.targetAmount || 0), 0);
-      document.getElementById("sumSaved").textContent = AZN(saved);
-      document.getElementById("sumTarget").textContent = AZN(target);
-      document.getElementById("sumCount").textContent = goals.length;
-      bar.classList.remove("hidden");
-    }
-
-    function daysLeft(deadline) {
-      if (!deadline) return null;
-      const d = new Date(deadline), now = new Date();
-      const diff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
-      return diff;
-    }
-
-    function renderGoals() {
-      const grid = document.getElementById("goalsGrid");
-      if (!goals.length) {
-        grid.innerHTML = `
+function renderGoals() {
+  const grid = document.getElementById("goalsGrid");
+  if (!goals.length) {
+    grid.innerHTML = `
       <div class="col-span-full">
         <div class="bg-white rounded-2xl border border-dashed border-line py-16 px-6 text-center max-w-lg mx-auto">
           <div class="w-14 h-14 rounded-2xl bg-mist grid place-items-center mx-auto mb-4">
@@ -507,40 +603,35 @@
           </button>
         </div>
       </div>`;
-        lucide.createIcons();
-        return;
-      }
+    lucide.createIcons();
+    return;
+  }
 
-      const R = 34, C = 2 * Math.PI * R;
+  const R = 34, C = 2 * Math.PI * R;
 
-      grid.innerHTML = goals.map(g => {
-        const pct = Math.min(100, Math.max(0, Number(g.percentage || 0)));
-        const offset = C * (1 - pct / 100);
-        const done = g.isCompleted || pct >= 100;
-        const dl = daysLeft(g.deadline);
+  grid.innerHTML = goals.map(g => {
+    const pct = Math.min(100, Math.max(0, Number(g.percentage || 0)));
+    const offset = C * (1 - pct / 100);
+    const done = g.isCompleted || pct >= 100;
+    const dl = daysLeft(g.deadline);
 
-        let deadlineChip = "";
-        if (dl !== null) {
-          if (dl < 0) deadlineChip = `<span class="text-[11px] text-red-500">${t("sav.deadlinePassed")}</span>`;
-          else if (dl === 0) deadlineChip = `<span class="text-[11px] text-amber-600">${t("sav.lastDayToday")}</span>`;
-          else deadlineChip = `<span class="text-[11px] text-ink/45">${dl} ${t("sav.daysLeft")}</span>`;
-        }
+    let deadlineChip = "";
+    if (dl !== null) {
+      if (dl < 0) deadlineChip = `<span class="text-[11px] text-red-500">${t("sav.deadlinePassed")}</span>`;
+      else if (dl === 0) deadlineChip = `<span class="text-[11px] text-amber-600">${t("sav.lastDayToday")}</span>`;
+      else deadlineChip = `<span class="text-[11px] text-ink/45">${dl} ${t("sav.daysLeft")}</span>`;
+    }
 
-        return `
+    return `
     <div class="bg-white rounded-2xl border border-line p-5 flex flex-col">
       <div class="flex items-start justify-between mb-4">
         <div class="min-w-0">
           <h3 class="font-display font-600 text-ink truncate">${g.name}</h3>
           ${deadlineChip || `<span class="text-[11px] text-ink/40">${t("sav.noDeadline")}</span>`}
         </div>
-        <div class="flex gap-1 shrink-0">
-          <button onclick="openEdit('${g.id}')" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-amber-50 text-ink/35 hover:text-amber-600 transition">
-            <i data-lucide="pencil" style="width:15px;height:15px"></i>
-          </button>
-          <button onclick="deleteGoal('${g.id}')" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-red-50 text-ink/35 hover:text-red-500 transition">
-            <i data-lucide="trash-2" style="width:15px;height:15px"></i>
-          </button>
-        </div>
+        <button onclick="deleteGoal('${g.id}')" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-red-50 text-ink/35 hover:text-red-500 transition shrink-0">
+          <i data-lucide="trash-2" style="width:15px;height:15px"></i>
+        </button>
       </div>
 
       <div class="flex items-center gap-4 mb-4">
@@ -552,8 +643,8 @@
           </svg>
           <div class="absolute inset-0 grid place-items-center">
             ${done
-            ? `<i data-lucide="check" style="width:26px;height:26px" class="text-teal-600"></i>`
-            : `<span class="font-mono font-700 text-ink text-sm">${Math.round(pct)}%</span>`}
+              ? `<i data-lucide="check" style="width:26px;height:26px" class="text-teal-600"></i>`
+              : `<span class="font-mono font-700 text-ink text-sm">${Math.round(pct)}%</span>`}
           </div>
         </div>
 
@@ -567,271 +658,171 @@
 
       <div class="flex gap-2 mt-auto">
         ${done
-            ? `<div class="flex-1 h-10 rounded-xl bg-neon/10 text-teal-700 text-sm font-500 grid place-items-center">${t("sav.completed")}</div>`
-            : `<button onclick="openMove('${g.id}','${g.name.replace(/'/g, "\\'")}','contribute')" class="flex-1 h-10 rounded-xl bg-ink text-white text-sm font-500 hover:bg-ink-2 transition flex items-center justify-center gap-1.5">
+          ? `<div class="flex-1 h-10 rounded-xl bg-neon/10 text-teal-700 text-sm font-500 grid place-items-center">${t("sav.completed")}</div>`
+          : `<button onclick="openMove('${g.id}','${g.name.replace(/'/g,"\\'")}','contribute')" class="flex-1 h-10 rounded-xl bg-ink text-white text-sm font-500 hover:bg-ink-2 transition flex items-center justify-center gap-1.5">
                <i data-lucide="plus" style="width:15px;height:15px"></i> ${t("sav.add")}
              </button>`}
-        <button onclick="openMove('${g.id}','${g.name.replace(/'/g, "\\'")}','withdraw')" class="h-10 px-3.5 rounded-xl border border-line text-sm font-500 text-ink/60 hover:border-ink/20 transition flex items-center justify-center gap-1.5">
+        <button onclick="openMove('${g.id}','${g.name.replace(/'/g,"\\'")}','withdraw')" class="h-10 px-3.5 rounded-xl border border-line text-sm font-500 text-ink/60 hover:border-ink/20 transition flex items-center justify-center gap-1.5">
           <i data-lucide="minus" style="width:15px;height:15px"></i>
         </button>
       </div>
     </div>`;
-      }).join("");
+  }).join("");
 
-      lucide.createIcons();
-    }
-
-
-    /* ══════════════════════════════════════════════════════════════
-       5. EMELLER
-       ══════════════════════════════════════════════════════════════ */
-
-    // yeni meqsed
-    document.getElementById("createForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const sourceAccountId = document.getElementById("goalAccount").value;
-      if (!sourceAccountId) return showMsg(t("sav.sourceRequired"), false);
-
-      const body = {
-        name: document.getElementById("goalName").value.trim(),
-        targetAmount: parseFloat(document.getElementById("goalTarget").value),
-        sourceAccountId,
-      };
-      const dl = document.getElementById("goalDeadline").value;
-      if (dl) body.deadline = new Date(dl).toISOString();
-
-      const btn = e.target.querySelector("button[type=submit]");
-      btn.disabled = true;
-      try {
-        await api("/api/SavingsGoal", { method: "POST", body: JSON.stringify(body) });
-        closeCreate();
-        showMsg(t("sav.goalCreated"), true);
-        e.target.reset();
-        await loadGoals();
-      } catch (err) {
-        showMsg(err.message, false);
-      } finally {
-        btn.disabled = false;
-      }
-    });
-
-    // pul elave/cixar
-    document.getElementById("moveForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const amount = parseFloat(document.getElementById("moveAmount").value);
-      if (!amount || amount <= 0) return showMsg(t("sav.enterAmount"), false);
-
-      const path = moveMode === "contribute"
-        ? `/api/SavingsGoal/${moveGoalId}/contribute`
-        : `/api/SavingsGoal/${moveGoalId}/withdraw`;
-
-      const btn = document.getElementById("moveSubmit");
-      btn.disabled = true;
-      try {
-        await api(path, { method: "POST", body: JSON.stringify({ amount }) });
-        closeMove();
-        showMsg(moveMode === "contribute" ? `${AZN(amount)} ${t("sav.addedToGoal")}` : `${AZN(amount)} ${t("sav.withdrawnFromGoal")}`, true);
-        await loadAccounts();
-        await loadGoals();
-      } catch (err) {
-        showMsg(err.message, false);
-      } finally {
-        btn.disabled = false;
-      }
-    });
-
-    async function deleteGoal(id) {
-      // SweetAlert2 Təsdiqləmə Pəncərəsi
-      Swal.fire({
-        title: t("sav.confirmDelete") || 'Əminsiniz?',
-        text: "Bu məqsədi silmək istədiyinizə əminsiniz?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#2c2966', // Sizin tünd göy (ink) rənginiz
-        cancelButtonColor: '#ef4444',  // Tailwind-in red-500 rəndi
-        confirmButtonText: 'Bəli, silinsin!',
-        cancelButtonText: 'Xeyr, ləğv et',
-        background: '#ffffff',
-        customClass: {
-          popup: 'rounded-2xl border border-line font-body text-ink-2'
-        }
-      }).then(async (result) => {
-        // Əgər istifadəçi "Bəli" düyməsinə klikləyibsə
-        if (result.isConfirmed) {
-          try {
-            await api(`/api/SavingsGoal/${id}`, { method: "DELETE" });
-            
-            // Uğurlu silinmə bildirişi
-            Swal.fire({
-              title: t("sav.goalDeleted") || 'Silindi!',
-              text: 'Məqsədiniz uğurla silindi.',
-              icon: 'success',
-              confirmButtonColor: '#2c2966',
-              customClass: {
-                popup: 'rounded-2xl font-body text-ink-2'
-              }
-            });
-
-            await loadAccounts();
-            await loadGoals();
-          } catch (e) { 
-            // Xəta baş verərsə bildiriş
-            Swal.fire({
-              title: 'Xəta!',
-              text: e.message,
-              icon: 'error',
-              confirmButtonColor: '#2c2966'
-            });
-          }
-        }
-      });
-    }
-    /* ════════════ REDAKTƏ İŞLƏRİ ════════════ */
-    
-    // Modalı açmaq və mövcud məlumatları doldurmaq
-    function openEdit(id) {
-      const goal = goals.find(g => g.id === id);
-      if (!goal) return;
-
-      document.getElementById("editGoalId").value = goal.id;
-      document.getElementById("editGoalName").value = goal.name;
-      document.getElementById("editGoalTarget").value = goal.targetAmount;
-      
-      // Əgər əvvəldən son tarix varsa, onu YYYY-MM-DD formatına salıb inputa yazırıq
-      if (goal.deadline) {
-        document.getElementById("editGoalDeadline").value = goal.deadline.split('T')[0];
-      } else {
-        document.getElementById("editGoalDeadline").value = "";
-      }
-
-      document.getElementById("editModal").classList.remove("hidden");
-      lucide.createIcons();
-    }
-
-    // Modalı bağlamaq
-    function closeEdit() {
-      document.getElementById("editModal").classList.add("hidden");
-    }
-
-    // Formu submit edib API-yə göndərmək
-    document.getElementById("editForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      
-      const id = document.getElementById("editGoalId").value;
-      const btn = document.getElementById("editSubmitBtn");
-      btn.disabled = true;
-
-      const body = {
-        name: document.getElementById("editGoalName").value.trim(),
-        targetAmount: parseFloat(document.getElementById("editGoalTarget").value)
-      };
-
-      const dl = document.getElementById("editGoalDeadline").value;
-      // Əgər istifadəçi tarix seçibsə ISO formatına salırıq, seçməyibsə null göndəririk
-      body.deadline = dl ? new Date(dl).toISOString() : null;
-
-      try {
-        // Redaktə üçün adətən PUT sorğusundan istifadə olunur
-        await api(`/api/SavingsGoal/${id}`, { 
-          method: "PUT", 
-          body: JSON.stringify(body) 
-        });
-
-        closeEdit();
-        
-        // SweetAlert2 ilə uğurlu bildiriş
-        Swal.fire({
-          title: 'Yeniləndi!',
-          text: 'Məqsədiniz uğurla redaktə olundu.',
-          icon: 'success',
-          confirmButtonColor: '#2c2966'
-        });
-
-        await loadAccounts();
-        await loadGoals();
-      } catch (err) {
-        // Əgər API-niz PUT əvəzinə POST qəbul edirsə və ya xəta baş verərsə bildiriş:
-        Swal.fire({
-          title: 'Xəta baş verdi',
-          text: err.message,
-          icon: 'error',
-          confirmButtonColor: '#2c2966'
-        });
-      } finally {
-        btn.disabled = false;
-      }
-    });
-
-    // Modalın kənarına kliklədikdə bağlanması üçün
-    document.getElementById("editModal").onclick = (e) => { 
-      if (e.target.id === "editModal") closeEdit(); 
-    };
-
-    /* ══════════════════════════════════════════════════════════════
-       6. MODAL IDARESI
-       ══════════════════════════════════════════════════════════════ */
-    function openCreate() {
-      if (!accounts.length) return showMsg(t("sav.needAccountFirst"), false);
-      document.getElementById("createModal").classList.remove("hidden");
-    }
-    function closeCreate() { document.getElementById("createModal").classList.add("hidden"); }
-
-    function openMove(goalId, goalName, mode) {
-      moveGoalId = goalId;
-      moveMode = mode;
-      const isAdd = mode === "contribute";
-      document.getElementById("moveTitle").textContent = isAdd ? t("sav.addTitle") : t("sav.withdrawTitle");
-      document.getElementById("moveGoalName").textContent = goalName;
-      document.getElementById("moveSubmit").textContent = isAdd ? t("sav.add") : t("sav.withdraw");
-      const ic = document.getElementById("moveIcon");
-      ic.className = "w-12 h-12 rounded-2xl grid place-items-center mb-4 " + (isAdd ? "bg-neon/12" : "bg-ink/8");
-      ic.innerHTML = `<i data-lucide="${isAdd ? "plus" : "minus"}" style="width:22px;height:22px" class="${isAdd ? "text-teal-700" : "text-ink"}"></i>`;
-      document.getElementById("moveAmount").value = "";
-      document.getElementById("moveModal").classList.remove("hidden");
-      lucide.createIcons();
-      setTimeout(() => document.getElementById("moveAmount").focus(), 60);
-    }
-    function closeMove() { document.getElementById("moveModal").classList.add("hidden"); }
+  lucide.createIcons();
+}
 
 
-    /* ══════════════════════════════════════════════════════════════
-       7. UI
-       ══════════════════════════════════════════════════════════════ */
-    function showMsg(text, ok) {
-      const el = document.getElementById("pageMsg");
-      el.textContent = text;
-      el.className = "mb-5 text-sm px-4 py-3 rounded-xl max-w-2xl " + (ok ? "bg-neon/10 text-teal-800" : "bg-red-50 text-red-700");
-      el.classList.remove("hidden");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      if (ok) setTimeout(() => el.classList.add("hidden"), 5000);
-    }
+/* ══════════════════════════════════════════════════════════════
+   5. EMELLER
+   ══════════════════════════════════════════════════════════════ */
 
-    document.getElementById("newGoalBtn").onclick = openCreate;
-    document.getElementById("closeCreate").onclick = closeCreate;
-    document.getElementById("closeMove").onclick = closeMove;
-    document.getElementById("createModal").onclick = (e) => { if (e.target.id === "createModal") closeCreate(); };
-    document.getElementById("moveModal").onclick = (e) => { if (e.target.id === "moveModal") closeMove(); };
+// yeni meqsed
+document.getElementById("createForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const sourceAccountId = document.getElementById("goalAccount").value;
+  if (!sourceAccountId) return showMsg(t("sav.sourceRequired"), false);
 
-    document.getElementById("logoutBtn").onclick = async () => {
-      try { await api("/api/Auth/logout", { method: "POST" }); } catch (e) { }
-      localStorage.removeItem("token"); localStorage.removeItem("refreshToken");
-      window.location.href = "amorabank-auth.html";
-    };
+  const body = {
+    name: document.getElementById("goalName").value.trim(),
+    targetAmount: parseFloat(document.getElementById("goalTarget").value),
+    sourceAccountId,
+  };
+  const dl = document.getElementById("goalDeadline").value;
+  if (dl) body.deadline = new Date(dl).toISOString();
+
+  const btn = e.target.querySelector("button[type=submit]");
+  btn.disabled = true;
+  try {
+    await api("/api/SavingsGoal", { method: "POST", body: JSON.stringify(body) });
+    closeCreate();
+    showMsg(t("sav.goalCreated"), true);
+    e.target.reset();
+    await loadGoals();
+  } catch (err) {
+    showMsg(err.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// pul elave/cixar
+document.getElementById("moveForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const amount = parseFloat(document.getElementById("moveAmount").value);
+  if (!amount || amount <= 0) return showMsg(t("sav.enterAmount"), false);
+
+  const path = moveMode === "contribute"
+    ? `/api/SavingsGoal/${moveGoalId}/contribute`
+    : `/api/SavingsGoal/${moveGoalId}/withdraw`;
+
+  const btn = document.getElementById("moveSubmit");
+  btn.disabled = true;
+  try {
+    await api(path, { method: "POST", body: JSON.stringify({ amount }) });
+    closeMove();
+    showMsg(moveMode === "contribute" ? `${AZN(amount)} ${t("sav.addedToGoal")}` : `${AZN(amount)} ${t("sav.withdrawnFromGoal")}`, true);
+    await loadAccounts();
+    await loadGoals();
+  } catch (err) {
+    showMsg(err.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+async function deleteGoal(id) {
+  if (!confirm(t("sav.confirmDelete"))) return;
+  try {
+    await api(`/api/SavingsGoal/${id}`, { method: "DELETE" });
+    showMsg(t("sav.goalDeleted"), true);
+    await loadAccounts();
+    await loadGoals();
+  } catch (e) { showMsg(e.message, false); }
+}
 
 
-    /* ══════════════════════════════════════════════════════════════
-       8. ILKIN YUKLENME
-       ══════════════════════════════════════════════════════════════ */
-    document.addEventListener("DOMContentLoaded", async () => {
-      // Valyuta mezennelerini cek (data cekilmeden EVVEL — ki money() hazir olsun)
-      if (typeof initCurrency === "function") await initCurrency();
+/* ══════════════════════════════════════════════════════════════
+   6. MODAL IDARESI
+   ══════════════════════════════════════════════════════════════ */
+function openCreate() {
+  if (!accounts.length) return showMsg(t("sav.needAccountFirst"), false);
+  document.getElementById("createModal").classList.remove("hidden");
+}
+function closeCreate() { document.getElementById("createModal").classList.add("hidden"); }
 
-      lucide.createIcons();
-      await loadProfile();
-      await loadAccounts();
-      await loadGoals();
-    });
-  </script>
+function openMove(goalId, goalName, mode) {
+  moveGoalId = goalId;
+  moveMode = mode;
+  const isAdd = mode === "contribute";
+  document.getElementById("moveTitle").textContent = isAdd ? t("sav.addTitle") : t("sav.withdrawTitle");
+  document.getElementById("moveGoalName").textContent = goalName;
+  document.getElementById("moveSubmit").textContent = isAdd ? t("sav.add") : t("sav.withdraw");
+  const ic = document.getElementById("moveIcon");
+  ic.className = "w-12 h-12 rounded-2xl grid place-items-center mb-4 " + (isAdd ? "bg-neon/12" : "bg-ink/8");
+  ic.innerHTML = `<i data-lucide="${isAdd ? "plus" : "minus"}" style="width:22px;height:22px" class="${isAdd ? "text-teal-700" : "text-ink"}"></i>`;
+  document.getElementById("moveAmount").value = "";
+  document.getElementById("moveModal").classList.remove("hidden");
+  lucide.createIcons();
+  setTimeout(() => document.getElementById("moveAmount").focus(), 60);
+}
+function closeMove() { document.getElementById("moveModal").classList.add("hidden"); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   7. UI
+   ══════════════════════════════════════════════════════════════ */
+function showMsg(text, ok) {
+  const el = document.getElementById("pageMsg");
+  el.textContent = text;
+  el.className = "mb-5 text-sm px-4 py-3 rounded-xl max-w-2xl " + (ok ? "bg-neon/10 text-teal-800" : "bg-red-50 text-red-700");
+  el.classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  if (ok) setTimeout(() => el.classList.add("hidden"), 5000);
+}
+
+document.getElementById("newGoalBtn").onclick = openCreate;
+document.getElementById("closeCreate").onclick = closeCreate;
+document.getElementById("closeMove").onclick = closeMove;
+document.getElementById("createModal").onclick = (e) => { if (e.target.id === "createModal") closeCreate(); };
+document.getElementById("moveModal").onclick = (e) => { if (e.target.id === "moveModal") closeMove(); };
+
+document.getElementById("logoutBtn").onclick = async () => {
+  try { await api("/api/Auth/logout", { method: "POST" }); } catch (e) {}
+  localStorage.removeItem("token"); localStorage.removeItem("refreshToken");
+  window.location.href = "amorabank-auth.html";
+};
+
+
+/* ══════════════════════════════════════════════════════════════
+   8. ILKIN YUKLENME
+   ══════════════════════════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", async () => {
+  // Valyuta mezennelerini cek (data cekilmeden EVVEL — ki money() hazir olsun)
+  if (typeof initCurrency === "function") await initCurrency();
+
+  lucide.createIcons();
+  await loadProfile();
+  await loadAccounts();
+  await loadGoals();
+});
+</script>
+<script src="ai-chat.js"></script>
+
+<script>
+// ── Mobil "Daha cox" menyusu ──
+(function(){
+  const btn = document.getElementById("moreNavBtn");
+  const sheet = document.getElementById("moreNavSheet");
+  const closeBtn = document.getElementById("moreNavClose");
+  const backdrop = document.getElementById("moreNavBackdrop");
+  if (!btn || !sheet) return;
+  const open = () => { sheet.classList.remove("hidden"); if(window.lucide) lucide.createIcons(); };
+  const close = () => sheet.classList.add("hidden");
+  btn.addEventListener("click", open);
+  closeBtn?.addEventListener("click", close);
+  backdrop?.addEventListener("click", close);
+})();
+</script>
 </body>
-
 </html>

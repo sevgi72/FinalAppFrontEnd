@@ -47,102 +47,246 @@
         linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
       background-size: 44px 44px;
     }
+
+    /* yumşaq işıq halələri — göz yormayan aksentlər */
+    .aura { position: absolute; border-radius: 9999px; filter: blur(80px); opacity: .5; pointer-events: none; }
+
+    /* pilləli görünmə animasiyası */
+    @keyframes rise { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+    .rise { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+
+    @keyframes floaty { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+    .floaty { animation: floaty 6s ease-in-out infinite; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rise, .floaty, .view.active { animation: none !important; }
+    }
+
+    /* status nöqtəsi */
+    @keyframes pulse-dot { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+    .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
   </style>
 </head>
 
-<body class="font-body antialiased bg-ink-3 min-h-screen grid place-items-center p-5">
+<body class="font-body antialiased bg-ink-3 min-h-screen text-ink">
 
   <div class="grid-bg fixed inset-0 pointer-events-none"></div>
 
-  <div class="relative w-full max-w-[400px]">
+  <main class="relative min-h-screen w-full lg:grid lg:grid-cols-[1.05fr_1fr]">
 
-    <!-- Loqo -->
-    <div class="flex items-center justify-center gap-2.5 mb-7">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
-        <i data-lucide="gem" style="width:19px;height:19px" class="text-ink-2"></i>
-      </div>
-      <div>
-        <span class="font-display font-700 text-xl text-white tracking-tight">Amorabank</span>
-        <span class="ml-1.5 px-2 py-0.5 rounded-md bg-lilac/20 text-lilac text-[10px] font-700 uppercase tracking-wider align-middle">Admin</span>
-      </div>
-    </div>
+    <!-- ════════════════════════════════════════════════
+         SOL PANEL — BREND / TƏHLÜKƏSİZLİK
+         ════════════════════════════════════════════════ -->
+    <section class="relative hidden lg:flex flex-col justify-between overflow-hidden bg-ink-2 px-12 py-11">
+      <div class="grid-bg absolute inset-0"></div>
+      <div class="aura w-80 h-80 bg-neon/25 -top-16 -left-10"></div>
+      <div class="aura w-96 h-96 bg-lilac/25 bottom-0 -right-16"></div>
 
-    <div class="bg-white rounded-2xl border border-line p-7 shadow-2xl shadow-black/30">
-
-      <p id="alertBox" class="hidden mb-5 text-sm px-3.5 py-2.5 rounded-xl leading-snug"></p>
-
-      <!-- ══ GIRIS ══ -->
-      <section class="view active" data-view="login">
-        <div class="w-11 h-11 rounded-xl bg-ink/6 grid place-items-center mb-4">
-          <i data-lucide="shield-check" style="width:21px;height:21px" class="text-ink"></i>
+      <!-- yuxarı: loqo + rozet -->
+      <div class="relative z-10">
+        <div class="flex items-center gap-2.5 rise">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+            <i data-lucide="gem" style="width:19px;height:19px" class="text-ink-2"></i>
+          </div>
+          <div>
+            <span class="font-display font-700 text-xl text-white tracking-tight">Amorabank</span>
+            <span class="ml-1.5 px-2 py-0.5 rounded-md bg-lilac/20 text-lilac text-[10px] font-700 uppercase tracking-wider align-middle">Admin</span>
+          </div>
         </div>
 
-        <h1 class="font-display font-600 text-xl text-ink">İdarəetmə paneli</h1>
-        <p class="text-sm text-ink/50 mt-1.5 mb-6">Bu sahə yalnız səlahiyyətli işçilər üçündür.</p>
-
-        <form id="loginForm" class="space-y-4">
-          <div>
-            <label class="block text-xs font-500 text-ink/60 mb-1.5">İşçi emaili</label>
-            <div class="relative">
-              <i data-lucide="mail" style="width:16px;height:16px"
-                class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
-              <input name="email" type="email" required autocomplete="username" placeholder="admin@amorabank.az"
-                class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-500 text-ink/60 mb-1.5">Parol</label>
-            <div class="relative">
-              <i data-lucide="lock" style="width:16px;height:16px"
-                class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
-              <input name="password" id="pwd" type="password" required autocomplete="current-password" placeholder="••••••••"
-                class="w-full h-12 pl-10 pr-11 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
-              <button type="button" id="togglePwd"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-ink/35 hover:text-ink/60 transition">
-                <i data-lucide="eye" style="width:17px;height:17px"></i>
-              </button>
-            </div>
-          </div>
-
-          <button type="submit"
-            class="btn-primary w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
-            Daxil ol
-          </button>
-        </form>
-      </section>
-
-      <!-- ══ OTP (2FA) ══ -->
-      <section class="view" data-view="otp">
-        <button type="button" id="backToLogin"
-          class="flex items-center gap-1.5 text-xs text-ink/45 hover:text-ink mb-5 transition">
-          <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Geri
-        </button>
-
-        <div class="w-11 h-11 rounded-xl bg-lilac/12 grid place-items-center mb-4">
-          <i data-lucide="key-round" style="width:21px;height:21px" class="text-lilac"></i>
+        <div class="mt-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs text-white/70 rise" style="animation-delay:.05s">
+          <span class="w-1.5 h-1.5 rounded-full bg-neon pulse-dot"></span>
+          Təhlükəsiz idarəetmə mühiti
         </div>
 
-        <h1 class="font-display font-600 text-xl text-ink">Təsdiq kodu</h1>
-        <p class="text-sm text-ink/50 mt-1.5 mb-6">
-          Kod <span class="font-500 text-ink-2" id="otpEmail">—</span> ünvanına göndərildi.
+        <h2 class="mt-6 font-display font-700 text-[2rem] leading-tight text-white text-balance rise" style="animation-delay:.1s">
+          İdarəetmə paneli<br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon to-lilac">nəzarət altında</span>
+        </h2>
+        <p class="mt-3 max-w-sm text-sm leading-relaxed text-white/55 rise" style="animation-delay:.15s">
+          Müştəri hesabları, əməliyyatlar və sistem parametrləri üzərində tam nəzarət — çoxsəviyyəli qorunma ilə.
         </p>
+      </div>
 
-        <form id="otpForm">
-          <div class="flex gap-2 justify-between" id="otpGroup"></div>
-          <button type="submit"
-            class="btn-primary w-full h-12 mt-6 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
-            Təsdiqlə və daxil ol
-          </button>
-        </form>
-      </section>
+      <!-- orta: təhlükəsizlik mockup şəkli -->
+      <div class="relative z-10 my-8 flex justify-center">
+        <div class="relative floaty">
+          <img src="/amora/admin-security.png" alt="Admin təhlükəsizlik pan"
+               class="w-[420px] max-w-full drop-shadow-2xl" crossorigin="anonymous">
 
-    </div>
+          <!-- üzən status kartı -->
+          <div class="absolute -bottom-3 -left-4 rounded-2xl border border-white/10 bg-ink-3/85 backdrop-blur px-4 py-3 shadow-xl rise" style="animation-delay:.35s">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg bg-neon/15 grid place-items-center">
+                <i data-lucide="shield-check" style="width:18px;height:18px" class="text-neon"></i>
+              </div>
+              <div>
+                <p class="text-[11px] text-white/45 leading-none">Sistem statusu</p>
+                <p class="text-sm font-600 text-white leading-tight mt-1">Bütün servislər aktiv</p>
+              </div>
+            </div>
+          </div>
 
-    <p class="text-center text-[11px] text-white/25 mt-6">
-      Müştərisiniz? <a href="amorabank-auth.html" class="text-white/50 hover:text-neon transition">Müştəri girişi</a>
-    </p>
-  </div>
+          <!-- üzən 2FA kartı -->
+          <div class="absolute -top-3 -right-4 rounded-2xl border border-white/10 bg-ink-3/85 backdrop-blur px-4 py-3 shadow-xl rise" style="animation-delay:.45s">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-lg bg-lilac/15 grid place-items-center">
+                <i data-lucide="key-round" style="width:18px;height:18px" class="text-lilac"></i>
+              </div>
+              <div>
+                <p class="text-[11px] text-white/45 leading-none">2FA</p>
+                <p class="text-sm font-600 text-white leading-tight mt-1">İki addımlı doğrulama</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- alt: təhlükəsizlik xüsusiyyətləri -->
+      <div class="relative z-10 grid grid-cols-3 gap-3 rise" style="animation-delay:.25s">
+        <div class="rounded-xl border border-white/8 bg-white/5 p-3.5">
+          <i data-lucide="lock-keyhole" style="width:18px;height:18px" class="text-neon"></i>
+          <p class="mt-2 text-xs font-600 text-white">256-bit şifrələmə</p>
+          <p class="text-[11px] text-white/45 mt-0.5 leading-snug">Uçdan-uca qorunma</p>
+        </div>
+        <div class="rounded-xl border border-white/8 bg-white/5 p-3.5">
+          <i data-lucide="scan-face" style="width:18px;height:18px" class="text-lilac"></i>
+          <p class="mt-2 text-xs font-600 text-white">Rol əsaslı giriş</p>
+          <p class="text-[11px] text-white/45 mt-0.5 leading-snug">Səlahiyyət nəzarəti</p>
+        </div>
+        <div class="rounded-xl border border-white/8 bg-white/5 p-3.5">
+          <i data-lucide="activity" style="width:18px;height:18px" class="text-neon"></i>
+          <p class="mt-2 text-xs font-600 text-white">Audit jurnalı</p>
+          <p class="text-[11px] text-white/45 mt-0.5 leading-snug">Hər giriş qeydə alınır</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════
+         SAĞ PANEL — GIRIS FORMASI
+         ════════════════════════════════════════════════ -->
+    <section class="relative grid place-items-center px-5 py-10 sm:px-8">
+      <div class="aura w-72 h-72 bg-neon/10 top-0 right-0 lg:hidden"></div>
+      <div class="aura w-72 h-72 bg-lilac/10 bottom-0 left-0 lg:hidden"></div>
+
+      <div class="relative w-full max-w-[400px]">
+
+        <!-- Loqo (yalnız kiçik ekranda) -->
+        <div class="flex items-center justify-center gap-2.5 mb-7 lg:hidden rise">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
+            <i data-lucide="gem" style="width:19px;height:19px" class="text-ink-2"></i>
+          </div>
+          <div>
+            <span class="font-display font-700 text-xl text-white tracking-tight">Amorabank</span>
+            <span class="ml-1.5 px-2 py-0.5 rounded-md bg-lilac/20 text-lilac text-[10px] font-700 uppercase tracking-wider align-middle">Admin</span>
+          </div>
+        </div>
+
+        <div class="relative rise" style="animation-delay:.1s">
+          <!-- kart ətrafı yumşaq işıq -->
+          <div class="aura w-40 h-40 bg-neon/20 -top-10 -left-6 hidden lg:block"></div>
+          <div class="aura w-40 h-40 bg-lilac/20 -bottom-10 -right-6 hidden lg:block"></div>
+
+          <div class="relative bg-white rounded-2xl border border-line p-7 shadow-2xl shadow-black/40">
+
+            <p id="alertBox" class="hidden mb-5 text-sm px-3.5 py-2.5 rounded-xl leading-snug"></p>
+
+            <!-- ══ GIRIS ══ -->
+            <section class="view active" data-view="login">
+              <div class="w-11 h-11 rounded-xl bg-ink/6 grid place-items-center mb-4">
+                <i data-lucide="shield-check" style="width:21px;height:21px" class="text-ink"></i>
+              </div>
+
+              <h1 class="font-display font-600 text-xl text-ink">İdarəetmə paneli</h1>
+              <p class="text-sm text-ink/50 mt-1.5 mb-6">Bu sahə yalnız səlahiyyətli işçilər üçündür.</p>
+
+              <form id="loginForm" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5">İşçi emaili</label>
+                  <div class="relative">
+                    <i data-lucide="mail" style="width:16px;height:16px"
+                      class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                    <input name="email" type="email" required autocomplete="username" placeholder="admin@amorabank.az"
+                      class="w-full h-12 pl-10 pr-3.5 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-500 text-ink/60 mb-1.5">Parol</label>
+                  <div class="relative">
+                    <i data-lucide="lock" style="width:16px;height:16px"
+                      class="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30"></i>
+                    <input name="password" id="pwd" type="password" required autocomplete="current-password" placeholder="••••••••"
+                      class="w-full h-12 pl-10 pr-11 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition">
+                    <button type="button" id="togglePwd"
+                      class="absolute right-3 top-1/2 -translate-y-1/2 text-ink/35 hover:text-ink/60 transition">
+                      <i data-lucide="eye" style="width:17px;height:17px"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <button type="submit"
+                  class="btn-primary w-full h-12 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+                  Daxil ol
+                </button>
+              </form>
+
+              <!-- etibar zolağı -->
+              <div class="mt-6 pt-5 border-t border-line flex items-center justify-center gap-4 text-[11px] text-ink/40">
+                <span class="flex items-center gap-1.5">
+                  <i data-lucide="shield" style="width:13px;height:13px" class="text-neon"></i>
+                  Şifrələnmiş bağlantı
+                </span>
+                <span class="w-px h-3 bg-line"></span>
+                <span class="flex items-center gap-1.5">
+                  <i data-lucide="fingerprint" style="width:13px;height:13px" class="text-lilac"></i>
+                  2FA qorunması
+                </span>
+              </div>
+            </section>
+
+            <!-- ══ OTP (2FA) ══ -->
+            <section class="view" data-view="otp">
+              <button type="button" id="backToLogin"
+                class="flex items-center gap-1.5 text-xs text-ink/45 hover:text-ink mb-5 transition">
+                <i data-lucide="arrow-left" style="width:14px;height:14px"></i> Geri
+              </button>
+
+              <div class="w-11 h-11 rounded-xl bg-lilac/12 grid place-items-center mb-4">
+                <i data-lucide="key-round" style="width:21px;height:21px" class="text-lilac"></i>
+              </div>
+
+              <h1 class="font-display font-600 text-xl text-ink">Təsdiq kodu</h1>
+              <p class="text-sm text-ink/50 mt-1.5 mb-6">
+                Kod <span class="font-500 text-ink-2" id="otpEmail">—</span> ünvanına göndərildi.
+              </p>
+
+              <form id="otpForm">
+                <div class="flex gap-2 justify-between" id="otpGroup"></div>
+                <button type="submit"
+                  class="btn-primary w-full h-12 mt-6 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition">
+                  Təsdiqlə və daxil ol
+                </button>
+              </form>
+
+              <!-- kod barədə qeyd -->
+              <div class="mt-6 flex items-start gap-2.5 rounded-xl bg-mist border border-line p-3.5">
+                <i data-lucide="info" style="width:15px;height:15px" class="text-ink/40 mt-0.5 shrink-0"></i>
+                <p class="text-[11px] leading-snug text-ink/50">
+                  Kodun etibarlılıq müddəti 2 dəqiqədir. Gəlmədisə, spam qovluğunu yoxlayın.
+                </p>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+        <p class="text-center text-[11px] text-white/30 mt-6 rise" style="animation-delay:.2s">
+          Müştərisiniz? <a href="amorabank-auth.html" class="text-white/55 hover:text-neon transition">Müştəri girişi</a>
+        </p>
+      </div>
+    </section>
+  </main>
 
   <script>
     /* ══════════════════════════════════════════════════════════════

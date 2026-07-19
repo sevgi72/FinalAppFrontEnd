@@ -103,14 +103,166 @@
       filter: blur(8px);
       user-select: none;
     }
+
+    /* ══════════ CESARETLI VIZUAL PAKET ══════════ */
+
+    /* Sehife foun — incə mesh gradient (rəng tonu deyismir, yalniz dərinlik) */
+    body {
+      background-color: #f4f5fa;
+      background-image:
+        radial-gradient(at 12% 8%, rgba(124, 111, 240, 0.06) 0px, transparent 45%),
+        radial-gradient(at 88% 4%, rgba(0, 229, 212, 0.05) 0px, transparent 42%),
+        radial-gradient(at 75% 92%, rgba(124, 111, 240, 0.05) 0px, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* Kart uzerinde guilloché — real bank kartlarindaki incə cizgi naxisi */
+    .guilloche {
+      position: absolute;
+      inset: 0;
+      opacity: .5;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    /* EMV cip — qizili-gradient */
+    .emv-chip {
+      width: 38px;
+      height: 28px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #f6d98a 0%, #d4af52 42%, #f2e3a8 62%, #c99b3e 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
+    }
+    .emv-chip::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(90deg, transparent 30%, rgba(0, 0, 0, .18) 30%, rgba(0, 0, 0, .18) 32%, transparent 32%),
+        linear-gradient(90deg, transparent 64%, rgba(0, 0, 0, .18) 64%, rgba(0, 0, 0, .18) 66%, transparent 66%),
+        linear-gradient(0deg, transparent 44%, rgba(0, 0, 0, .18) 44%, rgba(0, 0, 0, .18) 47%, transparent 47%);
+    }
+
+    /* Kart uzerinde donen isiq zolagi (shimmer) */
+    @keyframes cardSheen {
+      0% { transform: translateX(-120%) rotate(8deg); }
+      100% { transform: translateX(320%) rotate(8deg); }
+    }
+    .card-sheen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .13), transparent);
+      animation: cardSheen 7s ease-in-out infinite;
+      animation-delay: 2s;
+      pointer-events: none;
+    }
+
+    /* Kartlarda yumusaq qalxma — hover derinliyi */
+    .lift {
+      transition: transform .35s cubic-bezier(.22, 1, .36, 1), box-shadow .35s;
+    }
+    .lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 40px -12px rgba(44, 41, 102, .28);
+    }
+
+    /* Ikon "capsulu" — gradient fon + yumusaq kolge (duz ikon deyil) */
+    .icon-cap {
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      box-shadow: 0 6px 16px -6px rgba(44, 41, 102, .35), inset 0 1px 0 rgba(255, 255, 255, .3);
+    }
+
+    /* Sayi/deyer gelende yumusaq "pop" */
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(6px) scale(.96); }
+      100% { opacity: 1; transform: none; }
+    }
+    .pop-in { animation: popIn .45s cubic-bezier(.22, 1, .36, 1) both; }
+
+    /* Skeleton (yuklenme) — hərəkətli parıltı */
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #eceef6 25%, #f6f7fb 50%, #eceef6 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+      border-radius: 8px;
+    }
+
+    /* Bolme basliqlarinda incə accent xetti */
+    .accent-bar {
+      display: inline-flex;
+      align-items: center;
+    }
+    .accent-bar::before {
+      content: "";
+      display: inline-block;
+      width: 3px;
+      height: 16px;
+      border-radius: 99px;
+      background: linear-gradient(180deg, #00e5d4, #7c6ff0);
+      margin-right: 9px;
+    }
+
+    /* Sidebar aktiv element — gradient highlight + sol glow zolagi */
+    .nav-active {
+      position: relative;
+      color: #fff;
+      background: linear-gradient(90deg, rgba(0, 229, 212, .16), rgba(124, 111, 240, .10));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+    }
+    .nav-active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 60%;
+      border-radius: 99px;
+      background: linear-gradient(180deg, #00e5d4, #7c6ff0);
+      box-shadow: 0 0 12px rgba(0, 229, 212, .6);
+    }
+    .nav-active i { color: #00e5d4; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card-sheen, .skeleton, .pop-in { animation: none; }
+    }
+
+    /* ═══ RESPONSIV NAV — ZEMANETLI ═══
+       Tailwind CDN gec yuklense de, nav duzgun gorunsun.
+       lg breakpoint = 1024px. */
+    html, body { overflow-x: hidden; max-width: 100%; }
+
+    /* Kicik ekran (< 1024px): sidebar GIZLI, alt-nav GORUNUR */
+    @media (max-width: 1023px) {
+      aside.app-sidebar { display: none !important; }
+      nav.app-bottomnav { display: flex !important; }
+    }
+    /* Boyuk ekran (>= 1024px): sidebar GORUNUR, alt-nav GIZLI */
+    @media (min-width: 1024px) {
+      aside.app-sidebar { display: flex !important; }
+      nav.app-bottomnav { display: none !important; }
+      main { padding-bottom: 0 !important; }
+    }
   </style>
+
 </head>
 
 <body class="bg-mist font-body text-ink-2 antialiased">
 
   <div class="flex min-h-screen">
 
-    <aside class="hidden lg:flex w-64 shrink-0 flex-col bg-ink-2 text-white/70 px-5 py-6">
+    <aside class="app-sidebar hidden lg:flex w-64 shrink-0 flex-col bg-ink-2 text-white/70 px-5 py-6">
 
       <div class="flex items-center gap-2.5 px-2 mb-9">
         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
@@ -120,7 +272,7 @@
       </div>
 
       <nav class="flex-1 space-y-1">
-      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-dashboard.html" class="nav-active flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-sm">
         <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span data-i18n="nav.dashboard">Panel</span>
       </a>
       <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
@@ -132,8 +284,14 @@
       <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
       </a>
+      <a href="amorabank-cash.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="qr-code" style="width:18px;height:18px"></i> <span data-i18n="nav.cash">Kodla nağd</span>
+      </a>
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
+      </a>
+      <a href="amorabank-deposits.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="trending-up" style="width:18px;height:18px"></i> <span data-i18n="nav.deposits">Əmanət</span>
       </a>
       <a href="amorabank-statement.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="file-text" style="width:18px;height:18px"></i> <span data-i18n="nav.statement">Çıxarış</span>
@@ -267,13 +425,97 @@
       </header>
 
 
-      <div class="px-5 lg:px-8 py-6 grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6">
+      <div class="px-5 lg:px-8 py-6 space-y-6">
+
+        <!-- ═══ HERO BANNER ═══ -->
+        <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-ink via-ink-2 to-ink-3 px-6 lg:px-8 py-6">
+          <!-- dekorativ aurora -->
+          <div class="aurora-blob absolute -top-24 right-10 w-72 h-72 rounded-full blur-3xl opacity-40"
+               style="background: radial-gradient(circle, #00e5d4 0%, transparent 65%)"></div>
+          <div class="aurora-blob absolute -bottom-32 -left-10 w-80 h-80 rounded-full blur-3xl opacity-30"
+               style="background: radial-gradient(circle, #7c6ff0 0%, transparent 65%); animation-delay:-7s"></div>
+
+          <!-- dekorativ dalga xetti (SVG) -->
+          <svg class="absolute inset-0 w-full h-full opacity-[.12]" preserveAspectRatio="none" viewBox="0 0 800 200" fill="none">
+            <path d="M0 140 Q 200 90 400 130 T 800 120" stroke="#00e5d4" stroke-width="1.5" fill="none"/>
+            <path d="M0 160 Q 200 120 400 155 T 800 145" stroke="#7c6ff0" stroke-width="1.5" fill="none"/>
+          </svg>
+
+          <div class="relative">
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+              <div class="lg:pt-1">
+                <p id="heroGreeting" class="text-neon text-sm font-500 mb-1.5 flex items-center gap-1.5">—</p>
+                <h1 class="font-display font-700 text-white text-2xl lg:text-[32px] leading-tight">
+                  <span data-i18n="dash.hello">Salam,</span> <span id="heroName">…</span>
+                </h1>
+
+                <!-- umumi balans — buyuk -->
+                <div class="mt-5">
+                  <p class="text-white/45 text-[11px] uppercase tracking-[.15em] mb-1.5" data-i18n="dash.totalBalance">Ümumi balans</p>
+                  <p id="heroTotalBalance" class="font-mono font-700 text-white text-4xl lg:text-5xl balance-value pop-in leading-none">—</p>
+
+                  <!-- gelir/xerc mini kpi -->
+                  <div class="flex items-center gap-5 mt-4">
+                    <div class="flex items-center gap-2">
+                      <span class="w-7 h-7 rounded-lg bg-neon/20 grid place-items-center">
+                        <i data-lucide="arrow-down-left" style="width:14px;height:14px" class="text-neon"></i>
+                      </span>
+                      <div>
+                        <p class="text-white/40 text-[10px] uppercase tracking-wider" data-i18n="dash.moIn">Bu ay gələn</p>
+                        <p id="heroIn" class="font-mono font-600 text-white text-sm balance-value">—</p>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="w-7 h-7 rounded-lg bg-lilac/25 grid place-items-center">
+                        <i data-lucide="arrow-up-right" style="width:14px;height:14px" class="text-lilac"></i>
+                      </span>
+                      <div>
+                        <p class="text-white/40 text-[10px] uppercase tracking-wider" data-i18n="dash.moOut">Bu ay çıxan</p>
+                        <p id="heroOut" class="font-mono font-600 text-white text-sm balance-value">—</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- balans trend qrafiki (mini sparkline) -->
+              <div class="lg:w-[320px] shrink-0 bg-white/[.06] backdrop-blur-sm rounded-2xl border border-white/10 p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <p class="text-white/60 text-xs font-500" data-i18n="dash.balanceTrend">Balans trendi</p>
+                  <span class="text-[10px] text-white/35" data-i18n="dash.last7">son 7 gün</span>
+                </div>
+                <svg id="heroSpark" viewBox="0 0 300 90" class="w-full h-[90px]" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#00e5d4" stop-opacity=".35"/>
+                      <stop offset="100%" stop-color="#00e5d4" stop-opacity="0"/>
+                    </linearGradient>
+                    <linearGradient id="sparkLine" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#00e5d4"/>
+                      <stop offset="100%" stop-color="#7c6ff0"/>
+                    </linearGradient>
+                  </defs>
+                  <path id="sparkArea" fill="url(#sparkFill)" d=""></path>
+                  <path id="sparkStroke" fill="none" stroke="url(#sparkLine)" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" d=""></path>
+                </svg>
+                <div class="flex items-center justify-between mt-2">
+                  <p class="text-[11px] text-white/40"><span id="heroAccountCount">—</span> <span data-i18n="dash.accountsWord">hesab</span></p>
+                  <p id="heroTrendPct" class="text-[11px] font-600 text-neon">—</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <div class="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6">
 
         <div class="space-y-6 min-w-0">
 
           <section>
             <div class="flex items-center justify-between mb-3">
-              <h2 class="font-display font-600 text-ink" data-i18n="dash.myAccounts">Hesablarım</h2>
+              <h2 class="font-display font-600 text-ink accent-bar" data-i18n="dash.myAccounts">Hesablarım</h2>
               <div class="flex items-center gap-1.5">
                 <button id="prevCard"
                   class="w-8 h-8 grid place-items-center rounded-lg bg-white border border-line hover:border-ink/20 transition disabled:opacity-40">
@@ -297,7 +539,7 @@
           <section class="bg-white rounded-2xl border border-line p-5">
             <div class="flex items-center gap-2 mb-4">
               <i data-lucide="send" style="width:17px;height:17px" class="text-neon"></i>
-              <h2 class="font-display font-600 text-ink" data-i18n="dash.quickTransfer">Sürətli köçürmə</h2>
+              <h2 class="font-display font-600 text-ink accent-bar" data-i18n="dash.quickTransfer">Sürətli köçürmə</h2>
             </div>
 
             <!-- Sevimli alicilar — kocurmeler sehifesi ile EYNI anbardan (localStorage) -->
@@ -345,7 +587,7 @@
 
           <section class="bg-white rounded-2xl border border-line overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-line">
-              <h2 class="font-display font-600 text-ink" data-i18n="dash.recentTx">Son əməliyyatlar</h2>
+              <h2 class="font-display font-600 text-ink accent-bar" data-i18n="dash.recentTx">Son əməliyyatlar</h2>
               <button id="toggleTxBtn" class="text-xs font-500 text-neon hover:underline" data-i18n="dash.viewAll">Hamısına bax</button>
             </div>
 
@@ -359,7 +601,7 @@
         <div class="space-y-6">
 
           <section class="bg-white rounded-2xl border border-line p-5">
-            <h2 class="font-display font-600 text-ink mb-1" data-i18n="dash.monthSpending">Bu ayın xərcləri</h2>
+            <h2 class="font-display font-600 text-ink accent-bar mb-1" data-i18n="dash.monthSpending">Bu ayın xərcləri</h2>
             <p class="text-xs text-ink/45 mb-4" id="spendMonthLabel">—</p>
 
             <div class="relative w-40 h-40 mx-auto">
@@ -380,33 +622,80 @@
 
 
           <section class="grid grid-cols-2 gap-3">
-            <div class="bg-gradient-to-br from-ink to-ink-3 rounded-2xl p-4 text-white">
-              <i data-lucide="badge-percent" style="width:18px;height:18px" class="text-neon mb-3"></i>
-              <p class="text-[11px] text-white/55" data-i18n="dash.cashbackBalance">Keşbek balansı</p>
-              <p class="font-mono font-700 text-xl mt-0.5 balance-value" id="cashbackBalance">—</p>
-              <button id="cashbackTransferBtn" data-i18n="dash.transferToAccount" class="mt-3 text-[11px] font-600 text-neon hover:underline">Hesaba köçür →</button>
+            <div class="lift relative overflow-hidden bg-gradient-to-br from-ink via-ink-2 to-ink-3 rounded-2xl p-4 text-white">
+              <div class="aurora-blob absolute -top-8 -right-6 w-28 h-28 rounded-full blur-2xl opacity-40"
+                   style="background: radial-gradient(circle, #00e5d4 0%, transparent 65%)"></div>
+              <div class="relative">
+                <div class="icon-cap w-9 h-9 mb-3" style="background:linear-gradient(135deg,#00e5d4,#0bbfae)">
+                  <i data-lucide="badge-percent" style="width:17px;height:17px" class="text-ink-2"></i>
+                </div>
+                <p class="text-[11px] text-white/55" data-i18n="dash.cashbackBalance">Keşbek balansı</p>
+                <p class="font-mono font-700 text-xl mt-0.5 balance-value pop-in" id="cashbackBalance">—</p>
+                <button id="cashbackTransferBtn" data-i18n="dash.transferToAccount" class="mt-3 text-[11px] font-600 text-neon hover:underline">Hesaba köçür →</button>
+              </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-line p-4">
-              <i data-lucide="coins" style="width:18px;height:18px" class="text-lilac mb-3"></i>
-              <p class="text-[11px] text-ink/50" data-i18n="dash.roundupSavings">Round-up yığım</p>
-              <p class="font-mono font-700 text-xl mt-0.5 text-ink balance-value" id="roundupTotal">—</p>
-              <p class="mt-3 text-[11px] text-ink/40" data-i18n="dash.savedThisMonth">bu ay yığılıb</p>
+            <div class="lift relative overflow-hidden bg-white rounded-2xl border border-line p-4">
+              <div class="absolute -top-8 -right-6 w-28 h-28 rounded-full blur-2xl opacity-30"
+                   style="background: radial-gradient(circle, #7c6ff0 0%, transparent 70%)"></div>
+              <div class="relative">
+                <div class="icon-cap w-9 h-9 mb-3" style="background:linear-gradient(135deg,#7c6ff0,#9a8ff5)">
+                  <i data-lucide="coins" style="width:17px;height:17px" class="text-white"></i>
+                </div>
+                <p class="text-[11px] text-ink/50" data-i18n="dash.roundupSavings">Round-up yığım</p>
+                <p class="font-mono font-700 text-xl mt-0.5 text-ink balance-value pop-in" id="roundupTotal">—</p>
+                <p class="mt-3 text-[11px] text-ink/40" data-i18n="dash.savedThisMonth">bu ay yığılıb</p>
+              </div>
             </div>
           </section>
 
 
           <section class="bg-white rounded-2xl border border-line p-5">
             <div class="flex items-center justify-between mb-4">
-              <h2 class="font-display font-600 text-ink" data-i18n="dash.myGoal">Yığım məqsədim</h2>
+              <h2 class="font-display font-600 text-ink accent-bar" data-i18n="dash.myGoal">Yığım məqsədim</h2>
               <i data-lucide="target" style="width:16px;height:16px" class="text-ink/30"></i>
             </div>
             <div id="goalBox">
               <p class="text-sm text-ink/35 text-center py-4" data-i18n="dash.goalLoading">Məqsəd yüklənir…</p>
             </div>
           </section>
+
+
+          <!-- ═══ VALYUTA MEZENNELERI ═══ -->
+          <section class="bg-white rounded-2xl border border-line p-5">
+            <div class="flex items-center justify-between mb-1">
+              <h2 class="font-display font-600 text-ink accent-bar" data-i18n="dash.fxTitle">Valyuta məzənnələri</h2>
+              <i data-lucide="line-chart" style="width:16px;height:16px" class="text-ink/30"></i>
+            </div>
+            <p class="text-[11px] text-ink/40 mb-4">
+              <span data-i18n="dash.fxBase">1 vahid = AZN</span>
+              <span id="fxUpdated" class="ml-1"></span>
+            </p>
+
+            <div id="fxList" class="space-y-1">
+              <p class="text-sm text-ink/35 text-center py-3" data-i18n="dash.fxLoading">Yüklənir…</p>
+            </div>
+
+            <!-- kiçik çevirici -->
+            <div class="mt-4 pt-4 border-t border-line">
+              <div class="flex items-center gap-2">
+                <input id="fxAmount" type="number" min="0" step="1" value="100"
+                  class="w-20 h-9 px-2.5 rounded-lg border border-line bg-mist text-sm font-mono text-ink-2 focus:border-neon outline-none transition">
+                <select id="fxFrom"
+                  class="h-9 px-2 rounded-lg border border-line bg-mist text-xs font-500 text-ink-2 focus:border-neon outline-none transition"></select>
+                <i data-lucide="arrow-right" style="width:14px;height:14px" class="text-ink/30 shrink-0"></i>
+                <select id="fxTo"
+                  class="h-9 px-2 rounded-lg border border-line bg-mist text-xs font-500 text-ink-2 focus:border-neon outline-none transition"></select>
+              </div>
+              <div class="mt-2.5 flex items-baseline justify-between px-1">
+                <span id="fxResult" class="font-mono font-700 text-lg text-ink">—</span>
+                <span id="fxRate" class="text-[11px] text-ink/45 font-mono"></span>
+              </div>
+            </div>
+          </section>
         </div>
 
+        </div>
       </div>
     </main>
   </div>
@@ -445,26 +734,89 @@
     </button>
   </form>
 </div>
-  <nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
-    <div class="flex justify-around">
-      <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
-        <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
-        <span class="text-[10px] font-500" data-i18n="nav.dashboard">Panel</span>
+  <nav class="app-bottomnav lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
+  <div class="flex justify-around">
+    <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-neon">
+      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
+      <span class="text-[10px] font-500" data-i18n="nav.dashboard">Panel</span>
+    </a>
+    <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.transfers">Köçürmələr</span>
+    </a>
+    <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="credit-card" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
+    </a>
+    <a href="amorabank-loans.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="landmark" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.loans">Kreditlər</span>
+    </a>
+    <button id="moreNavBtn" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="grip" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.more">Daha çox</span>
+    </button>
+  </div>
+</nav>
+
+<!-- "Daha cox" menyusu (mobil) -->
+<div id="moreNavSheet" class="hidden lg:hidden fixed inset-0 z-40">
+  <div id="moreNavBackdrop" class="absolute inset-0 bg-ink-3/40 backdrop-blur-sm"></div>
+  <div class="absolute bottom-0 inset-x-0 bg-white rounded-t-3xl border-t border-line p-4 pb-6 max-h-[75vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-3 px-1">
+      <h3 class="font-display font-600 text-ink" data-i18n="nav.allSections">Bütün bölmələr</h3>
+      <button id="moreNavClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
+        <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
+      </button>
+    </div>
+    <div class="grid grid-cols-1 gap-1">
+      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-mist text-ink transition">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.dashboard">Panel</span>
       </a>
-      <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-        <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
-        <span class="text-[10px]" data-i18n="nav.transferShort">Köçür</span>
+      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.transfers">Köçürmələr</span>
       </a>
-      <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-        <i data-lucide="credit-card" style="width:20px;height:20px"></i>
-        <span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
+      <a href="amorabank-cards.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.cards">Kartlar</span>
       </a>
-      <a href="amorabank-analytics.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
-        <i data-lucide="pie-chart" style="width:20px;height:20px"></i>
-        <span class="text-[10px]" data-i18n="nav.analytics">Analitika</span>
+      <a href="amorabank-payments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="receipt" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.payments">Ödənişlər</span>
+      </a>
+      <a href="amorabank-cash.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="qr-code" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.cash">Kodla nağd</span>
+      </a>
+      <a href="amorabank-savings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.savings">Yığım</span>
+      </a>
+      <a href="amorabank-deposits.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="trending-up" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.deposits">Əmanət</span>
+      </a>
+      <a href="amorabank-loans.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="landmark" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.loans">Kreditlər</span>
+      </a>
+      <a href="amorabank-statement.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="file-text" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.statement">Çıxarış</span>
+      </a>
+      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.analytics">Analitika</span>
+      </a>
+      <a href="amorabank-settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="settings" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.settings">Ayarlar</span>
       </a>
     </div>
-  </nav>
+  </div>
+</div>
 
 
   <script>
@@ -535,15 +887,42 @@
         document.getElementById("userFullName").textContent = name;
         document.getElementById("userEmail").textContent = me.email ?? "";
         document.getElementById("userFirstName").textContent = name.split(" ")[0];
+        document.getElementById("heroName").textContent = name.split(" ")[0];
         document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
+        applyHeaderAvatar();
+        paintGreeting();
       } catch (e) {
         console.error("Profil yüklənmədi:", e.message);
         // Demo rejimi: backend qosulmayibsa numune ad
         document.getElementById("userFullName").textContent = "Sevgi Fərəcli";
         document.getElementById("userEmail").textContent = "sevgi@amorabank.az";
         document.getElementById("userFirstName").textContent = "Sevgi";
+        document.getElementById("heroName").textContent = "Sevgi";
         document.getElementById("avatar").textContent = "S";
+        paintGreeting();
       }
+    }
+
+    // header avatarina saxlanmis profil seklini tetbiq et
+    function applyHeaderAvatar() {
+      const el = document.getElementById("avatar");
+      if (!el) return;
+      const img = localStorage.getItem("amorabank_avatar");
+      if (img) {
+        el.style.backgroundImage = `url(${img})`;
+        el.style.backgroundSize = "cover";
+        el.style.backgroundPosition = "center";
+        el.textContent = "";
+      }
+    }
+
+    // gunun vaxtina gore salamlama
+    function paintGreeting() {
+      const h = new Date().getHours();
+      const key = h < 6 ? "dash.greetNight" : h < 12 ? "dash.greetMorning"
+                : h < 18 ? "dash.greetDay" : "dash.greetEvening";
+      const el = document.getElementById("heroGreeting");
+      if (el) el.textContent = t(key);
     }
 
     // ── Hesablar: GET /api/Account/my ──
@@ -560,7 +939,109 @@
       }
       renderAccountCards();
       fillTransferAccounts();
+      renderHeroStats();
+      loadHeroInsights();
       if (accounts[0]) loadTransactions(accounts[0].id);
+    }
+
+    // hero ucun: butun hesablarin son emeliyyatlarindan gelir/xerc + trend
+    async function loadHeroInsights() {
+      let all = [];
+      try {
+        // her hesabin son emeliyyatlarini topla
+        for (const a of accounts.slice(0, 4)) {
+          try {
+            const res = await api(`/api/Transaction/account/${a.id}?Page=1&PageSize=25`);
+            const items = res.items || res.data || (Array.isArray(res) ? res : []);
+            items.forEach(x => all.push({ ...x, _acc: a.id }));
+          } catch {}
+        }
+      } catch {}
+
+      if (!all.length) {
+        // demo trend (backend yoxdursa vizual bos qalmasin)
+        renderHeroSpark([2100, 2250, 2180, 2400, 2350, 2600, 2784]);
+        return;
+      }
+
+      // bu ay gelir/xerc
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      let inSum = 0, outSum = 0;
+      all.forEach(t2 => {
+        const d = new Date(t2.createdAt);
+        if (d < monthStart) return;
+        const isIn = accounts.some(a => a.id === t2.toAccountId);
+        if (isIn) inSum += Number(t2.amount); else outSum += Number(t2.amount);
+      });
+      renderHeroFlow(inSum, outSum);
+
+      // trend: son emeliyyatlarin balans snapshot-larindan (kohneden yeniye)
+      const withSnap = all
+        .filter(t2 => t2.toBalanceSnapshot != null || t2.fromBalanceSnapshot != null)
+        .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        .slice(-12)
+        .map(t2 => Number(t2.toBalanceSnapshot ?? t2.fromBalanceSnapshot));
+
+      if (withSnap.length >= 2) renderHeroSpark(withSnap);
+      else renderHeroSpark([2100, 2250, 2180, 2400, 2350, 2600, 2784]);
+    }
+
+    // hero: umumi balans + hesab sayi + gelir/xerc + trend qrafiki
+    function renderHeroStats() {
+      const total = accounts.reduce((s, a) => s + Number(a.balance || 0), 0);
+      const tb = document.getElementById("heroTotalBalance");
+      const ac = document.getElementById("heroAccountCount");
+      if (tb) tb.innerHTML = `${AZNnum(total)} <span class="text-2xl text-white/50">${curSym()}</span>`;
+      if (ac) ac.textContent = accounts.length;
+      applyPrivacy();
+    }
+
+    // hero gelir/xerc — bu ayin cemi (butun hesablarin emeliyyatlarindan)
+    function renderHeroFlow(inSum, outSum) {
+      const ei = document.getElementById("heroIn");
+      const eo = document.getElementById("heroOut");
+      if (ei) ei.textContent = "+" + AZN(inSum);
+      if (eo) eo.textContent = "−" + AZN(outSum);
+      applyPrivacy();
+    }
+
+    // hero sparkline — son 7 gunun balans trendi
+    // Qeyd: real gunluk snapshot yoxdur, ona gore son emeliyyatlardan
+    // kumulyativ balans qururuq (vizual trend ucun kifayetdir).
+    function renderHeroSpark(points) {
+      const W = 300, H = 90, pad = 6;
+      if (!points || points.length < 2) {
+        // duz xett
+        points = [50, 50];
+      }
+      const min = Math.min(...points), max = Math.max(...points);
+      const range = max - min || 1;
+      const stepX = (W - pad * 2) / (points.length - 1);
+
+      const xy = points.map((p, i) => {
+        const x = pad + i * stepX;
+        const y = pad + (H - pad * 2) * (1 - (p - min) / range);
+        return [x, y];
+      });
+
+      const line = xy.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+      const area = line + ` L${(W - pad).toFixed(1)} ${H} L${pad} ${H} Z`;
+
+      const stroke = document.getElementById("sparkStroke");
+      const fill = document.getElementById("sparkArea");
+      if (stroke) stroke.setAttribute("d", line);
+      if (fill) fill.setAttribute("d", area);
+
+      // trend faizi
+      const first = points[0], last = points[points.length - 1];
+      const pct = first > 0 ? ((last - first) / first) * 100 : 0;
+      const el = document.getElementById("heroTrendPct");
+      if (el) {
+        const up = pct >= 0;
+        el.textContent = (up ? "↑ " : "↓ ") + Math.abs(pct).toFixed(1) + "%";
+        el.className = "text-[11px] font-600 " + (up ? "text-neon" : "text-red-300");
+      }
     }
 
     // ── Emeliyyatlar: GET /api/Transaction/account/{id}?Page=1&PageSize=6 ──
@@ -641,6 +1122,84 @@
       }
       renderGoal(goals[0]);
     }
+
+
+    /* ══════════════ VALYUTA MEZENNELERI ══════════════ */
+    let fxRates = [];   // [{code, name, rateToAzn}]
+
+    // bayraq emojisi (yalniz gorunus)
+    const FX_FLAG = { AZN: "🇦🇿", USD: "🇺🇸", EUR: "🇪🇺", TRY: "🇹🇷" };
+
+    async function loadRates() {
+      const list = document.getElementById("fxList");
+      let data;
+      try {
+        data = await api("/api/Currency/rates");
+      } catch (e) {
+        console.error("Məzənnələr:", e.message);
+        list.innerHTML = `<p class="text-xs text-red-400 text-center py-3">${t("dash.fxError")}</p>`;
+        return;
+      }
+
+      fxRates = data.rates || [];
+
+      // AZN-i siyahida gostermeye ehtiyac yoxdur (baza valyutadir)
+      const shown = fxRates.filter(r => r.code !== "AZN");
+
+      list.innerHTML = shown.map(r => `
+        <div class="flex items-center justify-between py-1.5">
+          <div class="flex items-center gap-2">
+            <span class="text-base leading-none">${FX_FLAG[r.code] || "💱"}</span>
+            <div>
+              <p class="text-sm font-600 text-ink-2 leading-tight">${r.code}</p>
+              <p class="text-[10px] text-ink/40 leading-tight">${r.name}</p>
+            </div>
+          </div>
+          <p class="font-mono font-700 text-sm text-ink">${Number(r.rateToAzn).toFixed(2)} ₼</p>
+        </div>
+      `).join("");
+
+      // yenilenme tarixi
+      if (data.updatedAt) {
+        document.getElementById("fxUpdated").textContent =
+          "· " + new Date(data.updatedAt).toLocaleDateString("az-AZ", { day: "2-digit", month: "short" });
+      }
+
+      // cevirici dropdown-larini doldur
+      const opts = fxRates.map(r => `<option value="${r.code}">${r.code}</option>`).join("");
+      const from = document.getElementById("fxFrom");
+      const to = document.getElementById("fxTo");
+      from.innerHTML = opts;
+      to.innerHTML = opts;
+      from.value = "USD";
+      to.value = "AZN";
+
+      convertFx();   // ilkin hesablama
+    }
+
+    // cevirme — lokal hesablama (serverdeki formul ile eyni: rateFrom / rateTo)
+    // QEYD: server-de /convert endpoint-i de var; her deyisiklikde sorgu atmamaq
+    // ucun lokal hesablayiriq (mezenneler artiq elimizde).
+    function convertFx() {
+      const amount = Number(document.getElementById("fxAmount").value) || 0;
+      const from = document.getElementById("fxFrom").value;
+      const to = document.getElementById("fxTo").value;
+
+      const rf = fxRates.find(r => r.code === from)?.rateToAzn;
+      const rt = fxRates.find(r => r.code === to)?.rateToAzn;
+      if (!rf || !rt) return;
+
+      const rate = rf / rt;
+      const result = amount * rate;
+
+      document.getElementById("fxResult").textContent =
+        result.toLocaleString("az-AZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " " + to;
+      document.getElementById("fxRate").textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+    }
+
+    ["fxAmount", "fxFrom", "fxTo"].forEach(id =>
+      document.getElementById(id).addEventListener("input", convertFx));
+
 
     // ── Bildiris sayi: GET /api/Notification/unread-count ──
     async function loadNotifCount() {
@@ -822,27 +1381,52 @@
         <div class="aurora-blob absolute -bottom-20 -left-8 w-48 h-48 rounded-full blur-3xl opacity-30"
              style="background: radial-gradient(circle, #7c6ff0 0%, transparent 65%); animation-delay:-6s"></div>
 
+        <!-- guilloché naxis (real bank karti hissi) -->
+        <svg class="guilloche" viewBox="0 0 400 200" preserveAspectRatio="none" fill="none">
+          <defs>
+            <pattern id="gp${i}" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(18)">
+              <circle cx="20" cy="20" r="18" stroke="rgba(255,255,255,.10)" stroke-width="0.6" fill="none"/>
+              <circle cx="20" cy="20" r="11" stroke="rgba(255,255,255,.08)" stroke-width="0.5" fill="none"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="200" fill="url(#gp${i})"/>
+        </svg>
+
+        <!-- donen isiq -->
+        <span class="card-sheen"></span>
+
         <div class="relative flex flex-col h-full justify-between">
           <div class="flex items-start justify-between">
-            <div>
-              <p class="text-white/50 text-[11px] uppercase tracking-wider">
-                ${a.type === "Savings" ? t("dash.savingsAccount") : t("dash.checkingAccount")}
-              </p>
-              <p class="mt-1 font-mono text-white/70 text-xs tracking-widest">
-                ${formatIban(a.accountNumber)}
-              </p>
+            <div class="flex items-center gap-3">
+              <!-- EMV cip -->
+              <div class="emv-chip shrink-0"></div>
+              <div>
+                <p class="text-white/50 text-[11px] uppercase tracking-wider">
+                  ${a.type === "Savings" ? t("dash.savingsAccount") : t("dash.checkingAccount")}
+                </p>
+                <p class="mt-0.5 font-mono text-white/70 text-xs tracking-widest">
+                  ${formatIban(a.accountNumber)}
+                </p>
+              </div>
             </div>
-            <span class="px-2 py-0.5 rounded-md text-[10px] font-600
+            <span class="px-2 py-0.5 rounded-md text-[10px] font-600 backdrop-blur-sm
                         ${a.status === "Active" ? "bg-neon/20 text-neon" : "bg-red-500/20 text-red-300"}">
               ${a.status === "Active" ? t("dash.statusActive") : t("dash.statusFrozen")}
             </span>
           </div>
 
-          <div>
-            <p class="text-white/45 text-[11px] mb-1">${t("dash.balance")}</p>
-            <p class="font-mono font-700 text-white text-3xl balance-value">
-              ${AZNnum(a.balance)} <span class="text-lg text-white/60">${curSym()}</span>
-            </p>
+          <div class="flex items-end justify-between">
+            <div>
+              <p class="text-white/45 text-[11px] mb-1">${t("dash.balance")}</p>
+              <p class="font-mono font-700 text-white text-3xl balance-value pop-in">
+                ${AZNnum(a.balance)} <span class="text-lg text-white/60">${curSym()}</span>
+              </p>
+            </div>
+            <!-- brend loqosu — kartin sag-alt kunc -->
+            <div class="flex items-center gap-1.5 opacity-80">
+              <div class="w-6 h-6 rounded-full bg-neon/70"></div>
+              <div class="w-6 h-6 rounded-full bg-lilac/60 -ml-3"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -914,9 +1498,11 @@
 
         return `
       <li class="flex items-center gap-3.5 px-5 py-3.5 hover:bg-mist/60 transition">
-        <div class="w-10 h-10 rounded-xl grid place-items-center shrink-0
-                    ${isIn ? "bg-neon/12 text-teal-700" : "bg-ink/6 text-ink/60"}">
-          <i data-lucide="${icon}" style="width:17px;height:17px"></i>
+        <div class="icon-cap w-10 h-10 shrink-0"
+             style="background:${isIn
+               ? 'linear-gradient(135deg,#00e5d4,#0bbfae)'
+               : 'linear-gradient(135deg,#2c2966,#1b1940)'}">
+          <i data-lucide="${icon}" style="width:17px;height:17px" class="${isIn ? 'text-ink-2' : 'text-white/90'}"></i>
         </div>
 
         <div class="min-w-0 flex-1">
@@ -1007,6 +1593,7 @@
       await loadCashback();
       await loadRoundUp();
       await loadGoal();
+      await loadRates();
       await loadNotifCount();
 
       // Kart keçidləri
@@ -1365,6 +1952,22 @@
     };
   </script>
 <script src="ai-chat.js"></script>
+
+<script>
+// ── Mobil "Daha cox" menyusu ──
+(function(){
+  const btn = document.getElementById("moreNavBtn");
+  const sheet = document.getElementById("moreNavSheet");
+  const closeBtn = document.getElementById("moreNavClose");
+  const backdrop = document.getElementById("moreNavBackdrop");
+  if (!btn || !sheet) return;
+  const open = () => { sheet.classList.remove("hidden"); if(window.lucide) lucide.createIcons(); };
+  const close = () => sheet.classList.add("hidden");
+  btn.addEventListener("click", open);
+  closeBtn?.addEventListener("click", close);
+  backdrop?.addEventListener("click", close);
+})();
+</script>
 </body>
 
 </html>

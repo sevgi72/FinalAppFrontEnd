@@ -35,7 +35,141 @@ tailwind.config = {
   ::-webkit-scrollbar-thumb { background: #cfd3e6; border-radius: 99px; }
   :focus-visible { outline: 2px solid #00e5d4; outline-offset: 2px; border-radius: 6px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-</style>
+
+    /* ══════════ CESARETLI VIZUAL PAKET ══════════ */
+
+    /* Sehife foun — incə mesh gradient (rəng tonu deyismir, yalniz dərinlik) */
+    body {
+      background-color: #f4f5fa;
+      background-image:
+        radial-gradient(at 12% 8%, rgba(124, 111, 240, 0.06) 0px, transparent 45%),
+        radial-gradient(at 88% 4%, rgba(0, 229, 212, 0.05) 0px, transparent 42%),
+        radial-gradient(at 75% 92%, rgba(124, 111, 240, 0.05) 0px, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* Kart uzerinde guilloché — real bank kartlarindaki incə cizgi naxisi */
+    .guilloche {
+      position: absolute;
+      inset: 0;
+      opacity: .5;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    /* EMV cip — qizili-gradient */
+    .emv-chip {
+      width: 38px;
+      height: 28px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #f6d98a 0%, #d4af52 42%, #f2e3a8 62%, #c99b3e 100%);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
+    }
+    .emv-chip::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(90deg, transparent 30%, rgba(0, 0, 0, .18) 30%, rgba(0, 0, 0, .18) 32%, transparent 32%),
+        linear-gradient(90deg, transparent 64%, rgba(0, 0, 0, .18) 64%, rgba(0, 0, 0, .18) 66%, transparent 66%),
+        linear-gradient(0deg, transparent 44%, rgba(0, 0, 0, .18) 44%, rgba(0, 0, 0, .18) 47%, transparent 47%);
+    }
+
+    /* Kart uzerinde donen isiq zolagi (shimmer) */
+    @keyframes cardSheen {
+      0% { transform: translateX(-120%) rotate(8deg); }
+      100% { transform: translateX(320%) rotate(8deg); }
+    }
+    .card-sheen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .13), transparent);
+      animation: cardSheen 7s ease-in-out infinite;
+      animation-delay: 2s;
+      pointer-events: none;
+    }
+
+    /* Kartlarda yumusaq qalxma — hover derinliyi */
+    .lift {
+      transition: transform .35s cubic-bezier(.22, 1, .36, 1), box-shadow .35s;
+    }
+    .lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 40px -12px rgba(44, 41, 102, .28);
+    }
+
+    /* Ikon "capsulu" — gradient fon + yumusaq kolge (duz ikon deyil) */
+    .icon-cap {
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      box-shadow: 0 6px 16px -6px rgba(44, 41, 102, .35), inset 0 1px 0 rgba(255, 255, 255, .3);
+    }
+
+    /* Sayi/deyer gelende yumusaq "pop" */
+    @keyframes popIn {
+      0% { opacity: 0; transform: translateY(6px) scale(.96); }
+      100% { opacity: 1; transform: none; }
+    }
+    .pop-in { animation: popIn .45s cubic-bezier(.22, 1, .36, 1) both; }
+
+    /* Skeleton (yuklenme) — hərəkətli parıltı */
+    @keyframes shimmer {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #eceef6 25%, #f6f7fb 50%, #eceef6 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s infinite linear;
+      border-radius: 8px;
+    }
+
+    /* Bolme basliqlarinda incə accent xetti */
+    .accent-bar {
+      display: inline-flex;
+      align-items: center;
+    }
+    .accent-bar::before {
+      content: "";
+      display: inline-block;
+      width: 3px;
+      height: 16px;
+      border-radius: 99px;
+      background: linear-gradient(180deg, #00e5d4, #7c6ff0);
+      margin-right: 9px;
+    }
+
+    /* Sidebar aktiv element — gradient highlight + sol glow zolagi */
+    .nav-active {
+      position: relative;
+      color: #fff;
+      background: linear-gradient(90deg, rgba(0, 229, 212, .16), rgba(124, 111, 240, .10));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
+    }
+    .nav-active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 60%;
+      border-radius: 99px;
+      background: linear-gradient(180deg, #00e5d4, #7c6ff0);
+      box-shadow: 0 0 12px rgba(0, 229, 212, .6);
+    }
+    .nav-active i { color: #00e5d4; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card-sheen, .skeleton, .pop-in { animation: none; }
+    }
+  </style>
 </head>
 
 <body class="bg-mist font-body text-ink-2 antialiased">
@@ -64,8 +198,14 @@ tailwind.config = {
       <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
       </a>
+      <a href="amorabank-cash.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="qr-code" style="width:18px;height:18px"></i> <span data-i18n="nav.cash">Kodla nağd</span>
+      </a>
       <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
+      </a>
+      <a href="amorabank-deposits.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="trending-up" style="width:18px;height:18px"></i> <span data-i18n="nav.deposits">Əmanət</span>
       </a>
       <a href="amorabank-statement.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="file-text" style="width:18px;height:18px"></i> <span data-i18n="nav.statement">Çıxarış</span>
@@ -76,7 +216,7 @@ tailwind.config = {
       <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
-      <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/10 text-white transition text-sm">
+      <a href="amorabank-settings.html" class="nav-active flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-sm">
         <i data-lucide="settings" style="width:18px;height:18px"></i> <span data-i18n="nav.settings">Ayarlar</span>
       </a>
     </nav>
@@ -151,7 +291,16 @@ tailwind.config = {
       <!-- ═══ PROFIL BASLIGI ═══ -->
       <div class="bg-white rounded-2xl border border-line p-6 mb-5">
         <div class="flex items-center gap-4">
-          <div id="bigAvatar" class="w-16 h-16 rounded-2xl bg-gradient-to-br from-ink to-ink-3 text-white grid place-items-center font-700 text-2xl">—</div>
+          <div class="relative group shrink-0">
+            <div id="bigAvatar" class="w-16 h-16 rounded-2xl bg-gradient-to-br from-ink to-ink-3 text-white grid place-items-center font-700 text-2xl overflow-hidden bg-cover bg-center">—</div>
+            <!-- sekil deyisdirme overlay -->
+            <button id="avatarUploadBtn" type="button"
+                    class="absolute inset-0 rounded-2xl bg-ink-3/60 opacity-0 group-hover:opacity-100 grid place-items-center transition"
+                    title="Şəkil dəyiş" data-i18n-title="set.changePhoto">
+              <i data-lucide="camera" style="width:18px;height:18px" class="text-white"></i>
+            </button>
+            <input id="avatarInput" type="file" accept="image/*" class="hidden">
+          </div>
           <div class="min-w-0">
             <h2 id="hName" class="font-display font-600 text-ink text-xl truncate">…</h2>
             <p id="hEmail" class="text-sm text-ink/50 truncate">…</p>
@@ -186,9 +335,14 @@ tailwind.config = {
             <i data-lucide="user-round" style="width:17px;height:17px" class="text-teal-700"></i>
           </div>
           <div>
-            <h3 class="font-display font-600 text-ink" data-i18n="set.profileTitle">Şəxsi məlumat</h3>
+            <h3 class="font-display font-600 text-ink accent-bar" data-i18n="set.profileTitle">Şəxsi məlumat</h3>
             <p class="text-xs text-ink/45" data-i18n="set.profileHint">Adınızı və telefon nömrənizi yeniləyin</p>
           </div>
+          <div class="flex-1"></div>
+          <button id="removePhotoBtn" type="button"
+                  class="hidden text-[11px] font-500 text-red-500 hover:underline" data-i18n="set.removePhoto">
+            Şəkli sil
+          </button>
         </div>
 
         <form id="profileForm" class="space-y-4">
@@ -225,7 +379,7 @@ tailwind.config = {
             <i data-lucide="shield-check" style="width:17px;height:17px" class="text-lilac"></i>
           </div>
           <div>
-            <h3 class="font-display font-600 text-ink" data-i18n="set.securityTitle">Təhlükəsizlik</h3>
+            <h3 class="font-display font-600 text-ink accent-bar" data-i18n="set.securityTitle">Təhlükəsizlik</h3>
             <p class="text-xs text-ink/45" data-i18n="set.securityHint">Girişi qorumaq üçün</p>
           </div>
         </div>
@@ -284,7 +438,7 @@ tailwind.config = {
             <i data-lucide="bell-ring" style="width:17px;height:17px" class="text-amber-600"></i>
           </div>
           <div>
-            <h3 class="font-display font-600 text-ink" data-i18n="set.alertTitle">Balans xəbərdarlığı</h3>
+            <h3 class="font-display font-600 text-ink accent-bar" data-i18n="set.alertTitle">Balans xəbərdarlığı</h3>
             <p class="text-xs text-ink/45" data-i18n="set.alertHint">Balans həddin altına düşəndə bildiriş alın</p>
           </div>
         </div>
@@ -302,7 +456,7 @@ tailwind.config = {
             <i data-lucide="coins" style="width:17px;height:17px" class="text-lilac"></i>
           </div>
           <div class="flex-1 min-w-0">
-            <h3 class="font-display font-600 text-ink" data-i18n="set.ruTitle">Round-up yığım</h3>
+            <h3 class="font-display font-600 text-ink accent-bar" data-i18n="set.ruTitle">Round-up yığım</h3>
             <p class="text-xs text-ink/45" data-i18n="set.ruHint">Hər xərcin qəpiyi avtomatik yığım hesabına keçir</p>
           </div>
 
@@ -388,6 +542,32 @@ tailwind.config = {
       </section>
 
 
+      <!-- ═══ EMELIYYAT LIMITLERI ═══ -->
+      <section class="bg-white rounded-2xl border border-line p-6">
+        <div class="flex items-start gap-2.5 mb-5">
+          <div class="w-9 h-9 rounded-xl bg-neon/12 grid place-items-center shrink-0">
+            <i data-lucide="gauge" style="width:17px;height:17px" class="text-teal-600"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-display font-600 text-ink accent-bar" data-i18n="set.limTitle">Əməliyyat limitləri</h3>
+            <p class="text-xs text-ink/45" data-i18n="set.limHint">Köçürmə limitlərini hesab üzrə görün və dəyişin</p>
+          </div>
+        </div>
+
+        <!-- hesab secimi -->
+        <div class="mb-5">
+          <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="set.limAccount">Hesab</label>
+          <select id="limAccount"
+            class="w-full h-11 px-3 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition"></select>
+        </div>
+
+        <!-- limit karti (secilen hesab ucun) -->
+        <div id="limBody" class="space-y-4">
+          <p class="text-sm text-ink/35 text-center py-6" data-i18n="set.limLoading">Yüklənir…</p>
+        </div>
+      </section>
+
+
       <!-- ═══ TENZIMLEMELER ═══ -->
       <section class="bg-white rounded-2xl border border-line p-6">
         <div class="flex items-center gap-2.5 mb-5">
@@ -395,7 +575,7 @@ tailwind.config = {
             <i data-lucide="sliders-horizontal" style="width:17px;height:17px" class="text-ink/60"></i>
           </div>
           <div>
-            <h3 class="font-display font-600 text-ink" data-i18n="set.prefsTitle">Tənzimləmələr</h3>
+            <h3 class="font-display font-600 text-ink accent-bar" data-i18n="set.prefsTitle">Tənzimləmələr</h3>
             <p class="text-xs text-ink/45" data-i18n="set.prefsHint">Dil və valyuta</p>
           </div>
         </div>
@@ -429,26 +609,89 @@ tailwind.config = {
 
 
 <!-- ════════════ MOBIL NAV ════════════ -->
-<nav class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
+<nav class="app-bottomnav lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
   <div class="flex justify-around">
-    <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+    <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
       <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
       <span class="text-[10px]" data-i18n="nav.dashboard">Panel</span>
     </a>
-    <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+    <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
       <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
-      <span class="text-[10px]" data-i18n="nav.transferShort">Köçür</span>
+      <span class="text-[10px]" data-i18n="nav.transfers">Köçürmələr</span>
     </a>
-    <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-ink/40">
+    <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
       <i data-lucide="credit-card" style="width:20px;height:20px"></i>
       <span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
     </a>
-    <a href="amorabank-settings.html" class="flex flex-col items-center gap-0.5 px-3 py-1 text-neon">
+    <a href="amorabank-settings.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-neon">
       <i data-lucide="settings" style="width:20px;height:20px"></i>
       <span class="text-[10px] font-500" data-i18n="nav.settings">Ayarlar</span>
     </a>
+    <button id="moreNavBtn" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+      <i data-lucide="grip" style="width:20px;height:20px"></i>
+      <span class="text-[10px]" data-i18n="nav.more">Daha çox</span>
+    </button>
   </div>
 </nav>
+
+<!-- "Daha cox" menyusu (mobil) -->
+<div id="moreNavSheet" class="hidden lg:hidden fixed inset-0 z-40">
+  <div id="moreNavBackdrop" class="absolute inset-0 bg-ink-3/40 backdrop-blur-sm"></div>
+  <div class="absolute bottom-0 inset-x-0 bg-white rounded-t-3xl border-t border-line p-4 pb-6 max-h-[75vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-3 px-1">
+      <h3 class="font-display font-600 text-ink" data-i18n="nav.allSections">Bütün bölmələr</h3>
+      <button id="moreNavClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
+        <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
+      </button>
+    </div>
+    <div class="grid grid-cols-1 gap-1">
+      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.dashboard">Panel</span>
+      </a>
+      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.transfers">Köçürmələr</span>
+      </a>
+      <a href="amorabank-cards.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="credit-card" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.cards">Kartlar</span>
+      </a>
+      <a href="amorabank-payments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="receipt" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.payments">Ödənişlər</span>
+      </a>
+      <a href="amorabank-cash.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="qr-code" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.cash">Kodla nağd</span>
+      </a>
+      <a href="amorabank-savings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.savings">Yığım</span>
+      </a>
+      <a href="amorabank-deposits.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="trending-up" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.deposits">Əmanət</span>
+      </a>
+      <a href="amorabank-loans.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="landmark" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.loans">Kreditlər</span>
+      </a>
+      <a href="amorabank-statement.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="file-text" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.statement">Çıxarış</span>
+      </a>
+      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+        <i data-lucide="pie-chart" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.analytics">Analitika</span>
+      </a>
+      <a href="amorabank-settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-mist text-ink transition">
+        <i data-lucide="settings" style="width:18px;height:18px"></i>
+        <span class="text-sm font-500" data-i18n="nav.settings">Ayarlar</span>
+      </a>
+    </div>
+  </div>
+</div>
 
 
 <script>
@@ -500,7 +743,7 @@ async function loadProfile() {
   }
 
   // baslib
-  document.getElementById("bigAvatar").textContent = initials(profile.fullName || profile.email);
+  applyAvatar();   // saxlanmis sekil varsa goster, yoxsa herf
   document.getElementById("hName").textContent = profile.fullName || "—";
   document.getElementById("hEmail").textContent = profile.email || "";
   document.getElementById("hRole").textContent = (profile.roles && profile.roles[0]) || "Customer";
@@ -527,7 +770,81 @@ async function loadProfile() {
   // 2FA veziyyeti
   twoFaState = !!profile.isTwoFactorEnabled;
   renderTwoFa();
+
+
+  /* ══════════════════════════════════════════════════════════════
+     PROFIL SEKLI (PP)
+     Sekil localStorage-da base64 kimi saxlanir — backend fayl saxlama
+     infrastrukturu teleb etmir. Butun sehifelerdeki avatar bunu oxuyur.
+     ══════════════════════════════════════════════════════════════ */
 }
+
+const AVATAR_KEY = "amorabank_avatar";
+
+// saxlanmis sekli boyuk avatara tetbiq et (yoxsa herf gostr)
+function applyAvatar() {
+  const el = document.getElementById("bigAvatar");
+  if (!el || !profile) return;
+  const img = localStorage.getItem(AVATAR_KEY);
+  const removeBtn = document.getElementById("removePhotoBtn");
+  if (img) {
+    el.style.backgroundImage = `url(${img})`;
+    el.textContent = "";
+    if (removeBtn) removeBtn.classList.remove("hidden");
+  } else {
+    el.style.backgroundImage = "";
+    el.textContent = initials(profile.fullName || profile.email);
+    if (removeBtn) removeBtn.classList.add("hidden");
+  }
+}
+
+// sekli sil
+document.getElementById("removePhotoBtn").addEventListener("click", () => {
+  localStorage.removeItem(AVATAR_KEY);
+  applyAvatar();
+  showMsg(t("set.photoRemoved"), true);
+});
+
+// upload duymesi → fayl secimi
+document.getElementById("avatarUploadBtn").addEventListener("click", () =>
+  document.getElementById("avatarInput").click());
+
+// fayl secilende: kicilt (max 256px), base64-e cevir, saxla
+document.getElementById("avatarInput").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) return showMsg(t("set.photoBadType"), false);
+  if (file.size > 5 * 1024 * 1024) return showMsg(t("set.photoTooBig"), false);
+
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      // kvadrat kes + 256px-e kicilt (localStorage yer qenaeti)
+      const size = 256;
+      const canvas = document.createElement("canvas");
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext("2d");
+
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min) / 2;
+      const sy = (img.height - min) / 2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+      try {
+        localStorage.setItem(AVATAR_KEY, dataUrl);
+        applyAvatar();
+        showMsg(t("set.photoSaved"), true);
+      } catch {
+        showMsg(t("set.photoTooBig"), false);
+      }
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -912,6 +1229,134 @@ document.getElementById("ruWithdraw").addEventListener("click", async () => {
 
 
 /* ══════════════════════════════════════════════════════════════
+   5d. EMELIYYAT LIMITLERI — /api/Limit/{accountId}
+   ══════════════════════════════════════════════════════════════ */
+let limInfo = null;   // secilen hesabin limit melumati
+
+function limFillAccounts() {
+  const sel = document.getElementById("limAccount");
+  sel.innerHTML = accounts.length
+    ? accounts.map(a => `<option value="${a.id}">${accLabel(a)} — ${AZN(a.balance)}</option>`).join("")
+    : `<option value="">${t("set.limNoAccount")}</option>`;
+}
+
+async function loadLimits() {
+  const accId = document.getElementById("limAccount").value;
+  const body = document.getElementById("limBody");
+
+  if (!accId) {
+    body.innerHTML = `<p class="text-sm text-ink/35 text-center py-6">${t("set.limNoAccount")}</p>`;
+    return;
+  }
+
+  body.innerHTML = `<p class="text-sm text-ink/35 text-center py-6">${t("set.limLoading")}</p>`;
+  try {
+    limInfo = await api(`/api/Limit/${accId}`);
+  } catch (e) {
+    body.innerHTML = `<p class="text-sm text-red-500 text-center py-6">${e.message}</p>`;
+    return;
+  }
+  renderLimits();
+}
+
+// bir limit setri: baslq, istifade cubugu, deyer input
+function limRow(labelKey, limit, used, remaining, field) {
+  const pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
+  const danger = pct >= 90 ? "bg-red-400" : pct >= 70 ? "bg-amber-400" : "bg-neon";
+
+  return `
+    <div class="p-4 rounded-xl bg-mist">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm font-500 text-ink-2" data-i18n="${labelKey}">${t(labelKey)}</span>
+        <span class="text-[11px] text-ink/45 font-mono">${AZN(used)} / ${AZN(limit)}</span>
+      </div>
+
+      <!-- istifade cubugu -->
+      <div class="h-1.5 rounded-full bg-ink/8 overflow-hidden mb-3">
+        <div class="h-full ${danger} transition-all" style="width:${pct}%"></div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="relative flex-1">
+          <input type="number" min="0" step="1" value="${limit}" data-lim-field="${field}"
+            class="w-full h-10 pl-3 pr-8 rounded-lg border border-line bg-white text-sm font-mono text-ink-2 focus:border-neon outline-none transition">
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink/40">₼</span>
+        </div>
+        <span class="text-[11px] text-ink/45 shrink-0 w-24">${t("set.limRemaining")}: <b class="text-ink-2">${AZN(remaining)}</b></span>
+      </div>
+    </div>`;
+}
+
+function renderLimits() {
+  if (!limInfo) return;
+  const i = limInfo;
+
+  document.getElementById("limBody").innerHTML = `
+    ${i.isCustom
+      ? `<div class="flex items-center gap-2 text-[11px] text-teal-700 bg-neon/8 rounded-lg px-3 py-2">
+           <i data-lucide="check-circle" style="width:13px;height:13px"></i>
+           <span data-i18n="set.limCustom">${t("set.limCustom")}</span>
+         </div>`
+      : `<div class="flex items-center gap-2 text-[11px] text-ink/50 bg-mist rounded-lg px-3 py-2">
+           <i data-lucide="info" style="width:13px;height:13px"></i>
+           <span data-i18n="set.limDefault">${t("set.limDefault")}</span>
+         </div>`}
+
+    ${limRow("set.limDaily", i.dailyLimit, i.dailyUsed, i.dailyRemaining, "daily")}
+    ${limRow("set.limMonthly", i.monthlyLimit, i.monthlyUsed, i.monthlyRemaining, "monthly")}
+    ${limRow("set.limYearly", i.yearlyLimit, i.yearlyUsed, i.yearlyRemaining, "yearly")}
+
+    <div class="flex gap-2 pt-1">
+      <button id="limSave"
+        class="flex-1 h-11 rounded-xl bg-ink text-white text-sm font-600 hover:bg-ink-2 active:scale-[.99] disabled:opacity-60 transition flex items-center justify-center gap-2">
+        <i data-lucide="check" style="width:15px;height:15px"></i>
+        <span data-i18n="set.limSave">Yadda saxla</span>
+      </button>
+      <button id="limReset"
+        class="h-11 px-4 rounded-xl border border-line bg-white text-sm font-600 text-ink-2 hover:border-ink/20 active:scale-[.99] transition"
+        data-i18n="set.limReset">Standarta qaytar</button>
+    </div>`;
+
+  lucide.createIcons();
+
+  document.getElementById("limSave").addEventListener("click", () => saveLimits(false));
+  document.getElementById("limReset").addEventListener("click", () => saveLimits(true));
+}
+
+async function saveLimits(reset) {
+  const accId = document.getElementById("limAccount").value;
+  if (!accId) return;
+
+  let dto;
+  if (reset) {
+    // null → server standart limite qaytarir
+    dto = { dailyLimit: null, monthlyLimit: null, yearlyLimit: null };
+  } else {
+    const val = (field) => {
+      const el = document.querySelector(`[data-lim-field="${field}"]`);
+      const n = Number(el?.value);
+      return isNaN(n) || n < 0 ? null : n;
+    };
+    dto = { dailyLimit: val("daily"), monthlyLimit: val("monthly"), yearlyLimit: val("yearly") };
+  }
+
+  const btn = document.getElementById(reset ? "limReset" : "limSave");
+  btn.disabled = true;
+  try {
+    await api(`/api/Limit/${accId}`, { method: "PUT", body: JSON.stringify(dto) });
+    showMsg(reset ? t("set.limResetDone") : t("set.limSaved"), true);
+    await loadLimits();
+  } catch (err) {
+    showMsg(err.message, false);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+document.getElementById("limAccount").addEventListener("change", loadLimits);
+
+
+/* ══════════════════════════════════════════════════════════════
    6. TENZIMLEME DUYMELERI (dil/valyuta — sehife daxili)
    ══════════════════════════════════════════════════════════════ */
 function renderPrefButtons() {
@@ -967,8 +1412,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadProfile();
   await loadAlerts();
   await loadRoundUp();   // hesablar yuklendikden SONRA (dropdown-lar onlardan qurulur)
+  limFillAccounts();     // limit hesab secimi
+  await loadLimits();    // ilk hesabin limitleri
 });
 </script>
 <script src="ai-chat.js"></script>
+
+<script>
+// ── Mobil "Daha cox" menyusu ──
+(function(){
+  const btn = document.getElementById("moreNavBtn");
+  const sheet = document.getElementById("moreNavSheet");
+  const closeBtn = document.getElementById("moreNavClose");
+  const backdrop = document.getElementById("moreNavBackdrop");
+  if (!btn || !sheet) return;
+  const open = () => { sheet.classList.remove("hidden"); if(window.lucide) lucide.createIcons(); };
+  const close = () => sheet.classList.add("hidden");
+  btn.addEventListener("click", open);
+  closeBtn?.addEventListener("click", close);
+  backdrop?.addEventListener("click", close);
+})();
+</script>
 </body>
 </html>
