@@ -837,7 +837,7 @@ document.getElementById("externalForm").addEventListener("submit", async (e) => 
   setBtn(btn, true);
   try {
     const res = await api("/api/Transaction/transfer", { method: "POST", body: JSON.stringify(body) });
-    handleSuccess(res, body.amount, t("tr.externalLabel"));
+    handleSuccess(res, body.amount, t("tr.externalLabel"), false, body.fromAccountId);
     // alicini sevimlilere saxla (IBAN + qeyd)
     saveFavorite(body.toAccountNumber, document.getElementById("extDesc").value.trim());
     e.target.reset();
@@ -932,7 +932,7 @@ document.getElementById("selfForm").addEventListener("submit", async (e) => {
   setBtn(btn, true);
   try {
     const res = await api("/api/Transaction/self-transfer", { method: "POST", body: JSON.stringify(body) });
-    handleSuccess(res, body.amount, t("tr.selfLabel"));
+    handleSuccess(res, body.amount, t("tr.selfLabel"), false, body.fromAccountId);
     e.target.reset();
   } catch (err) {
     showMsg(err.message, false);
@@ -958,7 +958,7 @@ document.getElementById("balanceForm").addEventListener("submit", async (e) => {
   try {
     const res = await api(path, { method: "POST", body: JSON.stringify(body) });
     showMsg(`${AZNfix(body.amount)} ${word}.`, true);
-    handleSuccess(res, body.amount, balanceMode === "deposit" ? t("tr.depositLabel") : t("tr.withdrawLabel"), true);
+    handleSuccess(res, body.amount, balanceMode === "deposit" ? t("tr.depositLabel") : t("tr.withdrawLabel"), true, body.accountId);
     e.target.reset();
   } catch (err) {
     showMsg(err.message, false);
@@ -967,9 +967,22 @@ document.getElementById("balanceForm").addEventListener("submit", async (e) => {
   }
 });
 
-// Ugurlu emeliyyatdan sonra: balansi yenile + qebz goster
-async function handleSuccess(res, amount, typeLabel, skipReceipt = false) {
+// Ugurlu emeliyyatdan sonra: balansi + tarixçəni yenile + qebz goster
+async function handleSuccess(res, amount, typeLabel, skipReceipt = false, sourceAccId = null) {
+  // 1. Hesabları və balansları yeniləyirik
   await loadAccounts();
+
+  // 2. Əməliyyatın getdiyi hesabı sağ tərəfdə seçilmiş et və onun tarixçəsini göstər
+  const sel = document.getElementById("historyAccount");
+  if (sourceAccId && sel) {
+    sel.value = sourceAccId;        // sağ tərəfdəki seçimi göndərən hesaba keçir
+    updateSelectedBalance();
+  }
+  const currentAccId = sel?.value;
+  if (currentAccId) {
+    await loadHistory(currentAccId);
+  }
+
   // backend cavabinda transaction id ola biler (id / transactionId)
   const txId = res?.id || res?.transactionId || res?.transaction?.id || null;
   if (!skipReceipt && txId) {

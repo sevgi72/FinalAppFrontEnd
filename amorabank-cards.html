@@ -1030,9 +1030,17 @@ document.getElementById("settingsForm").addEventListener("submit", async (e) => 
   }
 });
 
+// Əgər istifadəçiyə hesab seçdirmədən avtomatik ilk hesaba kart bağlamaq istəyirsinizsə:
 document.getElementById("createForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const accountId = document.getElementById("cardAccount").value;
+  
+  let accountId = document.getElementById("cardAccount")?.value;
+  
+  // Əgər həmin anda accountId seçilməyibsə, aktiv olan ilk hesabı götürürük
+  if (!accountId && accounts.length > 0) {
+    accountId = accounts[0].id;
+  }
+
   if (!accountId) return showMsg(t("cards.needAccount"), false);
 
   const btn = e.target.querySelector("button[type=submit]");
@@ -1049,7 +1057,6 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
   }
 });
 
-
 /* ══════════════════════════════════════════════════════════════
    6. UI
    ══════════════════════════════════════════════════════════════ */
@@ -1062,8 +1069,33 @@ function showMsg(text, ok) {
   if (ok) setTimeout(() => el.classList.add("hidden"), 5000);
 }
 
-function openCreate() {
-  if (!accounts.length) return showMsg(t("cards.needAccountFirst"), false);
+async function openCreate() {
+  // 1. Əgər istifadəçinin hesabı yoxdursa, avtomatik backend-də hesab yaradırıq
+  if (!accounts || accounts.length === 0) {
+    try {
+      showMsg("İlkin bank hesabınız yaradılır...", true);
+      
+      // Backend-ə avtomatik hesab yaratmaq üçün sorğu atırıq
+      await api("/api/Account", {
+        method: "POST",
+        body: JSON.stringify({ currency: "AZN" }) // backend-inizin gözlədiyi parametrlərə uyğunlaşdırın
+      });
+
+      // Hesabları yenidən yükləyirik ki, 'accounts' massivi yenilənsin
+      await loadAccounts();
+    } catch (err) {
+      return showMsg("Hesab yaradılarkən xəta baş verdi: " + err.message, false);
+    }
+  }
+
+  // 2. Artıq hesab var! Əgər modaldakı account dropdown (select) varsa, ilk hesabı avtomatik seçirik
+  const selectEl = document.getElementById("cardAccount");
+  if (selectEl && accounts.length > 0) {
+    // Select elementinin içini təzələmək lazımdırsa (və ya loadAccounts artıq doldurursa)
+    selectEl.value = accounts[0].id;
+  }
+
+  // 3. Modalı açırıq
   document.getElementById("createModal").classList.remove("hidden");
 }
 function closeCreate() { document.getElementById("createModal").classList.add("hidden"); }

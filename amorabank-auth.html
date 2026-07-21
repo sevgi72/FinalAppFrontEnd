@@ -322,7 +322,7 @@
                         <p class="text-sm text-ink/50 mt-1.5 mb-7" data-i18n="auth.loginSubtitle">Hesabınıza daxil olun.
                         </p>
 
-                        <form id="loginForm" class="space-y-4">
+                        <form id="loginForm" class="space-y-4" novalidate>
                             <div>
                                 <label class="block text-xs font-500 text-ink/60 mb-1.5"
                                     data-i18n="common.email">Email</label>
@@ -405,7 +405,7 @@
                         <p class="text-sm text-ink/50 mt-1.5 mb-7" data-i18n="auth.registerSubtitle">Bir neçə addım — və
                             hazırsınız.</p>
 
-                        <form id="registerForm" class="space-y-4">
+                        <form id="registerForm" class="space-y-4" novalidate>
                             <div>
                                 <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="auth.fullName">Ad,
                                     soyad</label>
@@ -560,7 +560,7 @@
                         <p class="text-sm text-ink/50 mt-1.5 mb-7" data-i18n="auth.forgotSubtitle">Email ünvanınızı
                             yazın — sıfırlama kodu göndərəcəyik.</p>
 
-                        <form id="forgotForm" class="space-y-4">
+                        <form id="forgotForm" class="space-y-4" novalidate>
                             <div>
                                 <label class="block text-xs font-500 text-ink/60 mb-1.5"
                                     data-i18n="common.email">Email</label>
@@ -593,7 +593,7 @@
                             parolu yazın.
                         </p>
 
-                        <form id="resetForm" class="space-y-4">
+                        <form id="resetForm" class="space-y-4" novalidate>
                             <div>
                                 <label class="block text-xs font-500 text-ink/60 mb-1.5"
                                     data-i18n="auth.resetCode">Sıfırlama kodu</label>
@@ -838,6 +838,9 @@
             const email = fd.get("email").trim();
             const password = fd.get("password");
 
+            if (!email) return showAlert(t("auth.emptyEmail"));
+            if (!password) return showAlert(t("auth.emptyPassword"));
+
             setLoading(e.target, true);
             try {
                 const data = await api("/api/Auth/login", { email, password });
@@ -875,6 +878,9 @@
             const bodyData = Object.fromEntries(formData.entries());
 
             // Şifrələrin eyniliyini frontend-də də yoxlayaq (Zəmanət üçün)
+            if (!bodyData.fullName || !bodyData.fullName.trim()) return showAlert(t("auth.emptyName"));
+            if (!bodyData.email || !bodyData.email.trim()) return showAlert(t("auth.emptyEmail"));
+            if (!bodyData.password) return showAlert(t("auth.emptyPassword"));
             if (bodyData.password !== bodyData.confirmPassword) {
                 showAlert("Daxil etdiyiniz parollar üst-üstə düşmür.");
                 return;
@@ -937,6 +943,8 @@
             e.preventDefault();
             const email = new FormData(e.target).get("email").trim();
 
+            if (!email) return showAlert(t("auth.emptyEmail"));
+
             setLoading(e.target, true);
             try {
                 await api("/api/Auth/forgot-password", { email });
@@ -957,6 +965,8 @@
             const newPassword = fd.get("newPassword");
             const confirmNewPassword = fd.get("confirmNewPassword");
 
+            if (!fd.get("code") || !fd.get("code").trim()) return showAlert(t("auth.emptyCode"));
+            if (!newPassword) return showAlert(t("auth.emptyPassword"));
             if (newPassword !== confirmNewPassword) {
                 return showAlert("Parollar uyğun gəlmir.");
             }

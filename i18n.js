@@ -71,6 +71,10 @@ const I18N = {
     "auth.newPassword": "Yeni parol",
     "auth.confirmNewPassword": "Yeni parolu təsdiqləyin",
     "auth.resetBtn": "Parolu yenilə",
+    "auth.emptyName": "Zəhmət olmasa ad və soyadınızı yazın",
+    "auth.emptyEmail": "Zəhmət olmasa email daxil edin",
+    "auth.emptyPassword": "Zəhmət olmasa parolu daxil edin",
+    "auth.emptyCode": "Zəhmət olmasa kodu daxil edin",
 
     // ── Ortaq placeholder ──
     "common.emailPlaceholder": "ad@nümunə.az",
@@ -907,6 +911,10 @@ const I18N = {
     "auth.newPassword": "New password",
     "auth.confirmNewPassword": "Confirm new password",
     "auth.resetBtn": "Update password",
+    "auth.emptyName": "Please enter your full name",
+    "auth.emptyEmail": "Please enter your email",
+    "auth.emptyPassword": "Please enter your password",
+    "auth.emptyCode": "Please enter the code",
 
     "common.emailPlaceholder": "name@example.com",
 
@@ -1732,6 +1740,10 @@ const I18N = {
     "auth.newPassword": "Новый пароль",
     "auth.confirmNewPassword": "Подтвердите новый пароль",
     "auth.resetBtn": "Обновить пароль",
+    "auth.emptyName": "Пожалуйста, введите имя и фамилию",
+    "auth.emptyEmail": "Пожалуйста, введите email",
+    "auth.emptyPassword": "Пожалуйста, введите пароль",
+    "auth.emptyCode": "Пожалуйста, введите код",
 
     "common.emailPlaceholder": "name@example.com",
 
@@ -2546,7 +2558,7 @@ function updateLangButtons() {
     const on = btn.dataset.lang === lang;
     if (btn.classList.contains("lang-opt")) {
       // dropdown daxili secim
-      btn.className = "lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition " +
+      btn.className = "lang-opt flex items-center justify-between gap-2 w-full px-2.5 py-2 rounded-lg text-[11px] font-500 transition " +
         (on ? "bg-neon/12 text-teal-700" : "text-ink/60 hover:bg-mist");
     } else {
       btn.className = "lang-btn px-3 py-1.5 rounded-lg text-xs font-500 transition " +
