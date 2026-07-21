@@ -725,8 +725,12 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
   const sourceAccountId = document.getElementById("depAccount").value;
   const amount = parseFloat(document.getElementById("depAmount").value);
 
-  if (!sourceAccountId) return showMsg(t("dep.needAccount"), false);
-  if (!amount || amount < 10) return showMsg(t("dep.minAmount"), false);
+  if (!sourceAccountId) {
+    return Swal.fire({ icon: 'warning', title: 'Diqqət', text: t("dep.needAccount"), confirmButtonColor: '#2c2966' });
+  }
+  if (!amount || amount < 10) {
+    return Swal.fire({ icon: 'warning', title: 'Diqqət', text: t("dep.minAmount"), confirmButtonColor: '#2c2966' });
+  }
 
   btn.disabled = true;
   try {
@@ -735,11 +739,23 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
       body: JSON.stringify({ sourceAccountId, amount }),
     });
     closeCreate();
-    showMsg(t("dep.opened"), true);
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'Uğurlu!',
+      text: t("dep.opened"),
+      confirmButtonColor: '#2c2966'
+    });
+
     await loadAccounts();
     await loadDeposits();
   } catch (err) {
-    showMsg(err.message, false);
+    Swal.fire({
+      icon: 'error',
+      title: 'Xəta!',
+      text: err.message,
+      confirmButtonColor: '#2c2966'
+    });
   } finally {
     btn.disabled = false;
   }
@@ -747,16 +763,49 @@ document.getElementById("createForm").addEventListener("submit", async (e) => {
 
 // EMANETI BAGLA (esas + faiz geri)
 async function closeDeposit(depositId, totalValue) {
-  const ok = confirm(t("dep.closeConfirm").replace("{amount}", AZN(totalValue)));
-  if (!ok) return;
+  // Əmanət obyektini tapırıq ki, faiz məbləğini də ayıra bilək
+  const dep = deposits.find(d => d.id === depositId);
+  const interestVal = dep ? Number(dep.earnedInterest || 0) : 0;
+
+  // Mətndəki yerləri real dəyərlərlə əvəzləyirik ({total}, {interest} və ya {amount})
+  let confirmMessage = t("dep.closeConfirm") || "{total} hesabınıza qayıdacaq (faiz: {interest}). Bağlansın?";
+  confirmMessage = confirmMessage
+    .replace("{total}", AZN(totalValue))
+    .replace("{interest}", AZN(interestVal))
+    .replace("{amount}", AZN(totalValue)); // Əgər mətndə {amount} varsa deyə hər ehtimala karşı
+
+  const result = await Swal.fire({
+    title: 'Əmanəti bağlamaq istəyirsiniz?',
+    text: confirmMessage,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#2c2966',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Bəli, bağla',
+    cancelButtonText: 'Ləğv et'
+  });
+
+  if (!result.isConfirmed) return;
 
   try {
     const res = await api(`/api/Deposit/${depositId}/close`, { method: "POST" });
-    showMsg(res.message || t("dep.closedMsg"), true);
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'Əmanət bağlandı',
+      text: res.message || (typeof t === 'function' ? t("dep.closedMsg") : "Əmanət uğurla bağlandı"),
+      confirmButtonColor: '#2c2966'
+    });
+
     await loadAccounts();
     await loadDeposits();
   } catch (err) {
-    showMsg(err.message, false);
+    Swal.fire({
+      icon: 'error',
+      title: 'Xəta!',
+      text: err.message,
+      confirmButtonColor: '#2c2966'
+    });
   }
 }
 
@@ -778,12 +827,12 @@ function closeCreate() { document.getElementById("createModal").classList.add("h
    7. UI
    ══════════════════════════════════════════════════════════════ */
 function showMsg(text, ok) {
-  const el = document.getElementById("pageMsg");
-  el.textContent = text;
-  el.className = "mb-5 text-sm px-4 py-3 rounded-xl max-w-2xl " + (ok ? "bg-neon/10 text-teal-800" : "bg-red-50 text-red-700");
-  el.classList.remove("hidden");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-  if (ok) setTimeout(() => el.classList.add("hidden"), 5000);
+  Swal.fire({
+    icon: ok ? 'success' : 'error',
+    title: ok ? 'Uğurlu!' : 'Xəta!',
+    text: text,
+    confirmButtonColor: '#2c2966'
+  });
 }
 
 function applyI18n() { if (typeof applyTranslations === "function") applyTranslations(); }

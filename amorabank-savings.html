@@ -7,6 +7,7 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="i18n.js"></script>
 <script src="currency.js"></script>
 
@@ -772,14 +773,46 @@ document.getElementById("moveForm").addEventListener("submit", async (e) => {
   }
 });
 
-async function deleteGoal(id) {
-  if (!confirm(t("sav.confirmDelete"))) return;
+// YIĞIM / SAVINGS SİLMƏ FUNKSİYASI
+async function deleteGoal(goalId) {
+  // 1. Təsdiq modalı (SweetAlert)
+  const result = await Swal.fire({
+    title: 'Yığım məqsədini silmək istəyirsiniz?',
+    text: 'Bu məqsəd silinəcək və toplanan məbləğ əsas hesabınıza geri köçürüləcək.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#2c2966',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Bəli, sil',
+    cancelButtonText: 'Ləğv et'
+  });
+
+  if (!result.isConfirmed) return;
+
   try {
-    await api(`/api/SavingsGoal/${id}`, { method: "DELETE" });
-    showMsg(t("sav.goalDeleted"), true);
-    await loadAccounts();
-    await loadGoals();
-  } catch (e) { showMsg(e.message, false); }
+    // API sorğusu (layihənizdəki DELETE endpoint-i)
+    await api(`/api/Goal/${goalId}`, { method: "DELETE" });
+
+    // 2. Uğurlu silinmə bildirişi
+    Swal.fire({
+      icon: 'success',
+      title: 'Silindi!',
+      text: 'Yığım məqsədi uğurla silindi.',
+      confirmButtonColor: '#2c2966'
+    });
+
+    // Məlumatları yeniləyirik
+    if (typeof loadGoals === 'function') await loadGoals();
+    if (typeof loadAccounts === 'function') await loadAccounts();
+  } catch (err) {
+    // 3. Xəta bildirişi
+    Swal.fire({
+      icon: 'error',
+      title: 'Xəta!',
+      text: err.message || 'Silinmə zamanı problem yarandı.',
+      confirmButtonColor: '#2c2966'
+    });
+  }
 }
 
 

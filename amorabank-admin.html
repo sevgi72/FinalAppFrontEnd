@@ -514,10 +514,38 @@ tailwind.config = {
           </div>
 
           <div class="bg-white rounded-xl border border-line overflow-hidden">
-            <div class="px-4 py-3 border-b border-line">
-              <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.utilityProviders">Kommunal provayderlər</h2>
-              <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.providersHint">Söndürülən provayderə ödəniş qəbul edilmir.</p>
+            <div class="px-4 py-3 border-b border-line flex items-center justify-between">
+              <div>
+                <h2 class="font-display font-600 text-ink text-[13px]" data-i18n="adm.utilityProviders">Kommunal provayderlər</h2>
+                <p class="text-[11px] text-ink/40 mt-0.5" data-i18n="adm.providersHint">Söndürülən provayderə ödəniş qəbul edilmir.</p>
+              </div>
+              <button id="addProviderBtn" class="shrink-0 flex items-center gap-1.5 h-8 px-3 rounded-lg bg-ink text-white text-[12px] font-500 hover:bg-ink-2 transition">
+                <i data-lucide="plus" style="width:14px;height:14px"></i>
+                <span data-i18n="adm.addProvider">Yeni</span>
+              </button>
             </div>
+
+            <!-- yeni provayder formasi (gizli) -->
+            <div id="providerForm" class="hidden px-4 py-3 border-b border-line bg-mist/50">
+              <div class="grid grid-cols-[1fr_auto] gap-2">
+                <input id="providerName" type="text" data-i18n-placeholder="adm.providerNamePh" placeholder="Provayder adı (məs. Azərişıq)"
+                       class="h-9 px-3 rounded-lg border border-line bg-white text-[13px] focus:border-neon outline-none transition">
+                <select id="providerCategory"
+                        class="h-9 px-2 rounded-lg border border-line bg-white text-[12px] focus:border-neon outline-none transition">
+                  <option value="1" data-i18n="adm.catElectricity">Elektrik</option>
+                  <option value="2" data-i18n="adm.catWater">Su</option>
+                  <option value="3" data-i18n="adm.catGas">Qaz</option>
+                  <option value="4" data-i18n="adm.catMobile">Mobil</option>
+                  <option value="5" data-i18n="adm.catInternet">İnternet</option>
+                  <option value="6" data-i18n="adm.catTV">Televiziya</option>
+                </select>
+              </div>
+              <div class="flex gap-2 mt-2">
+                <button id="providerSave" class="flex-1 h-9 rounded-lg bg-neon text-ink-2 text-[12px] font-600 hover:brightness-105 transition" data-i18n="adm.save">Yadda saxla</button>
+                <button id="providerCancel" class="h-9 px-4 rounded-lg border border-line text-[12px] font-500 text-ink/60 hover:bg-white transition" data-i18n="adm.cancel">Ləğv</button>
+              </div>
+            </div>
+
             <ul id="providerToggleList" class="divide-y divide-line max-h-[420px] overflow-y-auto">
               <li class="px-4 py-8 text-center text-ink/35" data-i18n="adm.loading">Yüklənir…</li>
             </ul>
@@ -1269,7 +1297,8 @@ async function loadSettings() {
   const pbox = document.getElementById("providerToggleList");
   pbox.innerHTML = `<li class="px-4 py-8 text-center text-ink/35">${t("adm.loading")}</li>`;
   try {
-    const provs = await api("/api/Utility/providers");
+    // admin HAMISINI gormeli (aktiv + deaktiv) → providers/all
+    const provs = await api(isSuper() ? "/api/Utility/providers/all" : "/api/Utility/providers");
     const list = Array.isArray(provs) ? provs : (provs.items ?? []);
     pbox.innerHTML = list.length ? list.map(p => `
       <li class="px-4 py-3 flex items-center justify-between">
@@ -1287,6 +1316,10 @@ async function loadSettings() {
   } catch (e) {
     pbox.innerHTML = `<li class="px-4 py-6 text-center text-danger text-[12px]">${e.message}</li>`;
   }
+
+  // yaratma formasi yalniz SuperAdmin ucun gorunur
+  const addBtn = document.getElementById("addProviderBtn");
+  if (addBtn) addBtn.style.display = isSuper() ? "" : "none";
 }
 
 document.body.addEventListener("click", async (e) => {
@@ -1300,6 +1333,54 @@ document.body.addEventListener("click", async (e) => {
     loadSettings();
   } catch (err) { toast(err.message, false); }
 });
+
+
+/* ══════════════ YENI PROVAYDER YARAT (yalniz SuperAdmin) ══════════════ */
+(function () {
+  const addBtn = document.getElementById("addProviderBtn");
+  const form = document.getElementById("providerForm");
+  const nameInput = document.getElementById("providerName");
+  const catSelect = document.getElementById("providerCategory");
+  const saveBtn = document.getElementById("providerSave");
+  const cancelBtn = document.getElementById("providerCancel");
+  if (!addBtn || !form) return;
+
+  const openForm = () => { form.classList.remove("hidden"); nameInput.value = ""; nameInput.focus(); };
+  const closeForm = () => { form.classList.add("hidden"); nameInput.value = ""; };
+
+  addBtn.addEventListener("click", () => {
+    form.classList.contains("hidden") ? openForm() : closeForm();
+  });
+  cancelBtn.addEventListener("click", closeForm);
+
+  saveBtn.addEventListener("click", async () => {
+    const name = nameInput.value.trim();
+    if (!name) { toast(t("adm.providerNameRequired"), false); nameInput.focus(); return; }
+
+    saveBtn.disabled = true;
+    try {
+      await api("/api/Utility/providers", {
+        method: "POST",
+        body: JSON.stringify({
+          name: name,
+          category: parseInt(catSelect.value, 10),
+        }),
+      });
+      toast(t("adm.providerCreated"), true);
+      closeForm();
+      loadSettings();   // siyahini yenile
+    } catch (err) {
+      toast(err.message, false);
+    } finally {
+      saveBtn.disabled = false;
+    }
+  });
+
+  // Enter ile yadda saxla
+  document.getElementById("providerName")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); saveBtn.click(); }
+  });
+})();
 
 
 /* ══════════════════════════════════════════════════════════════

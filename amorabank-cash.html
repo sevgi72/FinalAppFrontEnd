@@ -32,11 +32,32 @@
   </script>
 
   <style>
-    :focus-visible { outline: 2px solid #00e5d4; outline-offset: 2px; border-radius: 8px; }
-    .fade-in { animation: fade .4s ease both; }
-    @keyframes fade { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
-    .code-digit { letter-spacing: .3em; }
-  
+    :focus-visible {
+      outline: 2px solid #00e5d4;
+      outline-offset: 2px;
+      border-radius: 8px;
+    }
+
+    .fade-in {
+      animation: fade .4s ease both;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .code-digit {
+      letter-spacing: .3em;
+    }
+
     /* ══════════ CESARETLI VIZUAL PAKET ══════════ */
 
     /* Sehife foun — incə mesh gradient (rəng tonu deyismir, yalniz dərinlik) */
@@ -68,6 +89,7 @@
       overflow: hidden;
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .25);
     }
+
     .emv-chip::before {
       content: "";
       position: absolute;
@@ -80,9 +102,15 @@
 
     /* Kart uzerinde donen isiq zolagi (shimmer) */
     @keyframes cardSheen {
-      0% { transform: translateX(-120%) rotate(8deg); }
-      100% { transform: translateX(320%) rotate(8deg); }
+      0% {
+        transform: translateX(-120%) rotate(8deg);
+      }
+
+      100% {
+        transform: translateX(320%) rotate(8deg);
+      }
     }
+
     .card-sheen {
       position: absolute;
       top: 0;
@@ -99,6 +127,7 @@
     .lift {
       transition: transform .35s cubic-bezier(.22, 1, .36, 1), box-shadow .35s;
     }
+
     .lift:hover {
       transform: translateY(-3px);
       box-shadow: 0 18px 40px -12px rgba(44, 41, 102, .28);
@@ -114,16 +143,32 @@
 
     /* Sayi/deyer gelende yumusaq "pop" */
     @keyframes popIn {
-      0% { opacity: 0; transform: translateY(6px) scale(.96); }
-      100% { opacity: 1; transform: none; }
+      0% {
+        opacity: 0;
+        transform: translateY(6px) scale(.96);
+      }
+
+      100% {
+        opacity: 1;
+        transform: none;
+      }
     }
-    .pop-in { animation: popIn .45s cubic-bezier(.22, 1, .36, 1) both; }
+
+    .pop-in {
+      animation: popIn .45s cubic-bezier(.22, 1, .36, 1) both;
+    }
 
     /* Skeleton (yuklenme) — hərəkətli parıltı */
     @keyframes shimmer {
-      0% { background-position: -400px 0; }
-      100% { background-position: 400px 0; }
+      0% {
+        background-position: -400px 0;
+      }
+
+      100% {
+        background-position: 400px 0;
+      }
     }
+
     .skeleton {
       background: linear-gradient(90deg, #eceef6 25%, #f6f7fb 50%, #eceef6 75%);
       background-size: 800px 100%;
@@ -136,6 +181,7 @@
       display: inline-flex;
       align-items: center;
     }
+
     .accent-bar::before {
       content: "";
       display: inline-block;
@@ -153,6 +199,7 @@
       background: linear-gradient(90deg, rgba(0, 229, 212, .16), rgba(124, 111, 240, .10));
       box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08);
     }
+
     .nav-active::before {
       content: "";
       position: absolute;
@@ -165,10 +212,18 @@
       background: linear-gradient(180deg, #00e5d4, #7c6ff0);
       box-shadow: 0 0 12px rgba(0, 229, 212, .6);
     }
-    .nav-active i { color: #00e5d4; }
+
+    .nav-active i {
+      color: #00e5d4;
+    }
 
     @media (prefers-reduced-motion: reduce) {
-      .card-sheen, .skeleton, .pop-in { animation: none; }
+
+      .card-sheen,
+      .skeleton,
+      .pop-in {
+        animation: none;
+      }
     }
   </style>
 </head>
@@ -176,7 +231,7 @@
 <body class="font-body antialiased bg-mist text-ink-2 min-h-screen flex">
 
   <!-- ════════════ SIDEBAR ════════════ -->
-  <aside class="hidden lg:flex flex-col w-60 shrink-0 bg-ink-3 text-white/70 p-4 sticky top-0 h-screen">
+  <aside class="hidden lg:flex w-64 shrink-0 flex-col bg-ink-2 text-white/70 px-5 py-6">
     <div class="flex items-center gap-2.5 px-2 mb-8">
       <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-neon to-lilac grid place-items-center">
         <i data-lucide="gem" style="width:18px;height:18px" class="text-ink-2"></i>
@@ -185,37 +240,50 @@
     </div>
 
     <nav class="flex-1 space-y-1">
-      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span data-i18n="nav.dashboard">Panel</span>
+      <a href="amorabank-dashboard.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i> <span
+          data-i18n="nav.dashboard">Panel</span>
       </a>
-      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
-        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span data-i18n="nav.transfers">Köçürmələr</span>
+      <a href="amorabank-transfers.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i> <span
+          data-i18n="nav.transfers">Köçürmələr</span>
       </a>
-      <a href="amorabank-cards.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-cards.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="credit-card" style="width:18px;height:18px"></i> <span data-i18n="nav.cards">Kartlar</span>
       </a>
-      <a href="amorabank-payments.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-payments.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="receipt" style="width:18px;height:18px"></i> <span data-i18n="nav.payments">Ödənişlər</span>
       </a>
-      <a href="amorabank-cash.html" class="nav-active flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-sm">
+      <a href="amorabank-cash.html"
+        class="nav-active flex items-center gap-3 px-3 py-2.5 rounded-xl transition text-sm">
         <i data-lucide="qr-code" style="width:18px;height:18px"></i> <span data-i18n="nav.cash">Kodla nağd</span>
       </a>
-      <a href="amorabank-savings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-savings.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="piggy-bank" style="width:18px;height:18px"></i> <span data-i18n="nav.savings">Yığım</span>
       </a>
-      <a href="amorabank-deposits.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-deposits.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="trending-up" style="width:18px;height:18px"></i> <span data-i18n="nav.deposits">Əmanət</span>
       </a>
-      <a href="amorabank-statement.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-statement.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="file-text" style="width:18px;height:18px"></i> <span data-i18n="nav.statement">Çıxarış</span>
       </a>
-      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-analytics.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="pie-chart" style="width:18px;height:18px"></i> <span data-i18n="nav.analytics">Analitika</span>
       </a>
-      <a href="amorabank-loans.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-loans.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="landmark" style="width:18px;height:18px"></i> <span data-i18n="nav.loans">Kreditlər</span>
       </a>
-      <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+      <a href="amorabank-settings.html"
+        class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
         <i data-lucide="settings" style="width:18px;height:18px"></i> <span data-i18n="nav.settings">Ayarlar</span>
       </a>
     </nav>
@@ -223,33 +291,50 @@
     <div class="flex gap-2 justify-center mb-3">
       <div class="relative flex-1">
         <button id="langTrigger" type="button"
-                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
           <i data-lucide="globe" style="width:14px;height:14px" class="text-ink/50"></i>
           <span id="langTriggerLabel">AZ</span>
           <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
         </button>
-        <div id="langMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
-          <button data-lang="az" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan <span class="text-[10px] text-ink/40">AZ</span></button>
-          <button data-lang="en" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English <span class="text-[10px] text-ink/40">EN</span></button>
-          <button data-lang="ru" class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский <span class="text-[10px] text-ink/40">RU</span></button>
+        <div id="langMenu"
+          class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-lang="az"
+            class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Azərbaycan
+            <span class="text-[10px] text-ink/40">AZ</span></button>
+          <button data-lang="en"
+            class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">English
+            <span class="text-[10px] text-ink/40">EN</span></button>
+          <button data-lang="ru"
+            class="lang-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Русский
+            <span class="text-[10px] text-ink/40">RU</span></button>
         </div>
       </div>
       <div class="relative flex-1">
         <button id="curTrigger" type="button"
-                class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
+          class="w-full flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl border border-line bg-white hover:border-ink/25 text-xs font-500 text-ink-2 transition">
           <span id="curTriggerLabel">₼ AZN</span>
           <i data-lucide="chevron-down" style="width:13px;height:13px" class="text-ink/40"></i>
         </button>
-        <div id="curMenu" class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
-          <button data-cur="AZN" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat <span class="text-[11px] text-ink/40">₼</span></button>
-          <button data-cur="USD" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar <span class="text-[11px] text-ink/40">$</span></button>
-          <button data-cur="EUR" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro <span class="text-[11px] text-ink/40">€</span></button>
-          <button data-cur="TRY" class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə <span class="text-[11px] text-ink/40">₺</span></button>
+        <div id="curMenu"
+          class="hidden absolute bottom-full mb-1 left-0 w-full bg-white rounded-xl border border-line shadow-lg shadow-ink/10 p-1 z-50">
+          <button data-cur="AZN"
+            class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Manat
+            <span class="text-[11px] text-ink/40">₼</span></button>
+          <button data-cur="USD"
+            class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Dollar
+            <span class="text-[11px] text-ink/40">$</span></button>
+          <button data-cur="EUR"
+            class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Avro
+            <span class="text-[11px] text-ink/40">€</span></button>
+          <button data-cur="TRY"
+            class="cur-opt flex items-center justify-between w-full px-3 py-2 rounded-lg text-xs font-500 transition">Lirə
+            <span class="text-[11px] text-ink/40">₺</span></button>
         </div>
       </div>
     </div>
 
-    <button id="logoutBtn" class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
+    <button id="logoutBtn"
+      class="mt-4 flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 hover:text-white transition text-sm">
       <i data-lucide="log-out" style="width:18px;height:18px"></i> <span data-i18n="common.logout">Çıxış</span>
     </button>
   </aside>
@@ -274,14 +359,18 @@
 
         <div class="flex-1"></div>
 
-        <a href="amorabank-dashboard.html" class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
+        <a href="amorabank-dashboard.html"
+          class="flex items-center gap-2 px-3.5 h-9 rounded-xl bg-white border border-line hover:border-ink/20 transition text-sm text-ink/70">
           <i data-lucide="arrow-left" style="width:15px;height:15px"></i>
           <span class="hidden sm:inline" data-i18n="cash.panel">Panel</span>
         </a>
 
         <div class="relative">
-          <button id="profileBtn" class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line hover:opacity-80 transition">
-            <div id="avatar" class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm bg-cover bg-center">—</div>
+          <button id="profileBtn"
+            class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line hover:opacity-80 transition">
+            <div id="avatar"
+              class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm bg-cover bg-center">
+              —</div>
             <div class="hidden xl:block leading-tight text-left">
               <p class="text-sm font-500 text-ink-2" id="userFullName">…</p>
               <p class="text-[11px] text-ink/45" id="userEmail">…</p>
@@ -289,24 +378,30 @@
             <i data-lucide="chevron-down" style="width:15px;height:15px" class="hidden xl:block text-ink/35"></i>
           </button>
 
-          <div id="profileMenu" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-line shadow-xl shadow-ink/10 z-50 overflow-hidden">
+          <div id="profileMenu"
+            class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-line shadow-xl shadow-ink/10 z-50 overflow-hidden">
             <div class="flex items-center gap-3 p-4 bg-gradient-to-br from-ink to-ink-3 text-white">
-              <div id="menuAvatar" class="w-11 h-11 rounded-full bg-white/15 grid place-items-center font-600 bg-cover bg-center shrink-0">—</div>
+              <div id="menuAvatar"
+                class="w-11 h-11 rounded-full bg-white/15 grid place-items-center font-600 bg-cover bg-center shrink-0">
+                —</div>
               <div class="min-w-0">
                 <p id="menuName" class="text-sm font-600 truncate">…</p>
                 <p id="menuEmail" class="text-[11px] text-white/60 truncate">…</p>
               </div>
             </div>
             <div class="p-1.5">
-              <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
+              <a href="amorabank-settings.html"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
                 <i data-lucide="user-round" style="width:17px;height:17px" class="text-ink/50"></i>
                 <span data-i18n="menu.profile">Profil məlumatı</span>
               </a>
-              <a href="amorabank-settings.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
+              <a href="amorabank-settings.html"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
                 <i data-lucide="settings" style="width:17px;height:17px" class="text-ink/50"></i>
                 <span data-i18n="menu.settings">Ayarlar</span>
               </a>
-              <a href="amorabank-statement.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
+              <a href="amorabank-statement.html"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
                 <i data-lucide="file-text" style="width:17px;height:17px" class="text-ink/50"></i>
                 <span data-i18n="menu.statement">Hesab çıxarışı</span>
               </a>
@@ -314,13 +409,17 @@
               <div class="px-3 py-2">
                 <p class="text-[11px] text-ink/40 mb-1.5" data-i18n="menu.language">Dil</p>
                 <div class="flex gap-1.5">
-                  <button data-lang="az" class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">AZ</button>
-                  <button data-lang="en" class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">EN</button>
-                  <button data-lang="ru" class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">RU</button>
+                  <button data-lang="az"
+                    class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">AZ</button>
+                  <button data-lang="en"
+                    class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">EN</button>
+                  <button data-lang="ru"
+                    class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">RU</button>
                 </div>
               </div>
               <div class="my-1.5 h-px bg-line"></div>
-              <button id="menuLogout" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 transition text-sm text-red-600">
+              <button id="menuLogout"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 transition text-sm text-red-600">
                 <i data-lucide="log-out" style="width:17px;height:17px"></i>
                 <span data-i18n="menu.logout">Çıxış</span>
               </button>
@@ -340,17 +439,20 @@
         <div class="flex items-start gap-2.5 p-4 rounded-xl bg-lilac/8 border border-lilac/15 mb-5">
           <i data-lucide="info" style="width:16px;height:16px" class="text-lilac mt-0.5 shrink-0"></i>
           <p class="text-[12px] text-ink/65 leading-relaxed" data-i18n="cash.howItWorks">
-            Kod yaradanda pul dərhal hesabından ayrılır. 8 rəqəmli kodu istədiyin şəxsə ver — o, kodu daxil edərək pulu öz hesabına köçürür. Kod 72 saat keçərlidir; götürülməsə, pul avtomatik geri qayıdır.
+            Kod yaradanda pul dərhal hesabından ayrılır. 8 rəqəmli kodu istədiyin şəxsə ver — o, kodu daxil edərək pulu
+            öz hesabına köçürür. Kod 72 saat keçərlidir; götürülməsə, pul avtomatik geri qayıdır.
           </p>
         </div>
 
         <!-- tab başlıqları -->
         <div class="flex gap-1 p-1 rounded-xl bg-ink/5 mb-5 w-full sm:w-fit">
-          <button data-tab="create" class="tab-btn flex-1 sm:flex-none px-5 h-10 rounded-lg text-sm font-600 transition flex items-center justify-center gap-2">
+          <button data-tab="create"
+            class="tab-btn flex-1 sm:flex-none px-5 h-10 rounded-lg text-sm font-600 transition flex items-center justify-center gap-2">
             <i data-lucide="plus-circle" style="width:15px;height:15px"></i>
             <span data-i18n="cash.tabCreate">Kod yarat</span>
           </button>
-          <button data-tab="claim" class="tab-btn flex-1 sm:flex-none px-5 h-10 rounded-lg text-sm font-600 transition flex items-center justify-center gap-2">
+          <button data-tab="claim"
+            class="tab-btn flex-1 sm:flex-none px-5 h-10 rounded-lg text-sm font-600 transition flex items-center justify-center gap-2">
             <i data-lucide="download" style="width:15px;height:15px"></i>
             <span data-i18n="cash.tabClaim">Kodla götür</span>
           </button>
@@ -362,7 +464,8 @@
 
           <div class="space-y-4">
             <div>
-              <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="cash.fromAccount">Hansı hesabdan</label>
+              <label class="block text-xs font-500 text-ink/60 mb-1.5" data-i18n="cash.fromAccount">Hansı
+                hesabdan</label>
               <select id="createAccount"
                 class="w-full h-11 px-3 rounded-xl border border-line bg-mist text-sm focus:border-neon focus:bg-white outline-none transition"></select>
             </div>
@@ -388,11 +491,14 @@
             <p class="text-xs text-ink/50 mb-2" data-i18n="cash.yourCode">Kodunuz</p>
             <div class="flex items-center justify-center gap-3 mb-3">
               <span id="resultCode" class="font-mono font-700 text-3xl text-ink code-digit">— — — —</span>
-              <button id="copyCode" class="w-9 h-9 grid place-items-center rounded-lg border border-line hover:border-neon hover:text-neon transition" title="Kopyala">
+              <button id="copyCode"
+                class="w-9 h-9 grid place-items-center rounded-lg border border-line hover:border-neon hover:text-neon transition"
+                title="Kopyala">
                 <i data-lucide="copy" style="width:16px;height:16px"></i>
               </button>
             </div>
-            <p class="text-[11px] text-ink/45" data-i18n="cash.codeHint">Bu kodu pulu götürəcək şəxslə paylaşın. 72 saat keçərlidir.</p>
+            <p class="text-[11px] text-ink/45" data-i18n="cash.codeHint">Bu kodu pulu götürəcək şəxslə paylaşın. 72 saat
+              keçərlidir.</p>
           </div>
         </section>
 
@@ -439,88 +545,99 @@
 
   <!-- ════════════ MOBIL NAV ════════════ -->
   <nav class="app-bottomnav lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line px-2 py-2">
-  <div class="flex justify-around">
-    <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
-      <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
-      <span class="text-[10px]" data-i18n="nav.dashboard">Panel</span>
-    </a>
-    <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
-      <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
-      <span class="text-[10px]" data-i18n="nav.transfers">Köçürmələr</span>
-    </a>
-    <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
-      <i data-lucide="credit-card" style="width:20px;height:20px"></i>
-      <span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
-    </a>
-    <a href="amorabank-cash.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-neon">
-      <i data-lucide="qr-code" style="width:20px;height:20px"></i>
-      <span class="text-[10px] font-500" data-i18n="nav.cash">Kodla nağd</span>
-    </a>
-    <button id="moreNavBtn" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
-      <i data-lucide="grip" style="width:20px;height:20px"></i>
-      <span class="text-[10px]" data-i18n="nav.more">Daha çox</span>
-    </button>
-  </div>
-</nav>
-
-<!-- "Daha cox" menyusu (mobil) -->
-<div id="moreNavSheet" class="hidden lg:hidden fixed inset-0 z-40">
-  <div id="moreNavBackdrop" class="absolute inset-0 bg-ink-3/40 backdrop-blur-sm"></div>
-  <div class="absolute bottom-0 inset-x-0 bg-white rounded-t-3xl border-t border-line p-4 pb-6 max-h-[75vh] overflow-y-auto">
-    <div class="flex items-center justify-between mb-3 px-1">
-      <h3 class="font-display font-600 text-ink" data-i18n="nav.allSections">Bütün bölmələr</h3>
-      <button id="moreNavClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
-        <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
+    <div class="flex justify-around">
+      <a href="amorabank-dashboard.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+        <i data-lucide="layout-dashboard" style="width:20px;height:20px"></i>
+        <span class="text-[10px]" data-i18n="nav.dashboard">Panel</span>
+      </a>
+      <a href="amorabank-transfers.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+        <i data-lucide="arrow-left-right" style="width:20px;height:20px"></i>
+        <span class="text-[10px]" data-i18n="nav.transfers">Köçürmələr</span>
+      </a>
+      <a href="amorabank-cards.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+        <i data-lucide="credit-card" style="width:20px;height:20px"></i>
+        <span class="text-[10px]" data-i18n="nav.cards">Kartlar</span>
+      </a>
+      <a href="amorabank-cash.html" class="flex flex-col items-center gap-0.5 px-2 py-1 text-neon">
+        <i data-lucide="qr-code" style="width:20px;height:20px"></i>
+        <span class="text-[10px] font-500" data-i18n="nav.cash">Kodla nağd</span>
+      </a>
+      <button id="moreNavBtn" class="flex flex-col items-center gap-0.5 px-2 py-1 text-ink/40">
+        <i data-lucide="grip" style="width:20px;height:20px"></i>
+        <span class="text-[10px]" data-i18n="nav.more">Daha çox</span>
       </button>
     </div>
-    <div class="grid grid-cols-1 gap-1">
-      <a href="amorabank-dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.dashboard">Panel</span>
-      </a>
-      <a href="amorabank-transfers.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.transfers">Köçürmələr</span>
-      </a>
-      <a href="amorabank-cards.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="credit-card" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.cards">Kartlar</span>
-      </a>
-      <a href="amorabank-payments.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="receipt" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.payments">Ödənişlər</span>
-      </a>
-      <a href="amorabank-cash.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-mist text-ink transition">
-        <i data-lucide="qr-code" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.cash">Kodla nağd</span>
-      </a>
-      <a href="amorabank-savings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="piggy-bank" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.savings">Yığım</span>
-      </a>
-      <a href="amorabank-deposits.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="trending-up" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.deposits">Əmanət</span>
-      </a>
-      <a href="amorabank-loans.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="landmark" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.loans">Kreditlər</span>
-      </a>
-      <a href="amorabank-statement.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="file-text" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.statement">Çıxarış</span>
-      </a>
-      <a href="amorabank-analytics.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="pie-chart" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.analytics">Analitika</span>
-      </a>
-      <a href="amorabank-settings.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
-        <i data-lucide="settings" style="width:18px;height:18px"></i>
-        <span class="text-sm font-500" data-i18n="nav.settings">Ayarlar</span>
-      </a>
+  </nav>
+
+  <!-- "Daha cox" menyusu (mobil) -->
+  <div id="moreNavSheet" class="hidden lg:hidden fixed inset-0 z-40">
+    <div id="moreNavBackdrop" class="absolute inset-0 bg-ink-3/40 backdrop-blur-sm"></div>
+    <div
+      class="absolute bottom-0 inset-x-0 bg-white rounded-t-3xl border-t border-line p-4 pb-6 max-h-[75vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-3 px-1">
+        <h3 class="font-display font-600 text-ink" data-i18n="nav.allSections">Bütün bölmələr</h3>
+        <button id="moreNavClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-mist transition">
+          <i data-lucide="x" style="width:18px;height:18px" class="text-ink/50"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-1 gap-1">
+        <a href="amorabank-dashboard.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="layout-dashboard" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.dashboard">Panel</span>
+        </a>
+        <a href="amorabank-transfers.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="arrow-left-right" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.transfers">Köçürmələr</span>
+        </a>
+        <a href="amorabank-cards.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="credit-card" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.cards">Kartlar</span>
+        </a>
+        <a href="amorabank-payments.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="receipt" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.payments">Ödənişlər</span>
+        </a>
+        <a href="amorabank-cash.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-mist text-ink transition">
+          <i data-lucide="qr-code" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.cash">Kodla nağd</span>
+        </a>
+        <a href="amorabank-savings.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="piggy-bank" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.savings">Yığım</span>
+        </a>
+        <a href="amorabank-deposits.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="trending-up" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.deposits">Əmanət</span>
+        </a>
+        <a href="amorabank-loans.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="landmark" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.loans">Kreditlər</span>
+        </a>
+        <a href="amorabank-statement.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="file-text" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.statement">Çıxarış</span>
+        </a>
+        <a href="amorabank-analytics.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="pie-chart" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.analytics">Analitika</span>
+        </a>
+        <a href="amorabank-settings.html"
+          class="flex items-center gap-3 px-4 py-3 rounded-xl text-ink/70 hover:bg-mist transition">
+          <i data-lucide="settings" style="width:18px;height:18px"></i>
+          <span class="text-sm font-500" data-i18n="nav.settings">Ayarlar</span>
+        </a>
+      </div>
     </div>
   </div>
-</div>
 
 
   <script src="i18n.js"></script>
@@ -613,10 +730,10 @@
        ══════════════════════════════════════════════════════════════ */
     // status → reng + etiket
     const STATUS_STYLE = {
-      Pending:   { cls: "bg-neon/15 text-teal-700", key: "cash.stPending" },
-      Claimed:   { cls: "bg-ink/8 text-ink/60",     key: "cash.stClaimed" },
-      Cancelled: { cls: "bg-red-50 text-red-500",   key: "cash.stCancelled" },
-      Expired:   { cls: "bg-amber-50 text-amber-600", key: "cash.stExpired" },
+      Pending: { cls: "bg-neon/15 text-teal-700", key: "cash.stPending" },
+      Claimed: { cls: "bg-ink/8 text-ink/60", key: "cash.stClaimed" },
+      Cancelled: { cls: "bg-red-50 text-red-500", key: "cash.stCancelled" },
+      Expired: { cls: "bg-amber-50 text-amber-600", key: "cash.stExpired" },
     };
 
     function renderCodes() {
@@ -650,11 +767,11 @@
           <div class="flex items-center justify-between">
             <span class="font-mono font-600 text-sm text-ink-2">${AZN(c.amount)}</span>
             ${isPending
-              ? `<div class="flex items-center gap-2">
+            ? `<div class="flex items-center gap-2">
                    <span class="text-[10px] text-ink/40">${t("cash.expiresIn").replace("{h}", hoursLeft)}</span>
                    <button data-cancel="${c.id}" class="text-[11px] font-600 text-red-500 hover:underline">${t("cash.cancel")}</button>
                  </div>`
-              : `<span class="text-[10px] text-ink/35">${new Date(c.createdAt).toLocaleDateString("az-AZ", { day: "2-digit", month: "short" })}</span>`}
+            : `<span class="text-[10px] text-ink/35">${new Date(c.createdAt).toLocaleDateString("az-AZ", { day: "2-digit", month: "short" })}</span>`}
           </div>
         </div>`;
       }).join("");
@@ -730,7 +847,7 @@
           el.innerHTML = `<i data-lucide="copy" style="width:16px;height:16px"></i>`;
           lucide.createIcons();
         }, 1500);
-      } catch {}
+      } catch { }
     });
 
 
@@ -801,7 +918,7 @@
     const hideAlert = (id) => document.getElementById(id).classList.add("hidden");
 
     document.getElementById("logoutBtn").addEventListener("click", async () => {
-      try { await api("/api/Auth/logout", { method: "POST" }); } catch {}
+      try { await api("/api/Auth/logout", { method: "POST" }); } catch { }
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
       window.location.href = "amorabank-auth.html";
@@ -822,82 +939,82 @@
 
       lucide.createIcons();
     });
-  
 
-</script>
 
-<script>
-// ── Mobil "Daha cox" menyusu ──
-(function(){
-  const btn = document.getElementById("moreNavBtn");
-  const sheet = document.getElementById("moreNavSheet");
-  const closeBtn = document.getElementById("moreNavClose");
-  const backdrop = document.getElementById("moreNavBackdrop");
-  if (!btn || !sheet) return;
-  const open = () => { sheet.classList.remove("hidden"); if(window.lucide) lucide.createIcons(); };
-  const close = () => sheet.classList.add("hidden");
-  btn.addEventListener("click", open);
-  closeBtn?.addEventListener("click", close);
-  backdrop?.addEventListener("click", close);
-})();
-</script>
+  </script>
 
-<script>
-/* Profil menyusu (avatar dropdown) */
-(function () {
-  const btn = document.getElementById("profileBtn");
-  const menu = document.getElementById("profileMenu");
-  if (!btn || !menu) return;
+  <script>
+    // ── Mobil "Daha cox" menyusu ──
+    (function () {
+      const btn = document.getElementById("moreNavBtn");
+      const sheet = document.getElementById("moreNavSheet");
+      const closeBtn = document.getElementById("moreNavClose");
+      const backdrop = document.getElementById("moreNavBackdrop");
+      if (!btn || !sheet) return;
+      const open = () => { sheet.classList.remove("hidden"); if (window.lucide) lucide.createIcons(); };
+      const close = () => sheet.classList.add("hidden");
+      btn.addEventListener("click", open);
+      closeBtn?.addEventListener("click", close);
+      backdrop?.addEventListener("click", close);
+    })();
+  </script>
 
-  function fillMenu() {
-    const name = document.getElementById("userFullName")?.textContent || "—";
-    const email = document.getElementById("userEmail")?.textContent || "";
-    const mn = document.getElementById("menuName");
-    const me = document.getElementById("menuEmail");
-    if (mn) mn.textContent = name;
-    if (me) me.textContent = email;
-    const ma = document.getElementById("menuAvatar");
-    const img = localStorage.getItem("amorabank_avatar");
-    if (ma) {
-      if (img) { ma.style.backgroundImage = `url(${img})`; ma.textContent = ""; }
-      else ma.textContent = (name[0] || "S").toUpperCase();
-    }
-    // header avatarina da sekli tetbiq et
-    const av = document.getElementById("avatar");
-    if (av && img) { av.style.backgroundImage = `url(${img})`; av.textContent = ""; }
-  }
+  <script>
+    /* Profil menyusu (avatar dropdown) */
+    (function () {
+      const btn = document.getElementById("profileBtn");
+      const menu = document.getElementById("profileMenu");
+      if (!btn || !menu) return;
 
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    fillMenu();
-    menu.classList.toggle("hidden");
-    if (window.lucide) lucide.createIcons();
-  });
-  document.addEventListener("click", (e) => {
-    if (!menu.contains(e.target) && !btn.contains(e.target)) menu.classList.add("hidden");
-  });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") menu.classList.add("hidden"); });
+      function fillMenu() {
+        const name = document.getElementById("userFullName")?.textContent || "—";
+        const email = document.getElementById("userEmail")?.textContent || "";
+        const mn = document.getElementById("menuName");
+        const me = document.getElementById("menuEmail");
+        if (mn) mn.textContent = name;
+        if (me) me.textContent = email;
+        const ma = document.getElementById("menuAvatar");
+        const img = localStorage.getItem("amorabank_avatar");
+        if (ma) {
+          if (img) { ma.style.backgroundImage = `url(${img})`; ma.textContent = ""; }
+          else ma.textContent = (name[0] || "S").toUpperCase();
+        }
+        // header avatarina da sekli tetbiq et
+        const av = document.getElementById("avatar");
+        if (av && img) { av.style.backgroundImage = `url(${img})`; av.textContent = ""; }
+      }
 
-  menu.querySelectorAll(".pm-lang").forEach(b => {
-    b.addEventListener("click", () => {
-      const lang = b.dataset.lang;
-      if (typeof setLang === "function") setLang(lang);
-      else { localStorage.setItem("lang", lang); location.reload(); }
-    });
-  });
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        fillMenu();
+        menu.classList.toggle("hidden");
+        if (window.lucide) lucide.createIcons();
+      });
+      document.addEventListener("click", (e) => {
+        if (!menu.contains(e.target) && !btn.contains(e.target)) menu.classList.add("hidden");
+      });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") menu.classList.add("hidden"); });
 
-  const ml = document.getElementById("menuLogout");
-  if (ml) ml.addEventListener("click", () => {
-    const lb = document.getElementById("logoutBtn");
-    if (lb) lb.click();
-    else {
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-      location.href = "amorabank-auth.html";
-    }
-  });
-})();
-</script>
+      menu.querySelectorAll(".pm-lang").forEach(b => {
+        b.addEventListener("click", () => {
+          const lang = b.dataset.lang;
+          if (typeof setLang === "function") setLang(lang);
+          else { localStorage.setItem("lang", lang); location.reload(); }
+        });
+      });
+
+      const ml = document.getElementById("menuLogout");
+      if (ml) ml.addEventListener("click", () => {
+        const lb = document.getElementById("logoutBtn");
+        if (lb) lb.click();
+        else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("refreshToken");
+          location.href = "amorabank-auth.html";
+        }
+      });
+    })();
+  </script>
 </body>
 
 </html>
