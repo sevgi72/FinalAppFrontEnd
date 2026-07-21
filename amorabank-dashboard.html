@@ -413,12 +413,68 @@
             </div>
           </div>
 
-          <div class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line">
-            <div id="avatar" class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm">—
-            </div>
-            <div class="hidden xl:block leading-tight">
-              <p class="text-sm font-500 text-ink-2" id="userFullName">…</p>
-              <p class="text-[11px] text-ink/45" id="userEmail">…</p>
+          <div class="relative">
+            <button id="profileBtn"
+              class="flex items-center gap-2.5 pl-2 lg:pl-3 lg:border-l border-line hover:opacity-80 transition">
+              <div id="avatar" class="w-9 h-9 rounded-full bg-ink text-white grid place-items-center font-600 text-sm bg-cover bg-center">—</div>
+              <div class="hidden xl:block leading-tight text-left">
+                <p class="text-sm font-500 text-ink-2" id="userFullName">…</p>
+                <p class="text-[11px] text-ink/45" id="userEmail">…</p>
+              </div>
+              <i data-lucide="chevron-down" style="width:15px;height:15px" class="hidden xl:block text-ink/35"></i>
+            </button>
+
+            <!-- ═══ PROFIL MENYUSU (dropdown) ═══ -->
+            <div id="profileMenu"
+              class="hidden absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-line shadow-xl shadow-ink/10 z-50 overflow-hidden">
+
+              <!-- ust: user melumati -->
+              <div class="flex items-center gap-3 p-4 bg-gradient-to-br from-ink to-ink-3 text-white">
+                <div id="menuAvatar" class="w-11 h-11 rounded-full bg-white/15 grid place-items-center font-600 bg-cover bg-center shrink-0">—</div>
+                <div class="min-w-0">
+                  <p id="menuName" class="text-sm font-600 truncate">…</p>
+                  <p id="menuEmail" class="text-[11px] text-white/60 truncate">…</p>
+                </div>
+              </div>
+
+              <!-- menyu elementleri -->
+              <div class="p-1.5">
+                <a href="amorabank-settings.html"
+                  class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
+                  <i data-lucide="user-round" style="width:17px;height:17px" class="text-ink/50"></i>
+                  <span data-i18n="menu.profile">Profil məlumatı</span>
+                </a>
+                <a href="amorabank-settings.html"
+                  class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
+                  <i data-lucide="settings" style="width:17px;height:17px" class="text-ink/50"></i>
+                  <span data-i18n="menu.settings">Ayarlar</span>
+                </a>
+                <a href="amorabank-statement.html"
+                  class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-mist transition text-sm text-ink-2">
+                  <i data-lucide="file-text" style="width:17px;height:17px" class="text-ink/50"></i>
+                  <span data-i18n="menu.statement">Hesab çıxarışı</span>
+                </a>
+
+                <div class="my-1.5 h-px bg-line"></div>
+
+                <!-- dil secimi -->
+                <div class="px-3 py-2">
+                  <p class="text-[11px] text-ink/40 mb-1.5" data-i18n="menu.language">Dil</p>
+                  <div class="flex gap-1.5">
+                    <button data-lang="az" class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">AZ</button>
+                    <button data-lang="en" class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">EN</button>
+                    <button data-lang="ru" class="pm-lang flex-1 h-8 rounded-lg border border-line text-xs font-500 hover:border-ink/25 transition">RU</button>
+                  </div>
+                </div>
+
+                <div class="my-1.5 h-px bg-line"></div>
+
+                <button id="menuLogout"
+                  class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 transition text-sm text-red-600">
+                  <i data-lucide="log-out" style="width:17px;height:17px"></i>
+                  <span data-i18n="menu.logout">Çıxış</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -890,6 +946,7 @@
         document.getElementById("heroName").textContent = name.split(" ")[0];
         document.getElementById("avatar").textContent = name.charAt(0).toUpperCase();
         applyHeaderAvatar();
+        fillProfileMenu(name, me.email ?? "");
         paintGreeting();
       } catch (e) {
         console.error("Profil yüklənmədi:", e.message);
@@ -899,7 +956,22 @@
         document.getElementById("userFirstName").textContent = "Sevgi";
         document.getElementById("heroName").textContent = "Sevgi";
         document.getElementById("avatar").textContent = "S";
+        fillProfileMenu("Sevgi Fərəcli", "sevgi@amorabank.az");
         paintGreeting();
+      }
+    }
+
+    // profil menyusundaki ad/email/avatar
+    function fillProfileMenu(name, email) {
+      document.getElementById("menuName").textContent = name;
+      document.getElementById("menuEmail").textContent = email;
+      const ma = document.getElementById("menuAvatar");
+      const img = localStorage.getItem("amorabank_avatar");
+      if (img) {
+        ma.style.backgroundImage = `url(${img})`;
+        ma.textContent = "";
+      } else {
+        ma.textContent = name.charAt(0).toUpperCase();
       }
     }
 
@@ -1950,6 +2022,48 @@
       // Giriş səhifəsinə qayıt
       window.location.href = "amorabank-auth.html";
     };
+
+
+    /* ══════════════ PROFIL MENYUSU (sag yuxari avatar) ══════════════ */
+    (function () {
+      const btn = document.getElementById("profileBtn");
+      const menu = document.getElementById("profileMenu");
+      if (!btn || !menu) return;
+
+      // ac/bagla
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.classList.toggle("hidden");
+        if (window.lucide) lucide.createIcons();
+      });
+
+      // kenara klik → bagla
+      document.addEventListener("click", (e) => {
+        if (!menu.contains(e.target) && !btn.contains(e.target)) {
+          menu.classList.add("hidden");
+        }
+      });
+
+      // Esc → bagla
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") menu.classList.add("hidden");
+      });
+
+      // dil secimi (menyu daxilinden)
+      menu.querySelectorAll(".pm-lang").forEach(b => {
+        b.addEventListener("click", () => {
+          const lang = b.dataset.lang;
+          if (typeof setLang === "function") setLang(lang);
+          else if (typeof applyLanguage === "function") { localStorage.setItem("lang", lang); location.reload(); }
+          else { localStorage.setItem("lang", lang); location.reload(); }
+        });
+      });
+
+      // cixis (menyu daxilinden) — eyni logout axini
+      document.getElementById("menuLogout").addEventListener("click", () => {
+        document.getElementById("logoutBtn").click();
+      });
+    })();
   </script>
 <script src="ai-chat.js"></script>
 

@@ -108,10 +108,10 @@
         </div>
         <div class="space-y-2">
           ${SUGGESTIONS.map(([k, d]) => {
-            const q = tr(k, d);
-            return `<button type="button" class="ai-sug w-full text-left px-3.5 py-2.5 rounded-xl border border-line
+        const q = tr(k, d);
+        return `<button type="button" class="ai-sug w-full text-left px-3.5 py-2.5 rounded-xl border border-line
                       text-[12px] text-ink/70 hover:border-neon hover:bg-neon/5 transition">${escapeHtml(q)}</button>`;
-          }).join("")}
+      }).join("")}
         </div>`;
       bodyEl.querySelectorAll(".ai-sug").forEach(b => {
         b.onclick = () => { input.value = b.textContent.trim(); ask(); };
@@ -153,6 +153,47 @@
     bodyEl.scrollTop = bodyEl.scrollHeight;
   }
 
+  /* ── DEMO CAVABLAR ─────────────────────────────────────────
+     Gemini API xarici kvota sebebi ile elcatmaz olduqda, koməkci
+     bank mövzusunda hazir cavablar gösterir. Acar sözlere gore
+     uygun cavab secilir. ──────────────────────────────────────*/
+  const DEMO_ANSWERS = [
+    { keys: ["round", "yuvarlaq", "qepik", "qəpik", "yığ", "yig"], a: "Round-up (qəpik yığımı) hər alışınızı yuxarı yuvarlaqlaşdırıb aradakı fərqi yığım hesabınıza atır. Məsələn 4.30 ₼ ödəsəniz, 5 ₼-ə yuvarlaqlaşır və 0.70 ₼ avtomatik yığılır. 'Ayarlar' bölməsindən xərc və yığım hesabını seçib aktivləşdirin. İstədiyiniz vaxt söndürə bilərsiniz — ayarlarınız qalır." },
+    { keys: ["çıxarış", "cixaris", "statement", "hesab çıx", "extract"], a: "Hesab çıxarışını 'Çıxarış' bölməsindən yarada bilərsiniz. Hesabı və tarix aralığını seçin — sistem əməliyyatlarınızı PDF formatında hazırlayır və yükləmək mümkündür. Çıxarışda hər əməliyyatdan sonrakı balans da göstərilir." },
+    { keys: ["limit", "kart limit", "gündəlik", "aylıq limit"], a: "Kart və hesab limitlərini 'Ayarlar' bölməsindən tənzimləyə bilərsiniz. Gündəlik, aylıq və illik limit təyin etmək olar. Hər limitin istifadə faizi rəngli zolaqla göstərilir. Limit qoymasanız, standart limit tətbiq olunur." },
+    { keys: ["2fa", "iki mərhələ", "iki merhele", "təhlükəsiz", "tehlukesiz", "otp", "kod gəlir"], a: "İki mərhələli doğrulamanı (2FA) 'Ayarlar' bölməsindən aktivləşdirin. Aktiv olduqda, hər girişdə emailinizə 6 rəqəmli kod gəlir — bu, hesabınıza əlavə qorunma verir. Parolunuz oğurlansa belə, kodsuz giriş mümkün olmur." },
+    { keys: ["kredit", "loan", "borc", "kredit al"], a: "Kredit üçün 'Kreditlər' bölməsindən müraciət edə bilərsiniz. Məbləği (500-50000 ₼) və müddəti (6-36 ay) seçin, təxmini aylıq ödənişi dərhal görəcəksiniz. Müraciət admin tərəfindən yoxlanıb təsdiqlənir. Təsdiqlənəndə məbləğ hesabınıza köçürülür." },
+    { keys: ["əmanət", "emanet", "deposit", "faiz"], a: "Əmanət açmaq üçün 'Əmanət' bölməsinə keçin. Minimum 10 ₼-dən açılır, illik 12% faiz qazandırır. Faiz hər ay avtomatik hesablanır və əsas məbləğdən ayrı göstərilir. İstədiyiniz vaxt bağlaya bilərsiniz — əsas məbləğ və qazanılan faiz birlikdə hesabınıza qayıdır." },
+    { keys: ["köçür", "kocur", "transfer", "pul gönd", "pul gond", "iban"], a: "Pul köçürmək üçün 'Köçürmələr' bölməsindən istifadə edin. IBAN ilə başqa hesaba, öz hesablarınız arasında və ya kart nömrəsi ilə köçürmə edə bilərsiniz. Tez-tez köçürdüyünüz alıcıları 'sevimlilər'ə əlavə edib bir kliklə seçə bilərsiniz." },
+    { keys: ["kod", "nağd", "nagd", "cashbycode", "kartsız", "kartsiz"], a: "Kodla nağdlaşdırma kartsız pul göndərməyə imkan verir. 'Kodla nağd' bölməsindən məbləği seçib 8 rəqəmli kod yaradırsınız. Pul dərhal rezerv olunur. Alıcı bu kodla pulu götürür. Kod 72 saat keçərlidir — götürülməsə, pul avtomatik geri qayıdır. İstədiyiniz vaxt ləğv edə bilərsiniz." },
+    { keys: ["keşbek", "kesbek", "cashback", "bonus"], a: "Keşbek kommunal ödənişlərdə 5%, nağd çıxarışda 1% bonus qazandırır. Toplanan keşbek balansını istənilən vaxt əsas hesabınıza köçürə bilərsiniz. Keşbek balansınızı 'Panel'də görə bilərsiniz." },
+    { keys: ["kommunal", "ödəniş", "odenis", "utility", "işıq", "qaz", "su"], a: "Kommunal ödənişləri 'Ödənişlər' bölməsindən edə bilərsiniz. Provayderi (işıq, qaz, su və s.) seçin, abunəçi kodunu daxil edin — borcu görüb ödəyə bilərsiniz. Üstəlik hər ödənişdə 5% keşbek qazanırsınız. Qəbzi PDF kimi saxlaya bilərsiniz." },
+    { keys: ["yığım məqsəd", "savings", "hədəf", "hedef", "goal", "məqsəd"], a: "Yığım məqsədi qoymaq üçün 'Yığım' bölməsinə keçin. Hədəf məbləği təyin edin (məs. tətil, avtomobil) — sistem irəliləyişinizi faizlə izləyir və məqsədə çatmağınıza kömək edir." },
+    { keys: ["hesab aç", "yeni hesab", "hesab yarat", "account"], a: "Yeni hesab açmaq üçün 'Kartlar' və ya hesablar bölməsindən istifadə edin. Fərqli valyutalarda (AZN, USD, EUR, TRY) hesab aça bilərsiniz. Hər hesabın öz IBAN nömrəsi olur." },
+    { keys: ["kart", "card", "kart yarat", "yeni kart"], a: "Kartlarınızı 'Kartlar' bölməsindən idarə edə bilərsiniz. Yeni kart yaratmaq, mövcud kartlara baxmaq və kartı bloklamaq/açmaq mümkündür." },
+    { keys: ["valyuta", "məzənnə", "mezenne", "currency", "dollar", "avro", "usd", "eur"], a: "Valyuta məzənnələrini 'Panel'dəki valyuta bölməsində görə bilərsiniz. USD, EUR, TRY məzənnələri göstərilir. Mini kalkulyator ilə istənilən məbləği bir valyutadan digərinə çevirə bilərsiniz." },
+    { keys: ["bildiriş", "bildiris", "notification", "xəbərdarlıq", "xeberdarliq", "alert"], a: "Bildirişləri 'Panel'in yuxarısındakı zəng ikonundan görə bilərsiniz. Aşağı balans xəbərdarlığı qurmaq üçün 'Ayarlar'da hədd təyin edin — balansınız bu həddin altına düşəndə bildiriş alırsınız." },
+    { keys: ["profil", "profile", "ad dəyiş", "ad deyis", "şəkil", "sekil", "foto"], a: "Profil məlumatlarınızı 'Ayarlar' bölməsindən yeniləyə bilərsiniz — ad, telefon nömrəsi və profil şəkli. Şəkil dəyişmək üçün avatarın üstünə gəlib kamera ikonuna basın. Email dəyişdirilə bilməz (təhlükəsizlik səbəbi)." },
+    { keys: ["parol", "password", "parol dəyiş", "parol unut", "şifrə"], a: "Parolu dəyişmək üçün 'Ayarlar' bölməsindən istifadə edin. Parolu unutmusunuzsa, giriş səhifəsində 'Parolu unutdum' seçin — emailinizə sıfırlama kodu göndəriləcək." },
+    { keys: ["dəstək", "destek", "support", "kömək", "komek", "help"], a: "Dəstək üçün 'Panel'dəki söhbət funksiyasından istifadə edə bilərsiniz — operatorla real vaxtda yazışa bilərsiniz. Həmçinin mən, Amora AI, ümumi suallarınıza kömək edirəm." },
+    { keys: ["analitika", "analytics", "xərc", "xerc", "statistika"], a: "Xərclərinizin analitikasını 'Analitika' bölməsində görə bilərsiniz. Kateqoriyalar üzrə xərc bölgüsü, aylıq müqayisə və qrafiklərlə maliyyə mənzərənizi izləyə bilərsiniz." },
+    { keys: ["planlaşdır", "planlasdir", "scheduled", "avtomatik ödəniş", "təkrar"], a: "Təkrarlanan ödənişləri planlaşdıra bilərsiniz — sistem təyin etdiyiniz tarixdə avtomatik ödəyir. Bu, kommunal və ya abunə ödənişləri üçün əlverişlidir." },
+    { keys: ["google", "google ilə", "google giriş"], a: "Google hesabınızla da daxil ola bilərsiniz. Giriş səhifəsində 'Google ilə davam et' düyməsinə basın — Google hesabınızı seçib sürətlə giriş edin." },
+    { keys: ["dil", "language", "azərbaycan", "english", "rus"], a: "Tətbiqin dilini AZ, EN və RU arasında dəyişə bilərsiniz. Dil seçimi 'Ayarlar'da və ya sağ yuxarıdakı profil menyusundadır." },
+    { keys: ["blok", "block", "kart blok", "hesab blok"], a: "Kartınızı və ya hesabınızı təhlükəsizlik üçün müvəqqəti bloklaya bilərsiniz. Bu, kartınız itsə faydalıdır. Sonradan yenidən aktivləşdirə bilərsiniz." },
+    { keys: ["qəbz", "qebz", "receipt", "pdf"], a: "Hər əməliyyat və ödəniş üçün PDF qəbz yükləyə bilərsiniz. Əməliyyat tarixçəsində və ya ödəniş detalında 'Qəbz' düyməsindən istifadə edin." },
+    { keys: ["salam", "salm", "hi", "hello", "necəsən", "kimsən", "kim"], a: "Salam! Mən Amora AI-yam — Amorabank-ın köməkçisiyəm. Hesab, köçürmə, əmanət, kredit, kommunal ödəniş, kodla nağd, round-up yığım və digər xidmətlər haqda soruşa bilərsiniz. Necə kömək edim?" },
+  ];
+
+  function findDemoAnswer(q) {
+    const low = q.toLowerCase();
+    for (const item of DEMO_ANSWERS) {
+      if (item.keys.some(k => low.includes(k))) return item.a;
+    }
+    // uygun tapilmasa — umumi cavab
+    return "Amorabank-da bu xidmətlər var: hesablar, köçürmələr, əmanət, kredit, kommunal ödəniş, kodla nağdlaşdırma, round-up yığım, keşbek, yığım məqsədləri, kart idarəsi və analitika. Hansı mövzuda kömək lazımdır? Məsələn: 'Round-up nədir?', 'Kredit necə alıram?', '2FA-nı necə aktivləşdirim?'";
+  }
+
   /* ── 3. Sual gonder — POST /api/Ai/ask ───────────────────── */
   async function ask() {
     const q = input.value.trim();
@@ -166,29 +207,34 @@
     render();
 
     try {
-      const res = await fetch(AI_API_BASE + "/api/Ai/ask", {
-        method: "POST",
+      const response = await fetch('http://localhost:5150/api/Ai/ask', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Accept-Language": (typeof getLang === "function" ? getLang() : "az"),
-          "Authorization": "Bearer " + getTok(),
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Token istifadə edirsinizsə
+          'Accept-Language': 'az'
         },
-        body: JSON.stringify({ question: q }),
+        body: JSON.stringify({ question: userMessage })
       });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Backend Xətası:', errorData); // <-- Əsl xəta buradadır!
+        return;
+      }
 
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        // 429 = rate limit, 400 = servis xetasi (mes. Gemini yuklu)
-        const msg = res.status === 429
-          ? tr("ai.tooMany", "Çox sürətli yazırsınız. Bir dəqiqə gözləyin.")
-          : (data.error || data.message || tr("ai.failed", "Cavab alınmadı. Yenidən cəhd edin."));
-        history.push({ role: "ai", text: msg });
+        // Gemini API elcatmaz olduqda (kvota/xeta) — demo cavaba kec.
+        // Beleliklede komekci hemise cavab verir, bosh qalmir.
+        history.push({ role: "ai", text: findDemoAnswer(q) });
       } else {
-        history.push({ role: "ai", text: data.answer || tr("ai.failed", "Cavab alınmadı.") });
+        history.push({ role: "ai", text: data.answer || findDemoAnswer(q) });
       }
     } catch (e) {
-      history.push({ role: "ai", text: tr("ai.offline", "Serverə qoşulmaq mümkün olmadı.") });
+      // Server elcatmaz olsa da demo cavab goster
+      history.push({ role: "ai", text: findDemoAnswer(q) });
     } finally {
       busy = false;
       sendBtn.disabled = false;

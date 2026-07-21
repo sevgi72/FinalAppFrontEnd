@@ -651,19 +651,38 @@ document.getElementById("pdfBtn").onclick = () => {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
+  // jsPDF-in default sriftii (Helvetica) Azerbaycan herflerini (ə ç ş ğ ı ö ü)
+  // ve Kirili dstekemir — poza gosterir. Ona gore PDF-e yazmadan evvel
+  // bu herfleri oxsar Latin qarsiligina ceviririk. Metn oxunaqli qalir.
+  const pdfSafe = (s) => String(s == null ? "" : s)
+    .replace(/ə/g, "e").replace(/Ə/g, "E")
+    .replace(/ç/g, "c").replace(/Ç/g, "C")
+    .replace(/ş/g, "s").replace(/Ş/g, "S")
+    .replace(/ğ/g, "g").replace(/Ğ/g, "G")
+    .replace(/ı/g, "i").replace(/İ/g, "I")
+    .replace(/ö/g, "o").replace(/Ö/g, "O")
+    .replace(/ü/g, "u").replace(/Ü/g, "U")
+    // Kiril (RU dili) ucun de latinlasdirma — sade transliterasiya
+    .replace(/[а-яА-ЯёЁ]/g, (ch) => {
+      const map = {а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"e",ж:"zh",з:"z",и:"i",й:"y",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",х:"h",ц:"ts",ч:"ch",ш:"sh",щ:"sch",ъ:"",ы:"y",ь:"",э:"e",ю:"yu",я:"ya"};
+      const low = ch.toLowerCase();
+      const res = map[low] || ch;
+      return ch === low ? res : res.charAt(0).toUpperCase() + res.slice(1);
+    });
+
   // Basliq
   doc.setFontSize(18);
   doc.setTextColor(44, 41, 102);   // ink
   doc.text("Amorabank", 14, 20);
   doc.setFontSize(11);
   doc.setTextColor(120, 120, 120);
-  doc.text(t("st.pdfTitle"), 14, 27);
+  doc.text(pdfSafe(t("st.pdfTitle")), 14, 27);
 
   // Hesab + dovr
   doc.setFontSize(10);
   doc.setTextColor(60, 60, 60);
-  doc.text(`${t("st.account")}: ${formatIban(st.accountNumber)}`, 14, 38);
-  doc.text(`${t("st.period")}: ${fmtDate(st.from)} - ${fmtDate(st.to)}`, 14, 44);
+  doc.text(pdfSafe(`${t("st.account")}: ${formatIban(st.accountNumber)}`), 14, 38);
+  doc.text(pdfSafe(`${t("st.period")}: ${fmtDate(st.from)} - ${fmtDate(st.to)}`), 14, 44);
 
   // Xulase qutusu
   doc.setDrawColor(230, 232, 242);
@@ -671,23 +690,23 @@ document.getElementById("pdfBtn").onclick = () => {
   doc.roundedRect(14, 50, 182, 22, 2, 2, "FD");
   doc.setFontSize(9);
   doc.setTextColor(90, 90, 90);
-  doc.text(`${t("st.opening")}: ${AZNraw(st.openingBalance)}`, 18, 58);
-  doc.text(`${t("st.closing")}: ${AZNraw(st.closingBalance)}`, 18, 64);
-  doc.text(`${t("st.totalIn")}: +${AZNraw(st.totalIn)}`, 110, 58);
-  doc.text(`${t("st.totalOut")}: -${AZNraw(st.totalOut)}`, 110, 64);
+  doc.text(pdfSafe(`${t("st.opening")}: ${AZNraw(st.openingBalance)}`), 18, 58);
+  doc.text(pdfSafe(`${t("st.closing")}: ${AZNraw(st.closingBalance)}`), 18, 64);
+  doc.text(pdfSafe(`${t("st.totalIn")}: +${AZNraw(st.totalIn)}`), 110, 58);
+  doc.text(pdfSafe(`${t("st.totalOut")}: -${AZNraw(st.totalOut)}`), 110, 64);
 
   // Cedvel
   const rows = (st.items || []).map(it => [
-    fmtDateTime(it.date),
-    txTypeLabel(it.type),
-    it.description || "-",
-    (it.isIncoming ? "+" : "-") + AZNraw(it.amount),
-    it.balanceAfter != null ? AZNraw(it.balanceAfter) : "-",
+    pdfSafe(fmtDateTime(it.date)),
+    pdfSafe(txTypeLabel(it.type)),
+    pdfSafe(it.description || "-"),
+    pdfSafe((it.isIncoming ? "+" : "-") + AZNraw(it.amount)),
+    pdfSafe(it.balanceAfter != null ? AZNraw(it.balanceAfter) : "-"),
   ]);
 
   doc.autoTable({
     startY: 78,
-    head: [[t("st.thDate"), t("st.thType"), t("st.thDesc"), t("st.thAmount"), t("st.thBalance")]],
+    head: [[pdfSafe(t("st.thDate")), pdfSafe(t("st.thType")), pdfSafe(t("st.thDesc")), pdfSafe(t("st.thAmount")), pdfSafe(t("st.thBalance"))]],
     body: rows,
     styles: { fontSize: 8, cellPadding: 2 },
     headStyles: { fillColor: [27, 25, 64], textColor: [255, 255, 255] },
@@ -701,7 +720,7 @@ document.getElementById("pdfBtn").onclick = () => {
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
-    doc.text(`Amorabank • ${new Date().toLocaleDateString("az-AZ")} • ${i}/${pageCount}`,
+    doc.text(pdfSafe(`Amorabank • ${new Date().toLocaleDateString("az-AZ")} • ${i}/${pageCount}`),
       14, doc.internal.pageSize.height - 10);
   }
 

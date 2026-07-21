@@ -52,14 +52,87 @@ tailwind.config = {
   ::-webkit-scrollbar-thumb { background:#cfd3e6; border-radius:99px }
   :focus-visible { outline:2px solid #00e5d4; outline-offset:2px; border-radius:6px }
   @media (prefers-reduced-motion: reduce){ *{transition:none!important} .page{animation:none} }
+
+  /* ═══ RESPONSIV ═══ */
+  html, body { overflow-x: hidden; max-width: 100%; }
+
+  /* drawer mobilde tam en, masaustunde 440px */
+  #drawer { width: 100%; max-width: 440px; }
+
+  /* < 1024px: sidebar gizli, mobil hamburger menyu isleyir */
+  @media (max-width: 1023px) {
+    aside.admin-sidebar { display: none !important; }
+  }
+  @media (min-width: 1024px) {
+    aside.admin-sidebar { display: flex !important; }
+    #adminMobileBar { display: none !important; }
+    #adminNavSheet { display: none !important; }
+  }
 </style>
 </head>
 
 <body class="bg-mist font-body text-ink-2 antialiased text-[13px]">
 
+<!-- ═══ MOBIL ÜST BAR (yalnız < 1024px) ═══ -->
+<div id="adminMobileBar" class="lg:hidden sticky top-0 z-30 flex items-center gap-3 h-14 px-4 bg-ink-2 text-white">
+  <button id="adminMenuBtn" class="w-9 h-9 grid place-items-center rounded-lg hover:bg-white/10 transition">
+    <i data-lucide="menu" style="width:20px;height:20px"></i>
+  </button>
+  <div class="flex items-center gap-2">
+    <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
+      <i data-lucide="gem" style="width:14px;height:14px" class="text-ink-2"></i>
+    </div>
+    <span class="font-display font-700 text-sm">Amorabank</span>
+    <span class="text-[10px] text-white/40 uppercase tracking-wider">Back-office</span>
+  </div>
+</div>
+
+<!-- ═══ MOBIL NAV MENYUSU ═══ -->
+<div id="adminNavSheet" class="hidden lg:hidden fixed inset-0 z-50">
+  <div id="adminNavBackdrop" class="absolute inset-0 bg-ink-3/50 backdrop-blur-sm"></div>
+  <div class="absolute top-0 left-0 h-full w-72 max-w-[85vw] bg-ink-2 text-white/70 p-4 overflow-y-auto shadow-2xl">
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
+          <i data-lucide="gem" style="width:15px;height:15px" class="text-ink-2"></i>
+        </div>
+        <span class="font-display font-700 text-white text-sm">Amorabank</span>
+      </div>
+      <button id="adminNavClose" class="w-8 h-8 grid place-items-center rounded-lg hover:bg-white/10 transition">
+        <i data-lucide="x" style="width:18px;height:18px" class="text-white/60"></i>
+      </button>
+    </div>
+
+    <nav class="space-y-1">
+      <button data-page="overview" data-mnav class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/8 transition">
+        <i data-lucide="gauge" style="width:17px;height:17px"></i> <span data-i18n="adm.navOverview">İcmal</span>
+      </button>
+      <button data-page="users" data-mnav class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/8 transition">
+        <i data-lucide="users" style="width:17px;height:17px"></i> <span data-i18n="adm.navUsers">Müştərilər</span>
+      </button>
+      <button data-page="loans" data-mnav class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/8 transition">
+        <i data-lucide="landmark" style="width:17px;height:17px"></i> <span data-i18n="adm.navLoans">Kredit sorğuları</span>
+      </button>
+      <button data-page="support" data-mnav class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/8 transition">
+        <i data-lucide="messages-square" style="width:17px;height:17px"></i> <span data-i18n="adm.navSupport">Dəstək</span>
+      </button>
+      <button data-page="broadcast" data-mnav class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/8 transition">
+        <i data-lucide="megaphone" style="width:17px;height:17px"></i> <span data-i18n="adm.navBroadcast">Elan göndər</span>
+      </button>
+      <p class="px-3 pt-4 pb-1.5 text-[10px] uppercase tracking-wider text-white/25" data-i18n="adm.superOnly">Yalnız SuperAdmin</p>
+      <button data-page="audit" data-mnav class="super-only w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/8 transition">
+        <i data-lucide="scroll-text" style="width:17px;height:17px"></i> <span data-i18n="adm.navAudit">Audit jurnalı</span>
+      </button>
+      <button data-page="settings" data-mnav class="super-only w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-white/8 transition">
+        <i data-lucide="sliders-horizontal" style="width:17px;height:17px"></i> <span data-i18n="adm.navSettings">Sistem tənzimləri</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
 <div class="flex min-h-screen">
 
-  <aside class="hidden lg:flex w-60 shrink-0 flex-col bg-ink-2 text-white/65 px-4 py-5">
+  <aside class="admin-sidebar hidden lg:flex w-60 shrink-0 flex-col bg-ink-2 text-white/65 px-4 py-5">
 
     <div class="flex items-center gap-2.5 px-2 mb-2">
       <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-lilac grid place-items-center">
@@ -586,6 +659,35 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
 });
 
 
+/* ══════════════ MOBIL HAMBURGER MENYU ══════════════ */
+(function () {
+  const menuBtn = document.getElementById("adminMenuBtn");
+  const sheet = document.getElementById("adminNavSheet");
+  const closeBtn = document.getElementById("adminNavClose");
+  const backdrop = document.getElementById("adminNavBackdrop");
+  if (!menuBtn || !sheet) return;
+
+  const openSheet = () => { sheet.classList.remove("hidden"); if (window.lucide) lucide.createIcons(); };
+  const closeSheet = () => sheet.classList.add("hidden");
+
+  menuBtn.addEventListener("click", openSheet);
+  closeBtn?.addEventListener("click", closeSheet);
+  backdrop?.addEventListener("click", closeSheet);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+
+  // menyu duymeleri → bolme dyis + menyu bagla (movcud showPage-i isledir)
+  sheet.querySelectorAll("[data-mnav]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.classList.contains("super-only") && !isSuper()) {
+        return toast(t("adm.superOnlyViewDot"), false);
+      }
+      showPage(btn.dataset.page);
+      closeSheet();
+    });
+  });
+})();
+
+
 /* ══════════════════════════════════════════════════════════════
    5. ICMAL — GET /api/Admin/stats
    ══════════════════════════════════════════════════════════════ */
@@ -1035,16 +1137,87 @@ document.body.addEventListener("click", async (e) => {
   const ap = e.target.closest("[data-loan-approve]");
   const rj = e.target.closest("[data-loan-reject]");
   if (ap) {
-    if (!confirm(t("adm.confirmApprove"))) return;
+    const ok = await confirmModal({
+      icon: "check-circle",
+      tone: "ok",
+      title: t("adm.confirmApproveTitle"),
+      text: t("adm.confirmApprove"),
+      confirmText: t("adm.approve"),
+    });
+    if (!ok) return;
     try { await api(`/api/Loan/${ap.dataset.loanApprove}/approve`, { method:"POST" }); toast(t("adm.loanApproved"), true); loadLoans(); }
     catch (err) { toast(err.message, false); }
   }
   if (rj) {
-    if (!confirm(t("adm.confirmReject"))) return;
+    const ok = await confirmModal({
+      icon: "x-circle",
+      tone: "danger",
+      title: t("adm.confirmRejectTitle"),
+      text: t("adm.confirmReject"),
+      confirmText: t("adm.reject"),
+    });
+    if (!ok) return;
     try { await api(`/api/Loan/${rj.dataset.loanReject}/reject`, { method:"POST" }); toast(t("adm.loanRejected"), true); loadLoans(); }
     catch (err) { toast(err.message, false); }
   }
 });
+
+
+/* ══════════════ TESDIQ MODALI (SweetAlert uslubu) ══════════════
+   confirm() evezine gozel modal. Promise qaytarir: true=tesdiq, false=legv. */
+function confirmModal({ icon = "help-circle", tone = "ok", title = "", text = "", confirmText = "Təsdiq", cancelText = "Ləğv" }) {
+  return new Promise((resolve) => {
+    const toneColors = {
+      ok: { bg: "bg-ok/12", ring: "text-ok", btn: "bg-ok hover:bg-ok/90" },
+      danger: { bg: "bg-danger/10", ring: "text-danger", btn: "bg-danger hover:bg-danger/90" },
+    };
+    const c = toneColors[tone] || toneColors.ok;
+
+    const wrap = document.createElement("div");
+    wrap.className = "fixed inset-0 z-[70] grid place-items-center p-4";
+    wrap.innerHTML = `
+      <div class="cm-backdrop absolute inset-0 bg-ink-3/45 backdrop-blur-sm opacity-0 transition-opacity"></div>
+      <div class="cm-card relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center
+                  scale-95 opacity-0 transition-all duration-200">
+        <div class="w-14 h-14 rounded-2xl ${c.bg} grid place-items-center mx-auto mb-4">
+          <i data-lucide="${icon}" style="width:28px;height:28px" class="${c.ring}"></i>
+        </div>
+        <h3 class="font-display font-600 text-ink text-lg mb-1.5">${title}</h3>
+        <p class="text-sm text-ink/55 mb-6 leading-relaxed">${text}</p>
+        <div class="flex gap-2.5">
+          <button class="cm-cancel flex-1 h-11 rounded-xl border border-line text-sm font-500 text-ink-2 hover:bg-mist transition">
+            ${cancelText}
+          </button>
+          <button class="cm-ok flex-1 h-11 rounded-xl ${c.btn} text-white text-sm font-600 transition shadow-lg">
+            ${confirmText}
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(wrap);
+    if (window.lucide) lucide.createIcons();
+
+    const backdrop = wrap.querySelector(".cm-backdrop");
+    const card = wrap.querySelector(".cm-card");
+    // acilis animasiyasi
+    requestAnimationFrame(() => {
+      backdrop.classList.remove("opacity-0");
+      card.classList.remove("scale-95", "opacity-0");
+    });
+
+    const close = (result) => {
+      backdrop.classList.add("opacity-0");
+      card.classList.add("scale-95", "opacity-0");
+      setTimeout(() => { wrap.remove(); resolve(result); }, 180);
+    };
+
+    wrap.querySelector(".cm-ok").onclick = () => close(true);
+    wrap.querySelector(".cm-cancel").onclick = () => close(false);
+    backdrop.onclick = () => close(false);
+    document.addEventListener("keydown", function esc(ev) {
+      if (ev.key === "Escape") { close(false); document.removeEventListener("keydown", esc); }
+    });
+  });
+}
 
 
 /* ══════════════════════════════════════════════════════════════
