@@ -329,6 +329,31 @@ tailwind.config = {
             </table>
           </div>
         </div>
+
+        <!-- ═══ ABUNƏÇI BORCU YOXLA ═══ -->
+        <div class="mt-4 bg-white rounded-xl border border-line p-4 max-w-xl">
+          <h2 class="font-display font-600 text-ink text-[13px]">Abunəçi borcu yoxla</h2>
+          <p class="text-[11px] text-ink/40 mt-0.5 mb-3">Provayder seç və abunəçi kodu yaz — borcu göstərsin.</p>
+
+          <div class="flex flex-wrap gap-2 items-end">
+            <div class="flex-1 min-w-[140px]">
+              <label class="block text-[11px] font-500 text-ink/60 mb-1">Provayder</label>
+              <select id="debtProvider"
+                class="w-full h-9 px-2.5 rounded-lg border border-line bg-mist text-[12px] focus:border-neon outline-none transition"></select>
+            </div>
+            <div class="flex-1 min-w-[140px]">
+              <label class="block text-[11px] font-500 text-ink/60 mb-1">Abunəçi kodu</label>
+              <input id="debtCode" type="text" placeholder="Məs: 1234567890"
+                class="w-full h-9 px-3 rounded-lg border border-line bg-mist text-[12px] font-mono focus:border-neon outline-none transition">
+            </div>
+            <button id="debtCheckBtn"
+              class="h-9 px-4 rounded-lg bg-ink text-white text-[12px] font-600 hover:bg-ink-2 transition">
+              Borcu göstər
+            </button>
+          </div>
+
+          <div id="debtResult" class="hidden mt-3 rounded-lg bg-mist p-3.5"></div>
+        </div>
       </section>
 
 
@@ -760,7 +785,9 @@ async function loadStats() {
     </tr>`).join("") || emptyRow(3);
 
   renderCharts(s);
+  loadDebtProviders();
 }
+
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -859,7 +886,62 @@ function renderCharts(s) {
     },
   });
 }
+/* ══════════════════════════════════════════════════════════════
+   5c. ABUNƏÇI BORCU YOXLA (admin yoxlama aleti)
+   ══════════════════════════════════════════════════════════════ */
 
+let debtProvidersLoaded = false;
+
+async function loadDebtProviders() {
+  if (debtProvidersLoaded) return;   // bir defe doldur, tekrar cekme
+  const sel = document.getElementById("debtProvider");
+  if (!sel) return;
+  try {
+    const provs = await api("/api/Utility/providers");
+    const list = Array.isArray(provs) ? provs : (provs.items ?? []);
+    sel.innerHTML = list.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+    debtProvidersLoaded = true;
+  } catch (e) {
+    sel.innerHTML = `<option value="">${t("adm.noProviders")}</option>`;
+  }
+}
+
+async function checkDebt() {
+  const providerId = document.getElementById("debtProvider").value;
+  const code = document.getElementById("debtCode").value.trim();
+  const box = document.getElementById("debtResult");
+
+  if (!providerId) { toast(t("adm.noProviders"), false); return; }
+  if (!code) { toast("Abunəçi kodu yazın.", false); return; }
+
+  box.classList.remove("hidden");
+  box.innerHTML = `<p class="text-[12px] text-ink/40 text-center">${t("adm.loading")}</p>`;
+
+  try {
+    const res = await api("/api/Utility/debt", {
+      method: "POST",
+      body: JSON.stringify({ providerId, subscriberCode: code }),
+    });
+    box.innerHTML = `
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-[11px] text-ink/45">${res.providerName || "—"}</p>
+          <p class="text-[12px] font-mono text-ink-2 mt-0.5">${res.subscriberCode || code}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-[10px] text-ink/45 uppercase">Borc</p>
+          <p class="font-mono font-700 text-lg text-ink">${AZN(res.debtAmount)}</p>
+        </div>
+      </div>`;
+  } catch (e) {
+    box.innerHTML = `<p class="text-[12px] text-danger text-center">${e.message}</p>`;
+  }
+}
+
+document.getElementById("debtCheckBtn")?.addEventListener("click", checkDebt);
+document.getElementById("debtCode")?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") checkDebt();
+});
 const emptyRow = (cols) => `<tr><td colspan="${cols}" class="px-4 py-8 text-center text-ink/30 text-[12px]">${t("adm.noData")}</td></tr>`;
 
 
